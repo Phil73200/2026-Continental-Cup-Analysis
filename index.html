@@ -253,20 +253,59 @@
     }
   </style>
 
+
+  <style>
+    @media (max-width: 760px) {
+      .card {
+        padding: 10px !important;
+      }
+
+      .controls {
+        gap: 6px 8px !important;
+        padding: 8px !important;
+      }
+
+      .control {
+        margin-bottom: 2px;
+      }
+
+      .chart-title {
+        font-size: 14px;
+      }
+
+      .chart-subtitle,
+      .note,
+      .subtitle {
+        font-size: 10px;
+        line-height: 1.3;
+      }
+
+      #penaltyBoxPlot,
+      #appliedBoxPlot {
+        height: 390px !important;
+      }
+
+      #penaltyThresholdChart,
+      #appliedThresholdChart {
+        max-height: 330px;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
 
   <div class="top-nav">
-    <button id="navField" class="active" onclick="showPage('field')">Field Level</button>
+    <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
-    <button id="navCross" onclick="showPage('cross')">Key Findings</button>
+    <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
   <section id="page-field" class="page-section active">
 
-  <h1>Continental Cups – Field Level 2026</h1>
+  <h1>Continental Cups – Competitive Participation 2026</h1>
 
   <div class="subtitle">
     Constant race sample within each selected Top cohort
@@ -337,7 +376,7 @@
 
   <div class="card">
 
-    <div class="chart-title">Field Level</div>
+    <div class="chart-title">Competitive Participation</div>
 
     <div class="chart-subtitle">
       X = rank by FIS points · Y = average FIS points
@@ -361,7 +400,7 @@
 
 
   <div id="loading" class="loading">
-    Loading Field Level data…
+    Loading Competitive Participation data…
   </div>
 
 
@@ -522,8 +561,6 @@
       <div class="control" style="margin-bottom:10px;">
         <div class="control-label">Penalty thresholds</div>
         <div id="appThresholdFilters" class="checks">
-          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="10" checked> ≤10</label>
-          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="12" checked> ≤12</label>
           <label class="check-item"><input type="checkbox" class="app-threshold-check" value="15" checked> ≤15</label>
           <label class="check-item"><input type="checkbox" class="app-threshold-check" value="18" checked> ≤18</label>
           <label class="check-item"><input type="checkbox" class="app-threshold-check" value="20" checked> ≤20</label>
@@ -541,15 +578,94 @@
   </section>
 
   <section id="page-cross" class="page-section">
-    <h1>Continental Cups – Key Findings</h1>
+    <h1>Findings & Possible Approaches</h1>
     <div class="subtitle">
-      Field strength → calculated penalties → applied penalties
+      Constats et pistes de réflexion / Findings and possible approaches
     </div>
 
-    <div class="placeholder-card">
-      <div>
-        <strong>Key Findings</strong>
-        This final page will summarize the effect of the current penalty rules after the three analytical views are validated.
+    <div class="card">
+      <div class="chart-title">Constats / Findings</div>
+
+      <div style="display:grid;gap:18px;margin-top:14px;">
+
+        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;">
+          <div style="font-weight:700;margin-bottom:6px;">Constat 1</div>
+          <div style="margin-bottom:8px;">
+            Les circuits continentaux présentent des différences importantes de
+            <strong>niveau et de densité de participation</strong>.
+          </div>
+          <div style="color:#4b5563;font-style:italic;">
+            Continental Cup circuits show substantial differences in the
+            <strong>level and depth of participation</strong>.
+          </div>
+        </div>
+
+        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;">
+          <div style="font-weight:700;margin-bottom:6px;">Constat 2</div>
+          <div style="margin-bottom:8px;">
+            Les pénalités calculées permettent de différencier les circuits,
+            mais ne reflètent pas toujours le niveau et la densité de participation.
+            Une course réunissant quelques athlètes de très haut niveau peut produire
+            une excellente pénalité calculée malgré une participation globalement moins dense.
+          </div>
+          <div style="color:#4b5563;font-style:italic;">
+            Calculated penalties distinguish between circuits but do not always reflect
+            the overall level and depth of participation. A race with a small number of
+            top-ranked athletes may produce an excellent calculated penalty despite a
+            less dense overall participation.
+          </div>
+        </div>
+
+        <div style="padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;">
+          <div style="font-weight:700;margin-bottom:6px;">Constat 3</div>
+          <div style="margin-bottom:8px;">
+            L'application des règles actuelles de pénalité appliquée réduit fortement
+            les différences observées entre les circuits.
+          </div>
+          <div style="color:#4b5563;font-style:italic;">
+            The current applied-penalty rules substantially reduce the differences
+            observed between Continental Cup circuits.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="chart-title">Pistes de réflexion / Possible Approaches</div>
+
+      <div style="display:grid;gap:18px;margin-top:14px;">
+
+        <div style="padding:16px;border-left:4px solid #2563eb;background:#f8fafc;border-radius:8px;">
+          <div style="font-weight:700;margin-bottom:6px;">
+            1. Appliquer directement la pénalité calculée
+          </div>
+          <div style="margin-bottom:8px;">
+            En évaluant les effets de bord avec les athlètes de Coupe du monde liés à
+            l'attribution de points FIS inférieurs à 15.
+          </div>
+          <div style="color:#4b5563;font-style:italic;">
+            <strong>Apply the calculated penalty directly.</strong>
+            Assess the boundary effects with World Cup athletes related to awarding
+            FIS points below 15.
+          </div>
+        </div>
+
+        <div style="padding:16px;border-left:4px solid #7c3aed;background:#f8fafc;border-radius:8px;">
+          <div style="font-weight:700;margin-bottom:6px;">
+            2. Appliquer un additif spécifique
+          </div>
+          <div style="margin-bottom:8px;">
+            Déterminé <strong>par circuit, par discipline et par sexe</strong>,
+            à partir des différences observées de niveau et de densité de participation.
+          </div>
+          <div style="color:#4b5563;font-style:italic;">
+            <strong>Apply a specific additive</strong>,
+            defined <strong>for each circuit, discipline and gender</strong>,
+            based on the observed differences in participation level and depth.
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -593,7 +709,7 @@ function showPage(page) {
   });
 
   /*
-   * Quand on revient au Field Level, on force Chart.js
+   * Quand on revient au Competitive Participation, on force Chart.js
    * à reprendre la largeur réellement disponible.
    */
   if (
@@ -1800,6 +1916,7 @@ function renderPenaltyBoxPlot(rows) {
     );
 
   const traces = [];
+  const allValues = [];
 
   circuits.forEach(circuit => {
 
@@ -1807,7 +1924,10 @@ function renderPenaltyBoxPlot(rows) {
       rows.filter(r => r.circuit === circuit);
 
     const vals =
-      arr.map(r => r.calculatedPenalty);
+      arr.map(r => r.calculatedPenalty)
+         .filter(Number.isFinite);
+
+    allValues.push(...vals);
 
     const avg =
       vals.length
@@ -1822,8 +1942,9 @@ function renderPenaltyBoxPlot(rows) {
         `${r.place} · ${r.discipline} · ${r.gender} · ${r.raceDate}`
       ),
       boxpoints: 'all',
-      jitter: 0.35,
+      jitter: 0.32,
       pointpos: 0,
+      width: 0.34,
       marker: {
         color: PEN_COLORS[circuit] || '#374151',
         size: 5,
@@ -1840,7 +1961,6 @@ function renderPenaltyBoxPlot(rows) {
     });
 
     if (Number.isFinite(avg)) {
-
       traces.push({
         type: 'scatter',
         mode: 'markers',
@@ -1849,7 +1969,7 @@ function renderPenaltyBoxPlot(rows) {
         name: 'Average',
         marker: {
           color: '#facc15',
-          size: 12,
+          size: 11,
           line: {
             color: '#111827',
             width: 1
@@ -1865,28 +1985,63 @@ function renderPenaltyBoxPlot(rows) {
     }
   });
 
+  let yRange = null;
+
+  if (allValues.length) {
+    const ymin = Math.min(...allValues);
+    const ymax = Math.max(...allValues);
+    const spread = Math.max(1, ymax - ymin);
+    const pad = Math.max(0.8, spread * 0.10);
+
+    yRange = [
+      Math.max(0, Math.floor((ymin - pad) * 2) / 2),
+      Math.ceil((ymax + pad) * 2) / 2
+    ];
+  }
+
+  const mobile =
+    window.innerWidth <= 760;
+
   Plotly.react(
     'penaltyBoxPlot',
     traces,
     {
-      margin: {l:60,r:20,t:20,b:55},
+      margin: mobile
+        ? {l:44,r:8,t:16,b:42}
+        : {l:60,r:20,t:20,b:55},
+
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
+
+      boxgap: 0.58,
+
       yaxis: {
-        title: 'Calculated Penalty',
-        rangemode: 'tozero',
-        gridcolor: '#e5e7eb'
+        title: mobile ? '' : 'Calculated Penalty',
+        range: yRange || undefined,
+        gridcolor: '#e5e7eb',
+        zeroline: false,
+        automargin: true
       },
+
       xaxis: {
-        title: 'Circuit'
+        title: mobile ? '' : 'Circuit',
+        automargin: true,
+        tickfont: {
+          size: mobile ? 10 : 12
+        }
       },
+
       legend: {
         orientation: 'h',
         x: 0.5,
         xanchor: 'center',
-        y: 1.08
+        y: 1.06
       },
-      hovermode: 'closest'
+
+      hovermode: 'closest',
+      font: {
+        size: mobile ? 10 : 12
+      }
     },
     {
       responsive: true,
@@ -2018,6 +2173,8 @@ function renderPenaltyThresholdChart(rows) {
               backgroundColor: ds.backgroundColor,
               borderColor: ds.borderColor,
               borderWidth: ds.borderWidth,
+              barPercentage: 0.72,
+              categoryPercentage: 0.74,
               _rawPoints: ds.data
             }))
         },
@@ -2306,6 +2463,7 @@ function renderAppliedBoxPlot(rows) {
     );
 
   const traces = [];
+  const allValues = [];
 
   circuits.forEach(circuit => {
 
@@ -2313,7 +2471,10 @@ function renderAppliedBoxPlot(rows) {
       rows.filter(r => r.circuit === circuit);
 
     const vals =
-      arr.map(r => r.appliedPenalty);
+      arr.map(r => r.appliedPenalty)
+         .filter(Number.isFinite);
+
+    allValues.push(...vals);
 
     const avg =
       vals.length
@@ -2328,8 +2489,9 @@ function renderAppliedBoxPlot(rows) {
         `${r.place} · ${r.discipline} · ${r.gender} · ${r.raceDate}`
       ),
       boxpoints: 'all',
-      jitter: 0.35,
+      jitter: 0.32,
       pointpos: 0,
+      width: 0.34,
       marker: {
         color: PEN_COLORS[circuit] || '#374151',
         size: 5,
@@ -2354,7 +2516,7 @@ function renderAppliedBoxPlot(rows) {
         name: 'Average',
         marker: {
           color: '#facc15',
-          size: 12,
+          size: 11,
           line: {
             color: '#111827',
             width: 1
@@ -2370,28 +2532,63 @@ function renderAppliedBoxPlot(rows) {
     }
   });
 
+  let yRange = null;
+
+  if (allValues.length) {
+    const ymin = Math.min(...allValues);
+    const ymax = Math.max(...allValues);
+    const spread = Math.max(1, ymax - ymin);
+    const pad = Math.max(0.7, spread * 0.12);
+
+    yRange = [
+      Math.max(0, Math.floor((ymin - pad) * 2) / 2),
+      Math.ceil((ymax + pad) * 2) / 2
+    ];
+  }
+
+  const mobile =
+    window.innerWidth <= 760;
+
   Plotly.react(
     'appliedBoxPlot',
     traces,
     {
-      margin: {l:60,r:20,t:20,b:55},
+      margin: mobile
+        ? {l:44,r:8,t:16,b:42}
+        : {l:60,r:20,t:20,b:55},
+
       paper_bgcolor: 'rgba(0,0,0,0)',
       plot_bgcolor: 'rgba(0,0,0,0)',
+
+      boxgap: 0.58,
+
       yaxis: {
-        title: 'Applied Penalty',
-        rangemode: 'tozero',
-        gridcolor: '#e5e7eb'
+        title: mobile ? '' : 'Applied Penalty',
+        range: yRange || undefined,
+        gridcolor: '#e5e7eb',
+        zeroline: false,
+        automargin: true
       },
+
       xaxis: {
-        title: 'Circuit'
+        title: mobile ? '' : 'Circuit',
+        automargin: true,
+        tickfont: {
+          size: mobile ? 10 : 12
+        }
       },
+
       legend: {
         orientation: 'h',
         x: 0.5,
         xanchor: 'center',
-        y: 1.08
+        y: 1.06
       },
-      hovermode: 'closest'
+
+      hovermode: 'closest',
+      font: {
+        size: mobile ? 10 : 12
+      }
     },
     {
       responsive: true,
@@ -2494,6 +2691,8 @@ function renderAppliedThresholdChart(rows) {
               backgroundColor: ds.backgroundColor,
               borderColor: ds.borderColor,
               borderWidth: ds.borderWidth,
+              barPercentage: 0.72,
+              categoryPercentage: 0.74,
               _rawPoints: ds.data
             }))
         },
