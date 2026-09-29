@@ -418,15 +418,43 @@
     </div>
 
     <div class="card" style="margin-top:12px;">
-      <div class="chart-title">Cumulative Distribution</div>
+      <div class="chart-title">Races Below Penalty Threshold</div>
       <div class="chart-subtitle">
-        Percentage of races at or below each calculated penalty threshold
+        Percentage of races with a calculated penalty at or below selected thresholds
       </div>
+
+      <div class="control" style="margin-bottom:10px;">
+        <div class="control-label">Penalty thresholds</div>
+        <div id="penThresholdFilters" class="checks">
+          <label class="check-item">
+            <input type="checkbox" class="pen-threshold-check" value="10" checked>
+            ≤10
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="pen-threshold-check" value="12" checked>
+            ≤12
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="pen-threshold-check" value="15" checked>
+            ≤15
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="pen-threshold-check" value="18" checked>
+            ≤18
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="pen-threshold-check" value="20" checked>
+            ≤20
+          </label>
+        </div>
+      </div>
+
       <div class="chart-wrap-main">
-        <canvas id="penaltyCdfChart"></canvas>
+        <canvas id="penaltyThresholdChart"></canvas>
       </div>
+
       <div class="note">
-        A curve further left / higher means a larger share of races achieved low calculated penalties.
+        Bars show the share of races in each circuit reaching each calculated-penalty threshold.
       </div>
     </div>
   </section>
@@ -503,11 +531,11 @@ function showPage(page) {
         if (el) Plotly.Plots.resize(el);
       }
       if (
-        typeof PEN_CDF_CHART !== 'undefined' &&
-        PEN_CDF_CHART
+        typeof PEN_THRESHOLD_CHART !== 'undefined' &&
+        PEN_THRESHOLD_CHART
       ) {
-        PEN_CDF_CHART.resize();
-        PEN_CDF_CHART.update('none');
+        PEN_THRESHOLD_CHART.resize();
+        PEN_THRESHOLD_CHART.update('none');
       }
     }, 80);
   }
@@ -1503,7 +1531,7 @@ init(EMBEDDED_DATA);
 const PENALTY_DATA = [{"raceid":127284,"racecodex":211,"raceDate":"18/08/2025","place":"Mount Hutt","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":11.01,"appliedPenalty":15.0,"penaltyAdjustment":3.99},{"raceid":127307,"racecodex":145,"raceDate":"26/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":11.92,"appliedPenalty":15.0,"penaltyAdjustment":3.08},{"raceid":127285,"racecodex":212,"raceDate":"03/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":12.84,"appliedPenalty":15.0,"penaltyAdjustment":2.16},{"raceid":127305,"racecodex":144,"raceDate":"25/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":13.02,"appliedPenalty":15.0,"penaltyAdjustment":1.98},{"raceid":127288,"racecodex":217,"raceDate":"06/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":14.72,"appliedPenalty":15.0,"penaltyAdjustment":0.28},{"raceid":127530,"racecodex":73,"raceDate":"24/03/2026","place":"Schladming","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":10.58,"appliedPenalty":15.0,"penaltyAdjustment":4.42},{"raceid":127515,"racecodex":82,"raceDate":"14/02/2026","place":"Berchtesgaden","hostNation":"GER","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":10.84,"appliedPenalty":15.0,"penaltyAdjustment":4.16},{"raceid":127520,"racecodex":92,"raceDate":"23/02/2026","place":"Norefjell","hostNation":"NOR","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":11.47,"appliedPenalty":15.0,"penaltyAdjustment":3.53},{"raceid":127506,"racecodex":67,"raceDate":"21/01/2026","place":"Turnau","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":11.79,"appliedPenalty":15.0,"penaltyAdjustment":3.21},{"raceid":127495,"racecodex":81,"raceDate":"17/12/2025","place":"Valloire","hostNation":"FRA","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":12.35,"appliedPenalty":15.0,"penaltyAdjustment":2.65},{"raceid":127507,"racecodex":68,"raceDate":"22/01/2026","place":"Turnau","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":12.9,"appliedPenalty":15.0,"penaltyAdjustment":2.1},{"raceid":127494,"racecodex":80,"raceDate":"16/12/2025","place":"Valloire","hostNation":"FRA","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":14.74,"appliedPenalty":15.0,"penaltyAdjustment":0.26},{"raceid":127519,"racecodex":91,"raceDate":"24/02/2026","place":"Norefjell","hostNation":"NOR","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":14.88,"appliedPenalty":15.0,"penaltyAdjustment":0.12},{"raceid":127487,"racecodex":98,"raceDate":"04/12/2025","place":"Zinal","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":15.29,"appliedPenalty":15.29,"penaltyAdjustment":0.0},{"raceid":127488,"racecodex":99,"raceDate":"05/12/2025","place":"Zinal","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":17.02,"appliedPenalty":17.02,"penaltyAdjustment":0.0},{"raceid":128112,"racecodex":1205,"raceDate":"05/02/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":9.67,"appliedPenalty":15.0,"penaltyAdjustment":5.33},{"raceid":128867,"racecodex":1146,"raceDate":"24/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":11.49,"appliedPenalty":15.0,"penaltyAdjustment":3.51},{"raceid":128869,"racecodex":1147,"raceDate":"25/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":12.19,"appliedPenalty":15.0,"penaltyAdjustment":2.81},{"raceid":128985,"racecodex":1152,"raceDate":"02/03/2026","place":"Hakuba","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":14.89,"appliedPenalty":15.0,"penaltyAdjustment":0.11},{"raceid":128113,"racecodex":1206,"raceDate":"06/02/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":15.83,"appliedPenalty":15.83,"penaltyAdjustment":0.0},{"raceid":128109,"racecodex":1204,"raceDate":"30/01/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":18.11,"appliedPenalty":18.11,"penaltyAdjustment":0.0},{"raceid":128107,"racecodex":1203,"raceDate":"29/01/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":18.51,"appliedPenalty":18.51,"penaltyAdjustment":0.0},{"raceid":130521,"racecodex":494,"raceDate":"11/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":20.81,"appliedPenalty":20.81,"penaltyAdjustment":0.0},{"raceid":130522,"racecodex":495,"raceDate":"12/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":21.28,"appliedPenalty":21.28,"penaltyAdjustment":0.0},{"raceid":128972,"racecodex":1939,"raceDate":"23/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":7.26,"appliedPenalty":15.0,"penaltyAdjustment":7.74},{"raceid":128974,"racecodex":1940,"raceDate":"24/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":10.01,"appliedPenalty":15.0,"penaltyAdjustment":4.99},{"raceid":131109,"racecodex":2004,"raceDate":"09/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":13.57,"appliedPenalty":15.0,"penaltyAdjustment":1.43},{"raceid":131110,"racecodex":2005,"raceDate":"10/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":13.64,"appliedPenalty":15.0,"penaltyAdjustment":1.36},{"raceid":128261,"racecodex":1792,"raceDate":"12/12/2025","place":"Beaver Creek Resort","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":16.51,"appliedPenalty":16.51,"penaltyAdjustment":0.0},{"raceid":128260,"racecodex":1790,"raceDate":"11/12/2025","place":"Beaver Creek Resort","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":16.65,"appliedPenalty":16.65,"penaltyAdjustment":0.0},{"raceid":128179,"racecodex":402,"raceDate":"09/01/2026","place":"Tremblant","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":17.01,"appliedPenalty":17.01,"penaltyAdjustment":0.0},{"raceid":128178,"racecodex":401,"raceDate":"08/01/2026","place":"Tremblant","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":18.21,"appliedPenalty":18.21,"penaltyAdjustment":0.0},{"raceid":127140,"racecodex":158,"raceDate":"31/08/2025","place":"El Colorado","hostNation":"CHI","circuit":"SAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":10.19,"appliedPenalty":15.0,"penaltyAdjustment":4.81},{"raceid":127227,"racecodex":133,"raceDate":"08/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":11.45,"appliedPenalty":15.0,"penaltyAdjustment":3.55},{"raceid":127229,"racecodex":135,"raceDate":"09/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":12.45,"appliedPenalty":15.0,"penaltyAdjustment":2.55},{"raceid":127197,"racecodex":117,"raceDate":"12/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":16.67,"appliedPenalty":16.67,"penaltyAdjustment":0.0},{"raceid":127195,"racecodex":116,"raceDate":"11/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"M","calculatedPenalty":16.68,"appliedPenalty":16.68,"penaltyAdjustment":0.0},{"raceid":127316,"racecodex":5196,"raceDate":"06/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":5.12,"appliedPenalty":15.0,"penaltyAdjustment":9.88},{"raceid":127313,"racecodex":5191,"raceDate":"03/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":6.37,"appliedPenalty":15.0,"penaltyAdjustment":8.63},{"raceid":127312,"racecodex":5190,"raceDate":"18/08/2025","place":"Mount Hutt","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":26.04,"appliedPenalty":26.04,"penaltyAdjustment":0.0},{"raceid":127304,"racecodex":5127,"raceDate":"25/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":37.66,"appliedPenalty":37.66,"penaltyAdjustment":0.0},{"raceid":127306,"racecodex":5128,"raceDate":"26/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":40.94,"appliedPenalty":40.94,"penaltyAdjustment":0.0},{"raceid":127483,"racecodex":5064,"raceDate":"24/03/2026","place":"Schladming","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":11.32,"appliedPenalty":15.0,"penaltyAdjustment":3.68},{"raceid":127454,"racecodex":5077,"raceDate":"09/01/2026","place":"Sestriere","hostNation":"ITA","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":12.19,"appliedPenalty":15.0,"penaltyAdjustment":2.81},{"raceid":127475,"racecodex":5081,"raceDate":"24/02/2026","place":"Oppdal","hostNation":"NOR","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":14.25,"appliedPenalty":15.0,"penaltyAdjustment":0.75},{"raceid":127471,"racecodex":5073,"raceDate":"07/02/2026","place":"Oberjoch","hostNation":"GER","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":14.55,"appliedPenalty":15.0,"penaltyAdjustment":0.45},{"raceid":127476,"racecodex":5082,"raceDate":"25/02/2026","place":"Oppdal","hostNation":"NOR","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":14.8,"appliedPenalty":15.0,"penaltyAdjustment":0.2},{"raceid":127446,"racecodex":5052,"raceDate":"06/12/2025","place":"Mayrhofen / Hippach","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":15.21,"appliedPenalty":15.21,"penaltyAdjustment":0.0},{"raceid":127455,"racecodex":5078,"raceDate":"10/01/2026","place":"Sestriere","hostNation":"ITA","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":15.56,"appliedPenalty":15.56,"penaltyAdjustment":0.0},{"raceid":127472,"racecodex":5074,"raceDate":"08/02/2026","place":"Oberjoch","hostNation":"GER","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":15.57,"appliedPenalty":15.57,"penaltyAdjustment":0.0},{"raceid":127444,"racecodex":5083,"raceDate":"01/12/2025","place":"Zinal","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":15.7,"appliedPenalty":15.7,"penaltyAdjustment":0.0},{"raceid":127445,"racecodex":5084,"raceDate":"02/12/2025","place":"Zinal","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":18.42,"appliedPenalty":18.42,"penaltyAdjustment":0.0},{"raceid":128111,"racecodex":6175,"raceDate":"05/02/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":10.86,"appliedPenalty":15.0,"penaltyAdjustment":4.14},{"raceid":128984,"racecodex":6122,"raceDate":"02/03/2026","place":"Hakuba","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":12.82,"appliedPenalty":15.0,"penaltyAdjustment":2.18},{"raceid":128108,"racecodex":6174,"raceDate":"30/01/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":13.84,"appliedPenalty":15.0,"penaltyAdjustment":1.16},{"raceid":128110,"racecodex":6176,"raceDate":"06/02/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":13.92,"appliedPenalty":15.0,"penaltyAdjustment":1.08},{"raceid":128868,"racecodex":6117,"raceDate":"25/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":15.67,"appliedPenalty":15.67,"penaltyAdjustment":0.0},{"raceid":128217,"racecodex":5476,"raceDate":"12/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":17.23,"appliedPenalty":17.23,"penaltyAdjustment":0.0},{"raceid":128866,"racecodex":6116,"raceDate":"24/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":17.53,"appliedPenalty":17.53,"penaltyAdjustment":0.0},{"raceid":128106,"racecodex":6173,"raceDate":"29/01/2026","place":"Yongpyong Resorts","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":18.56,"appliedPenalty":18.56,"penaltyAdjustment":0.0},{"raceid":128216,"racecodex":5475,"raceDate":"11/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":19.17,"appliedPenalty":19.17,"penaltyAdjustment":0.0},{"raceid":128181,"racecodex":5381,"raceDate":"07/01/2026","place":"Tremblant","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":10.22,"appliedPenalty":15.0,"penaltyAdjustment":4.78},{"raceid":128567,"racecodex":6797,"raceDate":"09/12/2025","place":"Copper Mountain, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":10.7,"appliedPenalty":15.0,"penaltyAdjustment":4.3},{"raceid":128183,"racecodex":5406,"raceDate":"11/02/2026","place":"Bromont","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":13.68,"appliedPenalty":15.0,"penaltyAdjustment":1.32},{"raceid":128180,"racecodex":5380,"raceDate":"06/01/2026","place":"Tremblant","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":13.87,"appliedPenalty":15.0,"penaltyAdjustment":1.13},{"raceid":128182,"racecodex":5405,"raceDate":"10/02/2026","place":"Bromont","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":16.06,"appliedPenalty":16.06,"penaltyAdjustment":0.0},{"raceid":128566,"racecodex":6796,"raceDate":"10/12/2025","place":"Copper Mountain, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":18.25,"appliedPenalty":18.25,"penaltyAdjustment":0.0},{"raceid":127226,"racecodex":5116,"raceDate":"08/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":10.98,"appliedPenalty":15.0,"penaltyAdjustment":4.02},{"raceid":127228,"racecodex":5118,"raceDate":"09/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":13.71,"appliedPenalty":15.0,"penaltyAdjustment":1.29},{"raceid":127196,"racecodex":5100,"raceDate":"12/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":13.87,"appliedPenalty":15.0,"penaltyAdjustment":1.13},{"raceid":127194,"racecodex":5099,"raceDate":"11/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"GS","gender":"W","calculatedPenalty":15.39,"appliedPenalty":15.39,"penaltyAdjustment":0.0},{"raceid":127291,"racecodex":220,"raceDate":"09/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":10.64,"appliedPenalty":15.0,"penaltyAdjustment":4.36},{"raceid":127286,"racecodex":213,"raceDate":"21/08/2025","place":"Mount Hutt","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.62,"appliedPenalty":15.0,"penaltyAdjustment":2.38},{"raceid":127287,"racecodex":214,"raceDate":"22/08/2025","place":"Mount Hutt","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.94,"appliedPenalty":15.0,"penaltyAdjustment":2.06},{"raceid":127290,"racecodex":219,"raceDate":"08/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":13.19,"appliedPenalty":15.0,"penaltyAdjustment":1.81},{"raceid":127309,"racecodex":146,"raceDate":"27/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":20.66,"appliedPenalty":20.66,"penaltyAdjustment":0.0},{"raceid":127514,"racecodex":78,"raceDate":"04/02/2026","place":"Baqueira-Beret","hostNation":"ESP","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":7.05,"appliedPenalty":15.0,"penaltyAdjustment":7.95},{"raceid":127531,"racecodex":74,"raceDate":"25/03/2026","place":"Schladming","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":7.94,"appliedPenalty":15.0,"penaltyAdjustment":7.06},{"raceid":127500,"racecodex":102,"raceDate":"13/01/2026","place":"Crans Montana","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":7.95,"appliedPenalty":15.0,"penaltyAdjustment":7.05},{"raceid":127497,"racecodex":90,"raceDate":"20/12/2025","place":"Val di Fassa","hostNation":"ITA","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":9.04,"appliedPenalty":15.0,"penaltyAdjustment":5.96},{"raceid":127501,"racecodex":103,"raceDate":"14/01/2026","place":"Crans Montana","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":10.31,"appliedPenalty":15.0,"penaltyAdjustment":4.69},{"raceid":127513,"racecodex":77,"raceDate":"03/02/2026","place":"Baqueira-Beret","hostNation":"ESP","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":10.42,"appliedPenalty":15.0,"penaltyAdjustment":4.58},{"raceid":127486,"racecodex":109,"raceDate":"23/11/2025","place":"Storklinten","hostNation":"SWE","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":11.2,"appliedPenalty":15.0,"penaltyAdjustment":3.8},{"raceid":127496,"racecodex":89,"raceDate":"19/12/2025","place":"Obereggen","hostNation":"ITA","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.21,"appliedPenalty":15.0,"penaltyAdjustment":2.79},{"raceid":127485,"racecodex":79,"raceDate":"21/11/2025","place":"Levi","hostNation":"FIN","circuit":"EC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":14.19,"appliedPenalty":15.0,"penaltyAdjustment":0.81},{"raceid":128991,"racecodex":1155,"raceDate":"05/03/2026","place":"Hakuba","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.56,"appliedPenalty":15.0,"penaltyAdjustment":2.44},{"raceid":128989,"racecodex":1154,"raceDate":"04/03/2026","place":"Hakuba","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.77,"appliedPenalty":15.0,"penaltyAdjustment":2.23},{"raceid":128875,"racecodex":1149,"raceDate":"27/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.82,"appliedPenalty":15.0,"penaltyAdjustment":2.18},{"raceid":128099,"racecodex":1199,"raceDate":"26/01/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":13.42,"appliedPenalty":15.0,"penaltyAdjustment":1.58},{"raceid":128871,"racecodex":1148,"raceDate":"26/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":13.66,"appliedPenalty":15.0,"penaltyAdjustment":1.34},{"raceid":128105,"racecodex":1202,"raceDate":"03/02/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":13.85,"appliedPenalty":15.0,"penaltyAdjustment":1.15},{"raceid":128103,"racecodex":1201,"raceDate":"02/02/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":14.2,"appliedPenalty":15.0,"penaltyAdjustment":0.8},{"raceid":128101,"racecodex":1200,"raceDate":"27/01/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":15.43,"appliedPenalty":15.43,"penaltyAdjustment":0.0},{"raceid":130524,"racecodex":496,"raceDate":"13/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":15.98,"appliedPenalty":15.98,"penaltyAdjustment":0.0},{"raceid":130526,"racecodex":497,"raceDate":"14/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":16.74,"appliedPenalty":16.74,"penaltyAdjustment":0.0},{"raceid":131112,"racecodex":2007,"raceDate":"12/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":6.26,"appliedPenalty":15.0,"penaltyAdjustment":8.74},{"raceid":131111,"racecodex":2006,"raceDate":"11/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.29,"appliedPenalty":15.0,"penaltyAdjustment":2.71},{"raceid":128978,"racecodex":1942,"raceDate":"26/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.7,"appliedPenalty":15.0,"penaltyAdjustment":2.3},{"raceid":128977,"racecodex":1941,"raceDate":"25/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":14.22,"appliedPenalty":15.0,"penaltyAdjustment":0.78},{"raceid":131090,"racecodex":404,"raceDate":"07/01/2026","place":"Mont Saint-Sauveur","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":14.99,"appliedPenalty":15.0,"penaltyAdjustment":0.01},{"raceid":131089,"racecodex":403,"raceDate":"06/01/2026","place":"Mont Saint-Sauveur","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":16.47,"appliedPenalty":16.47,"penaltyAdjustment":0.0},{"raceid":131113,"racecodex":2002,"raceDate":"13/12/2025","place":"Beaver Creek Resort","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":17.25,"appliedPenalty":17.25,"penaltyAdjustment":0.0},{"raceid":131114,"racecodex":2003,"raceDate":"14/12/2025","place":"Beaver Creek Resort","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":19.76,"appliedPenalty":19.76,"penaltyAdjustment":0.0},{"raceid":127231,"racecodex":138,"raceDate":"10/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":9.18,"appliedPenalty":15.0,"penaltyAdjustment":5.82},{"raceid":127233,"racecodex":139,"raceDate":"11/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":12.93,"appliedPenalty":15.0,"penaltyAdjustment":2.07},{"raceid":127205,"racecodex":120,"raceDate":"14/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":13.95,"appliedPenalty":15.0,"penaltyAdjustment":1.05},{"raceid":127207,"racecodex":121,"raceDate":"14/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"M","calculatedPenalty":16.63,"appliedPenalty":16.63,"penaltyAdjustment":0.0},{"raceid":127318,"racecodex":5198,"raceDate":"08/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":10.47,"appliedPenalty":15.0,"penaltyAdjustment":4.53},{"raceid":127319,"racecodex":5199,"raceDate":"09/09/2025","place":"Coronet Peak","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":11.49,"appliedPenalty":15.0,"penaltyAdjustment":3.51},{"raceid":127314,"racecodex":5192,"raceDate":"21/08/2025","place":"Mount Hutt","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":16.44,"appliedPenalty":16.44,"penaltyAdjustment":0.0},{"raceid":127315,"racecodex":5193,"raceDate":"22/08/2025","place":"Mount Hutt","hostNation":"NZL","circuit":"ANC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":17.49,"appliedPenalty":17.49,"penaltyAdjustment":0.0},{"raceid":127308,"racecodex":5129,"raceDate":"27/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":31.67,"appliedPenalty":31.67,"penaltyAdjustment":0.0},{"raceid":127310,"racecodex":5130,"raceDate":"29/08/2025","place":"Thredbo","hostNation":"AUS","circuit":"ANC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":38.1,"appliedPenalty":38.1,"penaltyAdjustment":0.0},{"raceid":127477,"racecodex":5091,"raceDate":"28/02/2026","place":"Sundsvall","hostNation":"SWE","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":8.69,"appliedPenalty":15.0,"penaltyAdjustment":6.31},{"raceid":127474,"racecodex":5090,"raceDate":"27/02/2026","place":"Sundsvall - Nolby","hostNation":"SWE","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":9.42,"appliedPenalty":15.0,"penaltyAdjustment":5.58},{"raceid":127484,"racecodex":5065,"raceDate":"25/03/2026","place":"Schladming","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":11.59,"appliedPenalty":15.0,"penaltyAdjustment":3.41},{"raceid":127462,"racecodex":5066,"raceDate":"23/01/2026","place":"Chamonix","hostNation":"FRA","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":12.25,"appliedPenalty":15.0,"penaltyAdjustment":2.75},{"raceid":127447,"racecodex":5053,"raceDate":"07/12/2025","place":"Mayrhofen / Hippach","hostNation":"AUT","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":12.26,"appliedPenalty":15.0,"penaltyAdjustment":2.74},{"raceid":127453,"racecodex":5076,"raceDate":"20/12/2025","place":"Valle Aurina / Ahrntal","hostNation":"ITA","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":13.66,"appliedPenalty":15.0,"penaltyAdjustment":1.34},{"raceid":127452,"racecodex":5075,"raceDate":"19/12/2025","place":"Valle Aurina / Ahrntal","hostNation":"ITA","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":14.1,"appliedPenalty":15.0,"penaltyAdjustment":0.9},{"raceid":127473,"racecodex":5089,"raceDate":"10/02/2026","place":"Hasliberg","hostNation":"SUI","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":14.24,"appliedPenalty":15.0,"penaltyAdjustment":0.76},{"raceid":127478,"racecodex":5092,"raceDate":"01/03/2026","place":"Sundsvall","hostNation":"SWE","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":14.26,"appliedPenalty":15.0,"penaltyAdjustment":0.74},{"raceid":127463,"racecodex":5067,"raceDate":"24/01/2026","place":"Chamonix","hostNation":"FRA","circuit":"EC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":15.64,"appliedPenalty":15.64,"penaltyAdjustment":0.0},{"raceid":128988,"racecodex":6124,"raceDate":"04/03/2026","place":"Hakuba","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":10.89,"appliedPenalty":15.0,"penaltyAdjustment":4.11},{"raceid":128100,"racecodex":6170,"raceDate":"27/01/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":12.25,"appliedPenalty":15.0,"penaltyAdjustment":2.75},{"raceid":128873,"racecodex":6119,"raceDate":"27/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":12.37,"appliedPenalty":15.0,"penaltyAdjustment":2.63},{"raceid":128870,"racecodex":6118,"raceDate":"26/02/2026","place":"Sugadairakohgen","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":12.57,"appliedPenalty":15.0,"penaltyAdjustment":2.43},{"raceid":128104,"racecodex":6172,"raceDate":"03/02/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":13.06,"appliedPenalty":15.0,"penaltyAdjustment":1.94},{"raceid":128990,"racecodex":6125,"raceDate":"05/03/2026","place":"Hakuba","hostNation":"JPN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":14.69,"appliedPenalty":15.0,"penaltyAdjustment":0.31},{"raceid":128102,"racecodex":6171,"raceDate":"02/02/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":15.27,"appliedPenalty":15.27,"penaltyAdjustment":0.0},{"raceid":128218,"racecodex":5477,"raceDate":"13/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":15.49,"appliedPenalty":15.49,"penaltyAdjustment":0.0},{"raceid":128219,"racecodex":5478,"raceDate":"14/12/2025","place":"Wanlong Ski Resorts","hostNation":"CHN","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":15.51,"appliedPenalty":15.51,"penaltyAdjustment":0.0},{"raceid":128098,"racecodex":6169,"raceDate":"26/01/2026","place":"Alpensia Ski Resort","hostNation":"KOR","circuit":"FEC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":15.94,"appliedPenalty":15.94,"penaltyAdjustment":0.0},{"raceid":128975,"racecodex":6877,"raceDate":"24/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":10.71,"appliedPenalty":15.0,"penaltyAdjustment":4.29},{"raceid":128245,"racecodex":5408,"raceDate":"13/02/2026","place":"Bromont","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":11.55,"appliedPenalty":15.0,"penaltyAdjustment":3.45},{"raceid":128973,"racecodex":6876,"raceDate":"23/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":12.25,"appliedPenalty":15.0,"penaltyAdjustment":2.75},{"raceid":128569,"racecodex":6799,"raceDate":"09/02/2026","place":"Owl's Head","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":13.44,"appliedPenalty":15.0,"penaltyAdjustment":1.56},{"raceid":128568,"racecodex":6798,"raceDate":"11/12/2025","place":"Copper Mountain, CO","hostNation":"USA","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":14.77,"appliedPenalty":15.0,"penaltyAdjustment":0.23},{"raceid":128244,"racecodex":5407,"raceDate":"12/02/2026","place":"Bromont","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":14.77,"appliedPenalty":15.0,"penaltyAdjustment":0.23},{"raceid":131088,"racecodex":5379,"raceDate":"09/01/2026","place":"Mont Saint-Sauveur","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":15.99,"appliedPenalty":15.99,"penaltyAdjustment":0.0},{"raceid":131087,"racecodex":5378,"raceDate":"08/01/2026","place":"Mont Saint-Sauveur","hostNation":"CAN","circuit":"NAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":16.29,"appliedPenalty":16.29,"penaltyAdjustment":0.0},{"raceid":127232,"racecodex":5122,"raceDate":"11/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":10.15,"appliedPenalty":15.0,"penaltyAdjustment":4.85},{"raceid":127230,"racecodex":5121,"raceDate":"10/09/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":11.26,"appliedPenalty":15.0,"penaltyAdjustment":3.74},{"raceid":127206,"racecodex":5104,"raceDate":"14/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":11.95,"appliedPenalty":15.0,"penaltyAdjustment":3.05},{"raceid":127204,"racecodex":5103,"raceDate":"14/08/2025","place":"Cerro Castor, Ushuaia","hostNation":"ARG","circuit":"SAC","group":"TECH","discipline":"SL","gender":"W","calculatedPenalty":17.61,"appliedPenalty":17.61,"penaltyAdjustment":0.0},{"raceid":127510,"racecodex":106,"raceDate":"29/01/2026","place":"Verbier","hostNation":"SUI","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":9.1,"appliedPenalty":15.0,"penaltyAdjustment":5.9},{"raceid":127511,"racecodex":107,"raceDate":"30/01/2026","place":"Verbier","hostNation":"SUI","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":10.0,"appliedPenalty":15.0,"penaltyAdjustment":5.0},{"raceid":127505,"racecodex":66,"raceDate":"19/01/2026","place":"Pass Thurn","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":10.26,"appliedPenalty":15.0,"penaltyAdjustment":4.74},{"raceid":127492,"racecodex":87,"raceDate":"12/12/2025","place":"Santa Caterina","hostNation":"ITA","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":11.21,"appliedPenalty":15.0,"penaltyAdjustment":3.79},{"raceid":127504,"racecodex":65,"raceDate":"18/01/2026","place":"Pass Thurn","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":12.72,"appliedPenalty":15.0,"penaltyAdjustment":2.28},{"raceid":127528,"racecodex":71,"raceDate":"20/03/2026","place":"Saalbach","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":12.8,"appliedPenalty":15.0,"penaltyAdjustment":2.2},{"raceid":127523,"racecodex":95,"raceDate":"27/02/2026","place":"Oppdal","hostNation":"NOR","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":13.36,"appliedPenalty":15.0,"penaltyAdjustment":1.64},{"raceid":127493,"racecodex":88,"raceDate":"13/12/2025","place":"Santa Caterina","hostNation":"ITA","circuit":"EC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":13.81,"appliedPenalty":15.0,"penaltyAdjustment":1.19},{"raceid":128966,"racecodex":1935,"raceDate":"19/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":9.59,"appliedPenalty":15.0,"penaltyAdjustment":5.41},{"raceid":128964,"racecodex":1933,"raceDate":"18/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":10.74,"appliedPenalty":15.0,"penaltyAdjustment":4.26},{"raceid":128558,"racecodex":1859,"raceDate":"04/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":11.07,"appliedPenalty":15.0,"penaltyAdjustment":3.93},{"raceid":128560,"racecodex":1860,"raceDate":"05/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":16.67,"appliedPenalty":16.67,"penaltyAdjustment":0.0},{"raceid":127148,"racecodex":162,"raceDate":"03/09/2025","place":"La Parva","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":8.35,"appliedPenalty":15.0,"penaltyAdjustment":6.65},{"raceid":127150,"racecodex":163,"raceDate":"04/09/2025","place":"La Parva","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":12.8,"appliedPenalty":15.0,"penaltyAdjustment":2.2},{"raceid":127172,"racecodex":179,"raceDate":"01/10/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":16.3,"appliedPenalty":16.3,"penaltyAdjustment":0.0},{"raceid":127170,"racecodex":178,"raceDate":"01/10/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"M","calculatedPenalty":18.22,"appliedPenalty":18.22,"penaltyAdjustment":0.0},{"raceid":127451,"racecodex":5088,"raceDate":"18/12/2025","place":"St. Moritz","hostNation":"SUI","circuit":"EC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":16.26,"appliedPenalty":16.26,"penaltyAdjustment":0.0},{"raceid":127481,"racecodex":5062,"raceDate":"20/03/2026","place":"Saalbach","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":16.27,"appliedPenalty":16.27,"penaltyAdjustment":0.0},{"raceid":127466,"racecodex":5070,"raceDate":"29/01/2026","place":"Orcieres Merlette","hostNation":"FRA","circuit":"EC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":17.93,"appliedPenalty":17.93,"penaltyAdjustment":0.0},{"raceid":127458,"racecodex":5056,"raceDate":"14/01/2026","place":"Pass Thurn","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":18.32,"appliedPenalty":18.32,"penaltyAdjustment":0.0},{"raceid":127459,"racecodex":5057,"raceDate":"15/01/2026","place":"Pass Thurn","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":18.52,"appliedPenalty":18.52,"penaltyAdjustment":0.0},{"raceid":127450,"racecodex":5087,"raceDate":"17/12/2025","place":"St. Moritz","hostNation":"SUI","circuit":"EC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":21.1,"appliedPenalty":21.1,"penaltyAdjustment":0.0},{"raceid":128965,"racecodex":6870,"raceDate":"18/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":25.76,"appliedPenalty":25.76,"penaltyAdjustment":0.0},{"raceid":128561,"racecodex":6793,"raceDate":"05/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":46.28,"appliedPenalty":46.28,"penaltyAdjustment":0.0},{"raceid":128967,"racecodex":6872,"raceDate":"19/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":47.3,"appliedPenalty":47.3,"penaltyAdjustment":0.0},{"raceid":128559,"racecodex":6792,"raceDate":"04/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":47.47,"appliedPenalty":47.47,"penaltyAdjustment":0.0},{"raceid":127149,"racecodex":5146,"raceDate":"04/09/2025","place":"La Parva","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":35.17,"appliedPenalty":35.17,"penaltyAdjustment":0.0},{"raceid":127147,"racecodex":5145,"raceDate":"03/09/2025","place":"La Parva","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":37.64,"appliedPenalty":37.64,"penaltyAdjustment":0.0},{"raceid":127169,"racecodex":5161,"raceDate":"30/09/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":41.11,"appliedPenalty":41.11,"penaltyAdjustment":0.0},{"raceid":127171,"racecodex":5162,"raceDate":"01/10/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"DH","gender":"W","calculatedPenalty":43.19,"appliedPenalty":43.19,"penaltyAdjustment":0.0},{"raceid":127499,"racecodex":101,"raceDate":"27/01/2026","place":"Verbier","hostNation":"SUI","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":6.16,"appliedPenalty":15.0,"penaltyAdjustment":8.84},{"raceid":127512,"racecodex":108,"raceDate":"26/01/2026","place":"Verbier","hostNation":"SUI","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":9.02,"appliedPenalty":15.0,"penaltyAdjustment":5.98},{"raceid":127517,"racecodex":75,"raceDate":"18/02/2026","place":"Bjelasnica / Sarajevo","hostNation":"BIH","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":9.36,"appliedPenalty":15.0,"penaltyAdjustment":5.64},{"raceid":127518,"racecodex":76,"raceDate":"18/02/2026","place":"Bjelasnica / Sarajevo","hostNation":"BIH","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":9.67,"appliedPenalty":15.0,"penaltyAdjustment":5.33},{"raceid":127529,"racecodex":72,"raceDate":"22/03/2026","place":"Saalbach","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":9.69,"appliedPenalty":15.0,"penaltyAdjustment":5.31},{"raceid":127525,"racecodex":97,"raceDate":"28/02/2026","place":"Oppdal","hostNation":"NOR","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":10.52,"appliedPenalty":15.0,"penaltyAdjustment":4.48},{"raceid":127498,"racecodex":100,"raceDate":"16/01/2026","place":"Pass Thurn","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":11.06,"appliedPenalty":15.0,"penaltyAdjustment":3.94},{"raceid":127489,"racecodex":84,"raceDate":"10/12/2025","place":"Santa Caterina","hostNation":"ITA","circuit":"EC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":12.46,"appliedPenalty":15.0,"penaltyAdjustment":2.54},{"raceid":128970,"racecodex":1938,"raceDate":"20/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":11.18,"appliedPenalty":15.0,"penaltyAdjustment":3.82},{"raceid":128562,"racecodex":1861,"raceDate":"06/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":13.9,"appliedPenalty":15.0,"penaltyAdjustment":1.1},{"raceid":128968,"racecodex":1937,"raceDate":"22/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":14.01,"appliedPenalty":15.0,"penaltyAdjustment":0.99},{"raceid":128258,"racecodex":1786,"raceDate":"09/12/2025","place":"Beaver Creek Resort","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":15.79,"appliedPenalty":15.79,"penaltyAdjustment":0.0},{"raceid":128259,"racecodex":1788,"raceDate":"10/12/2025","place":"Beaver Creek Resort","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":17.97,"appliedPenalty":17.97,"penaltyAdjustment":0.0},{"raceid":127152,"racecodex":164,"raceDate":"05/09/2025","place":"La Parva","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":11.35,"appliedPenalty":15.0,"penaltyAdjustment":3.65},{"raceid":127154,"racecodex":165,"raceDate":"29/09/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":22.74,"appliedPenalty":22.74,"penaltyAdjustment":0.0},{"raceid":127178,"racecodex":182,"raceDate":"29/09/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"SG","gender":"M","calculatedPenalty":23.49,"appliedPenalty":23.49,"penaltyAdjustment":0.0},{"raceid":127482,"racecodex":5063,"raceDate":"21/03/2026","place":"Saalbach","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":9.92,"appliedPenalty":15.0,"penaltyAdjustment":5.08},{"raceid":127470,"racecodex":5080,"raceDate":"02/02/2026","place":"Sarntal","hostNation":"ITA","circuit":"EC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":10.07,"appliedPenalty":15.0,"penaltyAdjustment":4.93},{"raceid":127469,"racecodex":5079,"raceDate":"04/02/2026","place":"Sarntal","hostNation":"ITA","circuit":"EC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":15.07,"appliedPenalty":15.07,"penaltyAdjustment":0.0},{"raceid":127468,"racecodex":5072,"raceDate":"26/01/2026","place":"Orcieres Merlette","hostNation":"FRA","circuit":"EC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":16.19,"appliedPenalty":16.19,"penaltyAdjustment":0.0},{"raceid":127461,"racecodex":5059,"raceDate":"20/01/2026","place":"St. Anton am Arlberg","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":18.08,"appliedPenalty":18.08,"penaltyAdjustment":0.0},{"raceid":127460,"racecodex":5058,"raceDate":"19/01/2026","place":"St. Anton am Arlberg","hostNation":"AUT","circuit":"EC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":19.07,"appliedPenalty":19.07,"penaltyAdjustment":0.0},{"raceid":128969,"racecodex":6874,"raceDate":"21/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":26.45,"appliedPenalty":26.45,"penaltyAdjustment":0.0},{"raceid":131200,"racecodex":6981,"raceDate":"08/12/2025","place":"Copper Mountain, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":28.78,"appliedPenalty":28.78,"penaltyAdjustment":0.0},{"raceid":131197,"racecodex":6964,"raceDate":"08/12/2025","place":"Copper Mountain, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":33.48,"appliedPenalty":33.48,"penaltyAdjustment":0.0},{"raceid":128971,"racecodex":6875,"raceDate":"21/03/2026","place":"Aspen Highlands, CO","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":36.85,"appliedPenalty":36.85,"penaltyAdjustment":0.0},{"raceid":128563,"racecodex":6794,"raceDate":"06/02/2026","place":"Whiteface Mountain","hostNation":"USA","circuit":"NAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":42.04,"appliedPenalty":42.04,"penaltyAdjustment":0.0},{"raceid":127151,"racecodex":5148,"raceDate":"29/09/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":29.13,"appliedPenalty":29.13,"penaltyAdjustment":0.0},{"raceid":127177,"racecodex":5165,"raceDate":"29/09/2025","place":"Corralco","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":35.9,"appliedPenalty":35.9,"penaltyAdjustment":0.0},{"raceid":127153,"racecodex":5147,"raceDate":"05/09/2025","place":"La Parva","hostNation":"CHI","circuit":"SAC","group":"SPEED","discipline":"SG","gender":"W","calculatedPenalty":45.68,"appliedPenalty":45.68,"penaltyAdjustment":0.0}];
 
 let PEN_GROUP = 'TECH';
-let PEN_CDF_CHART = null;
+let PEN_THRESHOLD_CHART = null;
 
 const PEN_CIRCUIT_ORDER = ['EC', 'NAC', 'FEC', 'SAC', 'ANC'];
 const PEN_COLORS = {
@@ -1692,94 +1720,156 @@ function renderPenaltyBoxPlot(rows) {
   );
 }
 
-function renderPenaltyCdf(rows) {
+function renderPenaltyThresholdChart(rows) {
 
   const circuits =
     PEN_CIRCUIT_ORDER.filter(c =>
       rows.some(r => r.circuit === c)
     );
 
-  const maxPenalty =
-    Math.max(
-      30,
-      ...rows.map(r => r.calculatedPenalty)
-    );
+  const selectedThresholds =
+    [...document.querySelectorAll('.pen-threshold-check:checked')]
+      .map(el => Number(el.value))
+      .filter(Number.isFinite)
+      .sort((a,b) => a-b);
 
-  const thresholds = [];
-  const step = 2;
+  const datasets =
+    circuits.map(circuit => {
 
-  for (let x = 0; x <= Math.ceil(maxPenalty / step) * step; x += step) {
-    thresholds.push(x);
-  }
+      const vals =
+        rows
+          .filter(r => r.circuit === circuit)
+          .map(r => r.calculatedPenalty)
+          .filter(Number.isFinite);
 
-  const datasets = circuits.map(circuit => {
+      return {
+        label: circuit,
 
-    const vals =
-      rows
-        .filter(r => r.circuit === circuit)
-        .map(r => r.calculatedPenalty)
-        .sort((a,b) => a-b);
+        data:
+          selectedThresholds.map(t => ({
+            x: '≤' + t,
+            y: vals.length
+              ? 100 * vals.filter(v => v <= t).length / vals.length
+              : 0,
+            threshold: t,
+            racesBelow: vals.filter(v => v <= t).length,
+            totalRaces: vals.length
+          })),
 
-    return {
-      label: circuit,
-      data: thresholds.map(t => ({
-        x: t,
-        y: vals.length
-          ? 100 * vals.filter(v => v <= t).length / vals.length
-          : 0
-      })),
-      borderColor: PEN_COLORS[circuit] || '#374151',
-      backgroundColor: PEN_COLORS[circuit] || '#374151',
-      borderWidth: 3,
-      pointRadius: 0,
-      tension: 0.08
-    };
-  });
+        backgroundColor:
+          PEN_COLORS[circuit] || '#374151',
+
+        borderColor:
+          PEN_COLORS[circuit] || '#374151',
+
+        borderWidth: 1
+      };
+    });
+
 
   const canvas =
-    document.getElementById('penaltyCdfChart');
+    document.getElementById(
+      'penaltyThresholdChart'
+    );
 
   if (!canvas) return;
 
-  if (PEN_CDF_CHART) {
-    PEN_CDF_CHART.destroy();
+
+  if (PEN_THRESHOLD_CHART) {
+    PEN_THRESHOLD_CHART.destroy();
   }
 
-  PEN_CDF_CHART =
+
+  PEN_THRESHOLD_CHART =
     new Chart(
       canvas.getContext('2d'),
       {
-        type: 'line',
+        type: 'bar',
+
         data: {
-          datasets: datasets
+          labels:
+            selectedThresholds.map(
+              t => '≤' + t
+            ),
+
+          datasets:
+            datasets.map(ds => ({
+              label: ds.label,
+              data: ds.data.map(p => p.y),
+              backgroundColor: ds.backgroundColor,
+              borderColor: ds.borderColor,
+              borderWidth: ds.borderWidth,
+              _rawPoints: ds.data
+            }))
         },
+
         options: {
           responsive: true,
           maintainAspectRatio: false,
           animation: false,
-          parsing: false,
+
           interaction: {
-            mode: 'nearest',
+            mode: 'index',
             intersect: false
           },
+
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+
+                  const dataset =
+                    ctx.dataset;
+
+                  const rawPoint =
+                    dataset._rawPoints
+                      ? dataset._rawPoints[ctx.dataIndex]
+                      : null;
+
+                  const pct =
+                    Number(ctx.parsed.y || 0);
+
+                  let txt =
+                    dataset.label +
+                    ': ' +
+                    pct.toFixed(1) +
+                    '%';
+
+                  if (rawPoint) {
+                    txt +=
+                      ' (' +
+                      rawPoint.racesBelow +
+                      '/' +
+                      rawPoint.totalRaces +
+                      ' races)';
+                  }
+
+                  return txt;
+                }
+              }
+            }
+          },
+
           scales: {
             x: {
-              type: 'linear',
-              min: 0,
               title: {
                 display: true,
-                text: 'Calculated Penalty'
+                text: 'Calculated Penalty Threshold'
               }
             },
+
             y: {
               min: 0,
               max: 100,
+
               title: {
                 display: true,
                 text: 'Races at or below threshold (%)'
               },
+
               ticks: {
-                callback: v => v + '%'
+                callback: v =>
+                  v + '%'
               }
             }
           }
@@ -1823,7 +1913,7 @@ function renderPenaltyPage() {
     getPenaltyRows();
 
   renderPenaltyBoxPlot(rows);
-  renderPenaltyCdf(rows);
+  renderPenaltyThresholdChart(rows);
   renderPenaltySummary(rows);
 }
 
@@ -1876,6 +1966,13 @@ function initPenaltyPage() {
 
   if (circuits) {
     circuits.addEventListener('change', renderPenaltyPage);
+  }
+
+  const thresholds =
+    document.getElementById('penThresholdFilters');
+
+  if (thresholds) {
+    thresholds.addEventListener('change', renderPenaltyPage);
   }
 
   renderPenaltyPage();
