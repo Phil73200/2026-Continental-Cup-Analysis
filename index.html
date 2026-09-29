@@ -1197,15 +1197,15 @@
   <section id="page-simulator" class="page-section">
     <h1>Coefficient Simulator 2026</h1>
     <div class="subtitle">
-      🇫🇷 Testez directement la profondeur de participation utilisée pour calculer le coefficient, puis observez son effet sur la pénalité.<br>
-      🇬🇧 Directly test the participation depth used to calculate the coefficient, then observe its effect on the penalty.
+      🇫🇷 Testez le niveau absolu de participation à partir d’un Top N choisi, puis observez son effet sur la pénalité.<br>
+      🇬🇧 Test the absolute participation level from a selected Top N, then observe its effect on the penalty.
     </div>
 
     <div class="controls">
 
       <div class="control">
         <div class="control-label">Discipline</div>
-        <div class="button-row" id="coefDisciplineButtons">
+        <div class="button-row" id="absDisciplineButtons">
           <button data-discipline="SL" class="coef-disc coef-sl active">SL</button>
           <button data-discipline="GS" class="coef-disc coef-gs">GS</button>
           <button data-discipline="SG" class="coef-disc coef-sg">SG</button>
@@ -1215,37 +1215,37 @@
 
       <div class="control">
         <div class="control-label">Gender</div>
-        <div class="button-row" id="coefGenderButtons">
+        <div class="button-row" id="absGenderButtons">
           <button data-gender="M" class="coef-gender coef-men active">Men</button>
           <button data-gender="W" class="coef-gender coef-women">Women</button>
         </div>
       </div>
 
       <div class="control">
-        <div class="control-label">Top minimum</div>
-        <input id="coefTopMin" type="number" min="1" max="59" step="1" value="5"
-               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
-      </div>
-
-      <div class="control">
-        <div class="control-label">Top maximum</div>
-        <input id="coefTopMax" type="number" min="2" max="60" step="1" value="15"
+        <div class="control-label">Top used</div>
+        <input id="absTopN" type="number" min="1" max="60" step="1" value="10"
                style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
       </div>
 
       <div class="control">
         <div class="control-label">Minimum penalty</div>
-        <input id="coefMinPenalty" type="number" min="0" step="0.5" value="15"
+        <input id="absMinPenalty" type="number" min="0" step="0.5" value="15"
                style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
       </div>
 
     </div>
 
     <div class="card">
-      <div class="chart-title">Coefficient Calculation</div>
-      <div class="chart-subtitle" id="coefFormulaText">
-        🇫🇷 Coefficient = moyenne des points FIS du Top 15 ÷ moyenne des points FIS du Top 5.<br>
-        🇬🇧 Coefficient = Average Top 15 FIS Points ÷ Average Top 5 FIS Points.
+      <div class="chart-title">Absolute Participation Coefficient</div>
+
+      <div class="chart-subtitle" id="absFormulaText">
+        🇫🇷 Le coefficient compare la moyenne des points FIS du Top 10 de chaque circuit à la meilleure moyenne Top 10 observée pour la même discipline et le même sexe.<br>
+        🇬🇧 The coefficient compares each circuit’s Average Top 10 FIS Points with the best observed Average Top 10 for the same discipline and gender.
+      </div>
+
+      <div style="margin-top:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;font-size:12px;line-height:1.5;">
+        🇫🇷 <strong>Coefficient = moyenne Top N du circuit ÷ meilleure moyenne Top N observée.</strong><br>
+        🇬🇧 <strong>Coefficient = circuit Average Top N ÷ best observed Average Top N.</strong>
       </div>
 
       <div class="coef-table-wrap">
@@ -1254,16 +1254,16 @@
             <tr>
               <th>Circuit</th>
               <th>Races</th>
-              <th id="coefMinHeader">Average Top 5 FIS Points</th>
-              <th id="coefMaxHeader">Average Top 15 FIS Points</th>
-              <th id="coefHeader">Coef. (Top 15 / Top 5)</th>
+              <th id="absTopHeader">Average Top 10 FIS Points</th>
+              <th id="absReferenceHeader">Best Average Top 10</th>
+              <th>Coefficient</th>
             </tr>
           </thead>
-          <tbody id="coefTableBody"></tbody>
+          <tbody id="absCoefTableBody"></tbody>
         </table>
       </div>
 
-      <div class="note" id="coefNote"></div>
+      <div class="note" id="absCoefNote"></div>
     </div>
 
     <div class="card" style="margin-top:14px;">
@@ -1285,11 +1285,11 @@
               <th>Difference</th>
             </tr>
           </thead>
-          <tbody id="coefPenaltyBody"></tbody>
+          <tbody id="absPenaltyBody"></tbody>
         </table>
       </div>
 
-      <div class="note" id="coefPenaltyNote"></div>
+      <div class="note" id="absPenaltyNote"></div>
     </div>
   </section>
 
@@ -3828,191 +3828,196 @@ bindInteractiveToggles();
 
 
 /* ============================================================
-   COEFFICIENT SIMULATOR
+   ABSOLUTE PARTICIPATION COEFFICIENT SIMULATOR
    ============================================================ */
 
-let COEF_DISCIPLINE = 'SL';
-let COEF_GENDER = 'M';
+let ABS_DISCIPLINE = 'SL';
+let ABS_GENDER = 'M';
 
-function coefNum(id, fallback) {
+function absNum(id, fallback) {
   const el = document.getElementById(id);
   if (!el) return fallback;
   const v = Number(el.value);
   return Number.isFinite(v) ? v : fallback;
 }
 
-function coefAvg(vals) {
+function absAvg(vals) {
   const clean = vals.filter(Number.isFinite);
   if (!clean.length) return null;
-  return clean.reduce((a,b) => a+b, 0) / clean.length;
+  return clean.reduce((a,b) => a+b,0) / clean.length;
 }
 
-function coefFmt(v, digits=2) {
+function absFmt(v, digits=2) {
   return Number.isFinite(v) ? v.toFixed(digits) : '—';
 }
 
-function coefficientSettings() {
-  let topMin = Math.round(coefNum('coefTopMin', 5));
-  let topMax = Math.round(coefNum('coefTopMax', 15));
-
-  topMin = Math.max(1, Math.min(59, topMin));
-  topMax = Math.max(2, Math.min(60, topMax));
-
-  if (topMin >= topMax) {
-    topMin = Math.max(1, topMax - 1);
-  }
-
-  const minPenalty = Math.max(0, coefNum('coefMinPenalty', 15));
-
-  return { topMin, topMax, minPenalty };
-}
-
-function availableCohorts() {
-  const vals = [...new Set(
+function absAvailableCohorts() {
+  return [...new Set(
     RAW
       .filter(r =>
-        r.discipline === COEF_DISCIPLINE &&
-        r.gender === COEF_GENDER
+        r.discipline === ABS_DISCIPLINE &&
+        r.gender === ABS_GENDER
       )
       .map(r => Number(r.cohortMaxRank))
       .filter(Number.isFinite)
   )].sort((a,b) => a-b);
-
-  return vals;
 }
 
-function chooseCohort(topMax) {
-  const cohorts = availableCohorts();
-  const found = cohorts.find(v => v >= topMax);
-  return found ?? (cohorts.length ? cohorts[cohorts.length - 1] : topMax);
+function absChooseCohort(topN) {
+  const cohorts = absAvailableCohorts();
+  const found = cohorts.find(v => v >= topN);
+  return found ?? (cohorts.length ? cohorts[cohorts.length - 1] : topN);
 }
 
-function fieldRows(circuit, cohort) {
+function absFieldRows(circuit, cohort) {
   return RAW.filter(r =>
     Number(r.cohortMaxRank) === cohort &&
     r.circuit === circuit &&
-    r.discipline === COEF_DISCIPLINE &&
-    r.gender === COEF_GENDER &&
+    r.discipline === ABS_DISCIPLINE &&
+    r.gender === ABS_GENDER &&
     Number.isFinite(Number(r.rank)) &&
     Number.isFinite(Number(r.avgFisPoints))
   );
 }
 
-function topAverage(rows, maxRank) {
-  const vals = rows
-    .filter(r => Number(r.rank) <= maxRank)
-    .map(r => Number(r.avgFisPoints))
-    .filter(Number.isFinite);
-
-  return coefAvg(vals);
+function absTopAverage(rows, topN) {
+  return absAvg(
+    rows
+      .filter(r => Number(r.rank) <= topN)
+      .map(r => Number(r.avgFisPoints))
+      .filter(Number.isFinite)
+  );
 }
 
-function sampleRaces(rows) {
+function absSampleRaces(rows) {
   const vals = rows
     .map(r => Number(r.sampleRaces))
     .filter(Number.isFinite);
 
   if (!vals.length) return 0;
-  return Math.round(coefAvg(vals));
+  return Math.round(absAvg(vals));
 }
 
-function penaltyRows(circuit) {
+function absPenaltyRows(circuit) {
   return PENALTY_DATA.filter(r =>
     r.circuit === circuit &&
-    r.discipline === COEF_DISCIPLINE &&
-    r.gender === COEF_GENDER &&
+    r.discipline === ABS_DISCIPLINE &&
+    r.gender === ABS_GENDER &&
     Number.isFinite(Number(r.calculatedPenalty))
   );
 }
 
-function renderCoefficientSimulator() {
-  const { topMin, topMax, minPenalty } = coefficientSettings();
-  const cohort = chooseCohort(topMax);
+function renderAbsoluteSimulator() {
+  let topN = Math.round(absNum('absTopN', 10));
+  topN = Math.max(1, Math.min(60, topN));
+
+  const minPenalty = Math.max(0, absNum('absMinPenalty', 15));
+  const cohort = absChooseCohort(topN);
 
   const circuits = PEN_CIRCUIT_ORDER.filter(c =>
     RAW.some(r =>
       r.circuit === c &&
-      r.discipline === COEF_DISCIPLINE &&
-      r.gender === COEF_GENDER
+      r.discipline === ABS_DISCIPLINE &&
+      r.gender === ABS_GENDER
     )
   );
 
-  const body = document.getElementById('coefTableBody');
-  const penaltyBody = document.getElementById('coefPenaltyBody');
-  if (!body || !penaltyBody) return;
+  const metrics = circuits.map(circuit => {
+    const rows = absFieldRows(circuit, cohort);
+    const avgTopN = absTopAverage(rows, topN);
+    const races = absSampleRaces(rows);
 
-  body.innerHTML = '';
-  penaltyBody.innerHTML = '';
+    return {
+      circuit,
+      rows,
+      avgTopN,
+      races
+    };
+  });
 
-  const formula = document.getElementById('coefFormulaText');
+  const available = metrics
+    .map(m => m.avgTopN)
+    .filter(Number.isFinite);
+
+  const bestAverage =
+    available.length
+      ? Math.min(...available)
+      : null;
+
+  metrics.forEach(m => {
+    m.coefficient =
+      (
+        Number.isFinite(m.avgTopN) &&
+        Number.isFinite(bestAverage) &&
+        bestAverage > 0
+      )
+        ? m.avgTopN / bestAverage
+        : null;
+  });
+
+  const formula = document.getElementById('absFormulaText');
   if (formula) {
     formula.innerHTML =
-      `🇫🇷 Coefficient = moyenne des points FIS du Top ${topMax} ÷ moyenne des points FIS du Top ${topMin}.<br>` +
-      `🇬🇧 Coefficient = Average Top ${topMax} FIS Points ÷ Average Top ${topMin} FIS Points.`;
+      `🇫🇷 Le coefficient compare la moyenne des points FIS du Top ${topN} de chaque circuit à la meilleure moyenne Top ${topN} observée pour la même discipline et le même sexe.<br>` +
+      `🇬🇧 The coefficient compares each circuit’s Average Top ${topN} FIS Points with the best observed Average Top ${topN} for the same discipline and gender.`;
   }
 
-  const minHeader = document.getElementById('coefMinHeader');
-  const maxHeader = document.getElementById('coefMaxHeader');
-  const coefHeader = document.getElementById('coefHeader');
+  const topHeader = document.getElementById('absTopHeader');
+  const refHeader = document.getElementById('absReferenceHeader');
 
-  if (minHeader) minHeader.textContent = `Average Top ${topMin} FIS Points`;
-  if (maxHeader) maxHeader.textContent = `Average Top ${topMax} FIS Points`;
-  if (coefHeader) coefHeader.textContent = `Coef. (Top ${topMax} / Top ${topMin})`;
+  if (topHeader) topHeader.textContent = `Average Top ${topN} FIS Points`;
+  if (refHeader) refHeader.textContent = `Best Average Top ${topN}`;
 
-  circuits.forEach(circuit => {
-    const rows = fieldRows(circuit, cohort);
-    const avgMin = topAverage(rows, topMin);
-    const avgMax = topAverage(rows, topMax);
-    const races = sampleRaces(rows);
+  const coefBody = document.getElementById('absCoefTableBody');
+  const penaltyBody = document.getElementById('absPenaltyBody');
 
-    const coef =
-      Number.isFinite(avgMin) &&
-      avgMin > 0 &&
-      Number.isFinite(avgMax)
-        ? avgMax / avgMin
-        : null;
+  if (!coefBody || !penaltyBody) return;
 
-    const color = PEN_COLORS[circuit] || '#374151';
+  coefBody.innerHTML = '';
+  penaltyBody.innerHTML = '';
+
+  metrics.forEach(m => {
+    const color = PEN_COLORS[m.circuit] || '#374151';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td><strong style="color:${color}">${circuit}</strong></td>
-      <td>${races || '—'}</td>
-      <td>${coefFmt(avgMin,2)}</td>
-      <td>${coefFmt(avgMax,2)}</td>
-      <td><strong>${coefFmt(coef,3)}</strong></td>
+      <td><strong style="color:${color}">${m.circuit}</strong></td>
+      <td>${m.races || '—'}</td>
+      <td>${absFmt(m.avgTopN,2)}</td>
+      <td>${absFmt(bestAverage,2)}</td>
+      <td><strong>${absFmt(m.coefficient,3)}</strong></td>
     `;
-    body.appendChild(tr);
+    coefBody.appendChild(tr);
 
-    const prows = penaltyRows(circuit);
+    const prows = absPenaltyRows(m.circuit);
 
-    const avgCalculated = coefAvg(
+    const avgCalculated = absAvg(
       prows.map(r => Number(r.calculatedPenalty))
     );
 
-    const avgCurrentApplied = coefAvg(
+    const avgCurrentApplied = absAvg(
       prows
         .map(r => Number(r.appliedPenalty))
         .filter(Number.isFinite)
     );
 
-    const simulated = prows.map(r => {
+    const simulatedValues = prows.map(r => {
       const calc = Number(r.calculatedPenalty);
 
       if (
         !Number.isFinite(calc) ||
-        !Number.isFinite(coef)
+        !Number.isFinite(m.coefficient)
       ) {
         return NaN;
       }
 
       return Math.max(
         minPenalty,
-        calc * coef
+        calc * m.coefficient
       );
     });
 
-    const avgSimulated = coefAvg(simulated);
+    const avgSimulated = absAvg(simulatedValues);
 
     const difference =
       (
@@ -4024,24 +4029,24 @@ function renderCoefficientSimulator() {
 
     const ptr = document.createElement('tr');
     ptr.innerHTML = `
-      <td><strong style="color:${color}">${circuit}</strong></td>
-      <td>${coefFmt(avgCalculated,2)}</td>
-      <td><strong>${coefFmt(coef,3)}</strong></td>
-      <td>${coefFmt(avgCurrentApplied,2)}</td>
-      <td><strong>${coefFmt(avgSimulated,2)}</strong></td>
+      <td><strong style="color:${color}">${m.circuit}</strong></td>
+      <td>${absFmt(avgCalculated,2)}</td>
+      <td><strong>${absFmt(m.coefficient,3)}</strong></td>
+      <td>${absFmt(avgCurrentApplied,2)}</td>
+      <td><strong>${absFmt(avgSimulated,2)}</strong></td>
       <td>${Number.isFinite(difference) ? (difference >= 0 ? '+' : '') + difference.toFixed(2) : '—'}</td>
     `;
     penaltyBody.appendChild(ptr);
   });
 
-  const note = document.getElementById('coefNote');
-  if (note) {
-    note.innerHTML =
-      `🇫🇷 Le Top ${topMin} et le Top ${topMax} sont calculés sur exactement le même groupe comparable de courses (cohorte Top ${cohort}).<br>` +
-      `🇬🇧 Top ${topMin} and Top ${topMax} are calculated from exactly the same comparable race sample (Top ${cohort} cohort).`;
+  const coefNote = document.getElementById('absCoefNote');
+  if (coefNote) {
+    coefNote.innerHTML =
+      `🇫🇷 Le coefficient de référence vaut automatiquement 1,000 pour le circuit ayant la meilleure moyenne Top ${topN}. Tous les circuits sont traités avec la même formule.<br>` +
+      `🇬🇧 The reference coefficient is automatically 1.000 for the circuit with the best Average Top ${topN}. All circuits are treated with the same formula.`;
   }
 
-  const penaltyNote = document.getElementById('coefPenaltyNote');
+  const penaltyNote = document.getElementById('absPenaltyNote');
   if (penaltyNote) {
     penaltyNote.innerHTML =
       `🇫🇷 Simulation : pénalité finale de chaque course = MAX(${minPenalty.toFixed(1)} ; pénalité calculée × coefficient).<br>` +
@@ -4049,49 +4054,49 @@ function renderCoefficientSimulator() {
   }
 }
 
-function initCoefficientSimulator() {
-  const disc = document.getElementById('coefDisciplineButtons');
+function initAbsoluteSimulator() {
+  const disc = document.getElementById('absDisciplineButtons');
   if (disc) {
     disc.addEventListener('click', event => {
       const btn = event.target.closest('button[data-discipline]');
       if (!btn) return;
 
-      COEF_DISCIPLINE = btn.dataset.discipline;
+      ABS_DISCIPLINE = btn.dataset.discipline;
 
       disc.querySelectorAll('button[data-discipline]')
         .forEach(b => b.classList.toggle('active', b === btn));
 
-      renderCoefficientSimulator();
+      renderAbsoluteSimulator();
     });
   }
 
-  const gender = document.getElementById('coefGenderButtons');
+  const gender = document.getElementById('absGenderButtons');
   if (gender) {
     gender.addEventListener('click', event => {
       const btn = event.target.closest('button[data-gender]');
       if (!btn) return;
 
-      COEF_GENDER = btn.dataset.gender;
+      ABS_GENDER = btn.dataset.gender;
 
       gender.querySelectorAll('button[data-gender]')
         .forEach(b => b.classList.toggle('active', b === btn));
 
-      renderCoefficientSimulator();
+      renderAbsoluteSimulator();
     });
   }
 
-  ['coefTopMin','coefTopMax','coefMinPenalty'].forEach(id => {
+  ['absTopN','absMinPenalty'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
 
-    el.addEventListener('input', renderCoefficientSimulator);
-    el.addEventListener('change', renderCoefficientSimulator);
+    el.addEventListener('input', renderAbsoluteSimulator);
+    el.addEventListener('change', renderAbsoluteSimulator);
   });
 
-  renderCoefficientSimulator();
+  renderAbsoluteSimulator();
 }
 
-initCoefficientSimulator();
+initAbsoluteSimulator();
 
 </script>
 
