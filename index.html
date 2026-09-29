@@ -803,7 +803,7 @@
 
   .coef-table {
     width:100%;
-    min-width:900px;
+    min-width:1050px;
     border-collapse:collapse;
     font-size:12px;
   }
@@ -869,6 +869,92 @@
   @media (max-width:760px) {
     .coef-table { font-size:11px; min-width:760px; }
     .coef-table th, .coef-table td { padding:7px; }
+  }
+</style>
+
+
+<style>
+  #absDisciplineButtons .coef-disc,
+  #absGenderButtons .coef-gender {
+    border-width:2px !important;
+    font-weight:800 !important;
+    box-sizing:border-box;
+    transition:background-color .12s ease, border-color .12s ease, opacity .12s ease;
+  }
+
+  /* Inactive discipline colors */
+  #absDisciplineButtons .coef-sl {
+    background:#eef6ff !important;
+    border-color:#b8d5ff !important;
+    color:#2f6fb3 !important;
+  }
+  #absDisciplineButtons .coef-gs {
+    background:#fff0f7 !important;
+    border-color:#f4bfd5 !important;
+    color:#b95b86 !important;
+  }
+  #absDisciplineButtons .coef-sg {
+    background:#eefbf2 !important;
+    border-color:#bce6c9 !important;
+    color:#2f7d4a !important;
+  }
+  #absDisciplineButtons .coef-dh {
+    background:#fff9db !important;
+    border-color:#f1df8a !important;
+    color:#8a6d00 !important;
+  }
+
+  /* Inactive gender colors */
+  #absGenderButtons .coef-men {
+    background:#eef2ff !important;
+    border-color:#c8d1f6 !important;
+    color:#1e3a8a !important;
+  }
+  #absGenderButtons .coef-women {
+    background:#fff4fa !important;
+    border-color:#f6c8df !important;
+    color:#b85b8d !important;
+  }
+
+  /* Active fills */
+  #absDisciplineButtons .coef-sl.active {
+    background:#6ea8ff !important;
+    color:#ffffff !important;
+  }
+  #absDisciplineButtons .coef-gs.active {
+    background:#f3a6c8 !important;
+    color:#6b2146 !important;
+  }
+  #absDisciplineButtons .coef-sg.active {
+    background:#7ad39a !important;
+    color:#154d2d !important;
+  }
+  #absDisciplineButtons .coef-dh.active {
+    background:#f4d35e !important;
+    color:#5f4b00 !important;
+  }
+  #absGenderButtons .coef-men.active {
+    background:#1e3a8a !important;
+    color:#ffffff !important;
+  }
+  #absGenderButtons .coef-women.active {
+    background:#f8b4d9 !important;
+    color:#6f2951 !important;
+  }
+
+  /* Strong selected frame */
+  #absDisciplineButtons button.active,
+  #absGenderButtons button.active {
+    border:3px solid #111111 !important;
+    box-shadow:0 0 0 2px #ffffff, 0 0 0 4px #111111 !important;
+    opacity:1 !important;
+    font-weight:900 !important;
+  }
+
+  #absDisciplineButtons button:not(.active),
+  #absGenderButtons button:not(.active) {
+    opacity:.70 !important;
+    box-shadow:none !important;
   }
 </style>
 
@@ -1195,7 +1281,8 @@
 
   
   <section id="page-simulator" class="page-section">
-    <h1>Coefficient Simulator 2026</h1>
+    <h1>Coefficient Simulator</h1>
+    <div style="margin-top:-4px;margin-bottom:8px;font-size:12px;color:#6b7280;font-style:italic;">Based on 2026 season data</div>
     <div class="subtitle">
       🇫🇷 Testez le niveau absolu de participation à partir d’un Top N choisi, puis observez son effet sur la pénalité.<br>
       🇬🇧 Test the absolute participation level from a selected Top N, then observe its effect on the penalty.
@@ -1280,6 +1367,7 @@
               <th>Circuit</th>
               <th>Average Calculated Penalty</th>
               <th>Coefficient</th>
+              <th>Average Calculated Penalty × Coefficient</th>
               <th>Average Current Applied Penalty</th>
               <th>Average Simulated Applied Penalty</th>
               <th>Difference</th>
@@ -4001,6 +4089,14 @@ function renderAbsoluteSimulator() {
         .filter(Number.isFinite)
     );
 
+    const avgCalculatedTimesCoef =
+      (
+        Number.isFinite(avgCalculated) &&
+        Number.isFinite(m.coefficient)
+      )
+        ? avgCalculated * m.coefficient
+        : null;
+
     const simulatedValues = prows.map(r => {
       const calc = Number(r.calculatedPenalty);
 
@@ -4032,6 +4128,7 @@ function renderAbsoluteSimulator() {
       <td><strong style="color:${color}">${m.circuit}</strong></td>
       <td>${absFmt(avgCalculated,2)}</td>
       <td><strong>${absFmt(m.coefficient,3)}</strong></td>
+      <td><strong>${absFmt(avgCalculatedTimesCoef,2)}</strong></td>
       <td>${absFmt(avgCurrentApplied,2)}</td>
       <td><strong>${absFmt(avgSimulated,2)}</strong></td>
       <td>${Number.isFinite(difference) ? (difference >= 0 ? '+' : '') + difference.toFixed(2) : '—'}</td>
