@@ -328,6 +328,102 @@
 }
 </style>
 
+
+<style>
+  .sim-grid {
+    display:grid;
+    grid-template-columns:repeat(5,minmax(120px,1fr));
+    gap:8px;
+  }
+
+  .sim-rule {
+    border:1px solid #e5e7eb;
+    border-radius:9px;
+    padding:10px;
+    background:#f8fafc;
+    font-size:12px;
+    line-height:1.9;
+  }
+
+  .sim-rule-title {
+    font-weight:800;
+    margin-bottom:3px;
+  }
+
+  .sim-rule input {
+    width:66px;
+    padding:4px 5px;
+    border:1px solid #d1d5db;
+    border-radius:6px;
+    font-size:12px;
+  }
+
+  .sim-table-wrap {
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    margin-top:12px;
+  }
+
+  .sim-table {
+    width:100%;
+    min-width:980px;
+    border-collapse:collapse;
+    font-size:12px;
+  }
+
+  .sim-table th,
+  .sim-table td {
+    border-bottom:1px solid #e5e7eb;
+    padding:8px 9px;
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  .sim-table th:first-child,
+  .sim-table td:first-child {
+    text-align:left;
+    position:sticky;
+    left:0;
+    background:#fff;
+    z-index:1;
+  }
+
+  .sim-table th {
+    font-weight:800;
+    color:#374151;
+    background:#f8fafc;
+  }
+
+  .sim-additive {
+    font-weight:800;
+  }
+
+  .sim-positive {
+    font-weight:800;
+    color:#b45309;
+  }
+
+  @media (max-width:760px) {
+    .sim-grid {
+      grid-template-columns:repeat(2,minmax(135px,1fr));
+    }
+
+    .sim-rule {
+      padding:8px;
+    }
+
+    .sim-table {
+      font-size:11px;
+    }
+
+    .sim-table th,
+    .sim-table td {
+      padding:7px;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -336,6 +432,7 @@
     <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
+    <button id="navSimulator" onclick="showPage('simulator')">Additive Simulator</button>
     <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
@@ -629,7 +726,117 @@
     </div>
   </section>
 
-  <section id="page-cross" class="page-section">
+  
+  <section id="page-simulator" class="page-section">
+    <h1>Continental Cups – Additive Simulator 2026</h1>
+    <div class="subtitle">
+      Test an additive from the Top 10 / Top 5 participation coefficient while keeping the current minimum penalty.
+    </div>
+
+    <div class="controls">
+
+      <div class="control">
+        <div class="control-label">Discipline</div>
+        <div class="button-row" id="simDisciplineButtons">
+          <button data-discipline="SL" class="active">SL</button>
+          <button data-discipline="GS">GS</button>
+          <button data-discipline="SG">SG</button>
+          <button data-discipline="DH">DH</button>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-label">Gender</div>
+        <div class="button-row" id="simGenderButtons">
+          <button data-gender="M" class="active">Men</button>
+          <button data-gender="W">Women</button>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-label">Minimum penalty</div>
+        <input id="simMinPenalty" type="number" min="0" step="0.5" value="15"
+               style="width:88px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="chart-title">Additive scale</div>
+      <div class="chart-subtitle">
+        Coefficient = Average FIS points Top 10 ÷ Average FIS points Top 5.
+        Change the limits or additives to test another rule instantly.
+      </div>
+
+      <div class="sim-grid" style="margin-top:14px;">
+        <div class="sim-rule">
+          <div class="sim-rule-title">Level 1</div>
+          <div>Coefficient ≤ <input id="simT1" type="number" step="0.01" value="1.05"></div>
+          <div>Additive <input id="simA1" type="number" step="0.5" value="0"></div>
+        </div>
+
+        <div class="sim-rule">
+          <div class="sim-rule-title">Level 2</div>
+          <div>≤ <input id="simT2" type="number" step="0.01" value="1.10"></div>
+          <div>Additive <input id="simA2" type="number" step="0.5" value="1"></div>
+        </div>
+
+        <div class="sim-rule">
+          <div class="sim-rule-title">Level 3</div>
+          <div>≤ <input id="simT3" type="number" step="0.01" value="1.15"></div>
+          <div>Additive <input id="simA3" type="number" step="0.5" value="2"></div>
+        </div>
+
+        <div class="sim-rule">
+          <div class="sim-rule-title">Level 4</div>
+          <div>≤ <input id="simT4" type="number" step="0.01" value="1.20"></div>
+          <div>Additive <input id="simA4" type="number" step="0.5" value="3"></div>
+        </div>
+
+        <div class="sim-rule">
+          <div class="sim-rule-title">Level 5</div>
+          <div>&gt; last limit</div>
+          <div>Additive <input id="simA5" type="number" step="0.5" value="4"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button id="simResetButton">Reset default scale</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="chart-title" id="simTableTitle">Simulation – SL Men</div>
+      <div class="chart-subtitle">
+        The additive is applied race by race before the minimum penalty:
+        Final = MAX(Minimum penalty ; Calculated penalty + Additive).
+      </div>
+
+      <div class="sim-table-wrap">
+        <table class="sim-table">
+          <thead>
+            <tr>
+              <th>Circuit</th>
+              <th>Races</th>
+              <th>Avg calculated</th>
+              <th>Top 5 avg</th>
+              <th>Top 10 avg</th>
+              <th>Top10 / Top5</th>
+              <th>Additive</th>
+              <th>Current avg applied</th>
+              <th>Simulated avg applied</th>
+              <th>Δ</th>
+            </tr>
+          </thead>
+          <tbody id="simTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="note" id="simNote"></div>
+    </div>
+  </section>
+
+<section id="page-cross" class="page-section">
     <h1>Findings & Possible Approaches</h1>
     <div class="subtitle">
       Constats et pistes de réflexion / Findings and possible approaches
@@ -717,7 +924,7 @@
 
 function showPage(page) {
 
-  const pages = ['field', 'penalty', 'applied', 'cross'];
+  const pages = ['field', 'penalty', 'applied', 'simulator', 'cross'];
 
   pages.forEach(function(name) {
 
@@ -732,7 +939,9 @@ function showPage(page) {
             ? 'navPenalty'
             : name === 'applied'
               ? 'navApplied'
-              : 'navCross'
+              : name === 'simulator'
+                ? 'navSimulator'
+                : 'navCross'
       );
 
     if (section) {
@@ -795,6 +1004,13 @@ function showPage(page) {
         APP_THRESHOLD_CHART.update('none');
       }
     }, 80);
+  }
+
+  if (
+    page === 'simulator' &&
+    typeof renderSimulator === 'function'
+  ) {
+    renderSimulator();
   }
 
   window.scrollTo({
@@ -3143,6 +3359,353 @@ function initAppliedPage() {
 }
 
 initAppliedPage();
+
+/* ============================================================
+   ADDITIVE SIMULATOR
+   ============================================================ */
+
+let SIM_DISCIPLINE = 'SL';
+let SIM_GENDER = 'M';
+
+function simNum(id, fallback) {
+  const el = document.getElementById(id);
+  if (!el) return fallback;
+  const v = Number(el.value);
+  return Number.isFinite(v) ? v : fallback;
+}
+
+function simRule() {
+
+  const t1 = simNum('simT1', 1.05);
+  const t2 = simNum('simT2', 1.10);
+  const t3 = simNum('simT3', 1.15);
+  const t4 = simNum('simT4', 1.20);
+
+  const a1 = simNum('simA1', 0);
+  const a2 = simNum('simA2', 1);
+  const a3 = simNum('simA3', 2);
+  const a4 = simNum('simA4', 3);
+  const a5 = simNum('simA5', 4);
+
+  return { t1,t2,t3,t4,a1,a2,a3,a4,a5 };
+}
+
+function simAdditive(coef) {
+
+  const r = simRule();
+
+  if (!Number.isFinite(coef)) return null;
+
+  if (coef <= r.t1) return r.a1;
+  if (coef <= r.t2) return r.a2;
+  if (coef <= r.t3) return r.a3;
+  if (coef <= r.t4) return r.a4;
+
+  return r.a5;
+}
+
+function simFieldRows(circuit) {
+
+  return RAW.filter(r =>
+    Number(r.cohortMaxRank) === 10 &&
+    r.circuit === circuit &&
+    r.discipline === SIM_DISCIPLINE &&
+    r.gender === SIM_GENDER &&
+    Number.isFinite(Number(r.rank)) &&
+    Number.isFinite(Number(r.avgFisPoints))
+  );
+}
+
+function simTopAverage(rows, maxRank) {
+
+  const vals =
+    rows
+      .filter(r => Number(r.rank) <= maxRank)
+      .map(r => Number(r.avgFisPoints))
+      .filter(Number.isFinite);
+
+  if (!vals.length) return null;
+
+  return vals.reduce((a,b) => a+b, 0) / vals.length;
+}
+
+function simPenaltyRows(circuit) {
+
+  return PENALTY_DATA.filter(r =>
+    r.circuit === circuit &&
+    r.discipline === SIM_DISCIPLINE &&
+    r.gender === SIM_GENDER &&
+    Number.isFinite(Number(r.calculatedPenalty))
+  );
+}
+
+function avgOf(vals) {
+  const a = vals.filter(Number.isFinite);
+  if (!a.length) return null;
+  return a.reduce((x,y) => x+y,0) / a.length;
+}
+
+function fmtSim(v, digits=2) {
+  return Number.isFinite(v)
+    ? v.toFixed(digits)
+    : '—';
+}
+
+function renderSimulator() {
+
+  const minPenalty =
+    simNum('simMinPenalty', 15);
+
+  const circuits =
+    PEN_CIRCUIT_ORDER.filter(c =>
+      PENALTY_DATA.some(r =>
+        r.circuit === c &&
+        r.discipline === SIM_DISCIPLINE &&
+        r.gender === SIM_GENDER
+      )
+    );
+
+  const body =
+    document.getElementById('simTableBody');
+
+  if (!body) return;
+
+  body.innerHTML = '';
+
+  circuits.forEach(circuit => {
+
+    const frows =
+      simFieldRows(circuit);
+
+    const top5 =
+      simTopAverage(frows, 5);
+
+    const top10 =
+      simTopAverage(frows, 10);
+
+    const coef =
+      (
+        Number.isFinite(top5) &&
+        top5 > 0 &&
+        Number.isFinite(top10)
+      )
+        ? top10 / top5
+        : null;
+
+    const additive =
+      simAdditive(coef);
+
+    const prows =
+      simPenaltyRows(circuit);
+
+    const avgCalc =
+      avgOf(
+        prows.map(r =>
+          Number(r.calculatedPenalty)
+        )
+      );
+
+    const currentApplied =
+      avgOf(
+        prows
+          .map(r => Number(r.appliedPenalty))
+          .filter(Number.isFinite)
+      );
+
+    const simulatedValues =
+      prows.map(r => {
+
+        const calc =
+          Number(r.calculatedPenalty);
+
+        if (
+          !Number.isFinite(calc) ||
+          !Number.isFinite(additive)
+        ) {
+          return NaN;
+        }
+
+        return Math.max(
+          minPenalty,
+          calc + additive
+        );
+      });
+
+    const simulatedApplied =
+      avgOf(simulatedValues);
+
+    const delta =
+      (
+        Number.isFinite(simulatedApplied) &&
+        Number.isFinite(currentApplied)
+      )
+        ? simulatedApplied - currentApplied
+        : null;
+
+    const tr =
+      document.createElement('tr');
+
+    const color =
+      PEN_COLORS[circuit] || '#374151';
+
+    tr.innerHTML = `
+      <td>
+        <strong style="color:${color}">
+          ${circuit}
+        </strong>
+      </td>
+      <td>${prows.length}</td>
+      <td>${fmtSim(avgCalc)}</td>
+      <td>${fmtSim(top5)}</td>
+      <td>${fmtSim(top10)}</td>
+      <td><strong>${fmtSim(coef,3)}</strong></td>
+      <td class="sim-additive">
+        ${Number.isFinite(additive) ? '+' + additive.toFixed(1) : '—'}
+      </td>
+      <td>${fmtSim(currentApplied)}</td>
+      <td><strong>${fmtSim(simulatedApplied)}</strong></td>
+      <td class="${Number.isFinite(delta) && delta > 0.01 ? 'sim-positive' : ''}">
+        ${Number.isFinite(delta) ? (delta >= 0 ? '+' : '') + delta.toFixed(2) : '—'}
+      </td>
+    `;
+
+    body.appendChild(tr);
+  });
+
+  const title =
+    document.getElementById('simTableTitle');
+
+  if (title) {
+    title.textContent =
+      'Simulation – ' +
+      SIM_DISCIPLINE +
+      ' ' +
+      (SIM_GENDER === 'M' ? 'Men' : 'Women');
+  }
+
+  const note =
+    document.getElementById('simNote');
+
+  if (note) {
+    note.textContent =
+      'Top 5 and Top 10 are calculated from the comparable Top 10 cohort. ' +
+      'The simulated applied penalty is then calculated race by race using the selected additive and the minimum penalty.';
+  }
+}
+
+function resetSimulatorDefaults() {
+
+  const defaults = {
+    simMinPenalty: 15,
+    simT1: 1.05,
+    simT2: 1.10,
+    simT3: 1.15,
+    simT4: 1.20,
+    simA1: 0,
+    simA2: 1,
+    simA3: 2,
+    simA4: 3,
+    simA5: 4
+  };
+
+  Object.entries(defaults)
+    .forEach(([id, value]) => {
+      const el =
+        document.getElementById(id);
+
+      if (el) {
+        el.value = value;
+      }
+    });
+
+  renderSimulator();
+}
+
+function initSimulator() {
+
+  const disc =
+    document.getElementById('simDisciplineButtons');
+
+  if (disc) {
+    disc.addEventListener('click', event => {
+
+      const btn =
+        event.target.closest('button');
+
+      if (!btn) return;
+
+      SIM_DISCIPLINE =
+        btn.dataset.discipline;
+
+      disc
+        .querySelectorAll('button')
+        .forEach(b =>
+          b.classList.remove('active')
+        );
+
+      btn.classList.add('active');
+
+      renderSimulator();
+    });
+  }
+
+  const gender =
+    document.getElementById('simGenderButtons');
+
+  if (gender) {
+    gender.addEventListener('click', event => {
+
+      const btn =
+        event.target.closest('button');
+
+      if (!btn) return;
+
+      SIM_GENDER =
+        btn.dataset.gender;
+
+      gender
+        .querySelectorAll('button')
+        .forEach(b =>
+          b.classList.remove('active')
+        );
+
+      btn.classList.add('active');
+
+      renderSimulator();
+    });
+  }
+
+  [
+    'simMinPenalty',
+    'simT1','simT2','simT3','simT4',
+    'simA1','simA2','simA3','simA4','simA5'
+  ].forEach(id => {
+
+    const el =
+      document.getElementById(id);
+
+    if (!el) return;
+
+    el.addEventListener(
+      'input',
+      renderSimulator
+    );
+  });
+
+  const reset =
+    document.getElementById('simResetButton');
+
+  if (reset) {
+    reset.addEventListener(
+      'click',
+      resetSimulatorDefaults
+    );
+  }
+
+  renderSimulator();
+}
+
+initSimulator();
 bindInteractiveToggles();
 
 </script>
