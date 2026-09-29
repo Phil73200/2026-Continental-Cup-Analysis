@@ -298,7 +298,7 @@
           <span style="color:#1e3a8a;font-weight:700">Men</span>
         </label>
         <label class="check-item">
-          <input type="checkbox" class="gender-check" value="W" checked style="accent-color:#f8b4d9">
+          <input type="checkbox" class="gender-check" value="W" style="accent-color:#f8b4d9">
           <span style="color:#f8b4d9;font-weight:700">Women</span>
         </label>
       </div>
@@ -396,7 +396,7 @@
             <span style="color:#1e3a8a;font-weight:700">Men</span>
           </label>
           <label class="check-item">
-            <input type="checkbox" class="pen-gender-check" value="W" checked style="accent-color:#f8b4d9">
+            <input type="checkbox" class="pen-gender-check" value="W" style="accent-color:#f8b4d9">
             <span style="color:#f8b4d9;font-weight:700">Women</span>
           </label>
         </div>
@@ -490,10 +490,11 @@
             <span style="color:#1e3a8a;font-weight:700">Men</span>
           </label>
           <label class="check-item">
-            <input type="checkbox" class="app-gender-check" value="W" checked style="accent-color:#f8b4d9">
+            <input type="checkbox" class="app-gender-check" value="W" style="accent-color:#f8b4d9">
             <span style="color:#f8b4d9;font-weight:700">Women</span>
           </label>
         </div>
+        <div style="font-size:10px;color:#6b7280;margin-top:4px;">One gender at a time</div>
       </div>
 
       <div class="control">
@@ -919,6 +920,43 @@ function buildDisciplineFilters() {
 }
 
 
+
+function bindExclusiveGender(selector, onChange) {
+
+  const boxes =
+    [...document.querySelectorAll(selector)];
+
+  boxes.forEach(box => {
+
+    box.addEventListener('change', function() {
+
+      if (box.checked) {
+
+        boxes.forEach(other => {
+          if (other !== box) {
+            other.checked = false;
+          }
+        });
+
+      } else {
+
+        const anyChecked =
+          boxes.some(b => b.checked);
+
+        // Never allow a graph with no gender selected.
+        if (!anyChecked) {
+          box.checked = true;
+        }
+      }
+
+      if (typeof onChange === 'function') {
+        onChange();
+      }
+    });
+  });
+}
+
+
 function bindEvents() {
 
   document
@@ -931,12 +969,10 @@ function bindEvents() {
       }
     );
 
-  document
-    .getElementById('genderFilters')
-    .addEventListener(
-      'change',
-      render
-    );
+  bindExclusiveGender(
+    '.gender-check',
+    render
+  );
 
   document
     .getElementById('disciplineFilters')
@@ -2137,12 +2173,10 @@ function initPenaltyPage() {
     disc.addEventListener('change', renderPenaltyPage);
   }
 
-  const gender =
-    document.getElementById('penGenderFilters');
-
-  if (gender) {
-    gender.addEventListener('change', renderPenaltyPage);
-  }
+  bindExclusiveGender(
+    '.pen-gender-check',
+    renderPenaltyPage
+  );
 
   const circuits =
     document.getElementById('penCircuitFilters');
@@ -2608,12 +2642,10 @@ function initAppliedPage() {
     disc.addEventListener('change', renderAppliedPage);
   }
 
-  const gender =
-    document.getElementById('appGenderFilters');
-
-  if (gender) {
-    gender.addEventListener('change', renderAppliedPage);
-  }
+  bindExclusiveGender(
+    '.app-gender-check',
+    renderAppliedPage
+  );
 
   const circuits =
     document.getElementById('appCircuitFilters');
