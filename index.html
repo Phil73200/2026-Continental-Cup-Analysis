@@ -593,6 +593,19 @@
   }
 </style>
 
+
+<style>
+  .sim-table th {
+    white-space: normal !important;
+    line-height: 1.2;
+    min-width: 110px;
+  }
+  .sim-table th:nth-child(1),
+  .sim-table th:nth-child(2) {
+    min-width: 70px;
+  }
+</style>
+
 </head>
 
 <body>
@@ -898,9 +911,10 @@
 
   
   <section id="page-simulator" class="page-section">
-    <h1>Continental Cups – Adder Simulator 2026</h1>
+    <h1>Adder Simulator 2026</h1>
     <div class="subtitle">
-      Test an additive from the Top 10 / Top 5 participation coefficient while keeping the current minimum penalty.
+      🇫🇷 Test d'un additif calculé à partir du coefficient Top 10 / Top 5, tout en conservant la pénalité minimale actuelle.<br>
+      🇬🇧 Test an additive derived from the Top 10 / Top 5 coefficient while keeping the current minimum penalty.
     </div>
 
     <div class="controls">
@@ -932,39 +946,39 @@
     </div>
 
     <div class="card">
-      <div class="chart-title">Additive scale</div>
+      <div class="chart-title">🇫🇷 Calcul du coefficient et de l’additif / 🇬🇧 Coefficient and Additive Calculation</div>
       <div class="chart-subtitle">
-        Coefficient = Average FIS points Top 10 ÷ Average FIS points Top 5.
-        Change the limits or additives to test another rule instantly.
+        🇫🇷 Le coefficient est calculé comme le rapport entre la moyenne des points FIS du Top 10 et la moyenne des points FIS du Top 5. Modifiez les seuils ou les additifs pour tester instantanément une autre hypothèse.<br>
+        🇬🇧 The coefficient is calculated as the ratio between the Average Top 10 FIS Points and the Average Top 5 FIS Points. Change the limits or additives to test another hypothesis instantly.
       </div>
 
       <div class="sim-grid" style="margin-top:14px;">
         <div class="sim-rule">
-          <div class="sim-rule-title">Level 1</div>
+          <div class="sim-rule-title">Adder 0</div>
           <div>Coefficient ≤ <input id="simT1" type="number" step="0.01" value="1.05"></div>
           <div>Additive <input id="simA1" type="number" step="0.5" value="0"></div>
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Level 2</div>
+          <div class="sim-rule-title">Adder 1</div>
           <div>≤ <input id="simT2" type="number" step="0.01" value="1.10"></div>
           <div>Additive <input id="simA2" type="number" step="0.5" value="1"></div>
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Level 3</div>
+          <div class="sim-rule-title">Adder 2</div>
           <div>≤ <input id="simT3" type="number" step="0.01" value="1.15"></div>
           <div>Additive <input id="simA3" type="number" step="0.5" value="2"></div>
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Level 4</div>
+          <div class="sim-rule-title">Adder 3</div>
           <div>≤ <input id="simT4" type="number" step="0.01" value="1.20"></div>
           <div>Additive <input id="simA4" type="number" step="0.5" value="3"></div>
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Level 5</div>
+          <div class="sim-rule-title">Adder 4</div>
           <div>&gt; last limit</div>
           <div>Additive <input id="simA5" type="number" step="0.5" value="4"></div>
         </div>
@@ -976,10 +990,15 @@
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <div class="chart-title" id="simTableTitle">Simulation – SL Men</div>
+      <div class="chart-title" id="simTableTitle">🇫🇷 Simulation – SL Hommes / 🇬🇧 Simulation – SL Men</div>
       <div class="chart-subtitle">
-        The additive is applied race by race before the minimum penalty:
-        Final = MAX(Minimum penalty ; Calculated penalty + Additive).
+        🇫🇷 L'additif est appliqué course par course avant la pénalité minimale : Pénalité finale = MAX(Pénalité minimale ; Pénalité calculée + Additif). Les valeurs affichées dans le tableau sont ensuite des moyennes par circuit.<br>
+        🇬🇧 The additive is applied race by race before the minimum penalty: Final penalty = MAX(Minimum penalty ; Calculated penalty + Additive). The values displayed in the table are then averages by circuit.
+      </div>
+
+      <div style="margin-top:10px;font-size:11px;line-height:1.45;color:#4b5563;">
+        🇫🇷 Toutes les valeurs de pénalité du tableau sont des <strong>moyennes par circuit</strong>.<br>
+        🇬🇧 All penalty values shown in the table are <strong>averages by circuit</strong>.
       </div>
 
       <div class="sim-table-wrap">
@@ -988,13 +1007,13 @@
             <tr>
               <th>Circuit</th>
               <th>Races</th>
-              <th>Calculated Penalty</th>
-              <th>Top 5 avg</th>
-              <th>Top 10 avg</th>
-              <th>Top10 / Top5</th>
+              <th>Average Calculated Penalty</th>
+              <th>Average Top 5 FIS Points</th>
+              <th>Average Top 10 FIS Points</th>
+              <th>Coef. (Top 10 / Top 5)</th>
               <th>Additive</th>
-              <th>Current Applied Penalty</th>
-              <th>Simulated Applied Penalty</th>
+              <th>Average Current Applied Penalty</th>
+              <th>Average Simulated Applied Penalty</th>
               <th>Difference</th>
             </tr>
           </thead>
@@ -3748,7 +3767,11 @@ function renderSimulator() {
 
   if (title) {
     title.textContent =
-      'Simulation – ' +
+      '🇫🇷 Simulation – ' +
+      SIM_DISCIPLINE +
+      ' ' +
+      (SIM_GENDER === 'M' ? 'Hommes' : 'Dames') +
+      ' / 🇬🇧 Simulation – ' +
       SIM_DISCIPLINE +
       ' ' +
       (SIM_GENDER === 'M' ? 'Men' : 'Women');
@@ -3758,17 +3781,18 @@ function renderSimulator() {
     document.getElementById('simNote');
 
   if (note) {
-    note.textContent =
-      'Top 5 and Top 10 are calculated from the comparable Top 10 cohort. ' +
-      'The simulated applied penalty is then calculated race by race using the selected additive and the minimum penalty.';
+    note.innerHTML =
+      '🇫🇷 Les moyennes Top 5 et Top 10 sont calculées à partir des 10 premiers concurrents de chaque course. La pénalité appliquée simulée est calculée course par course à partir de l\'additif sélectionné et de la pénalité minimale, puis affichée sous forme de moyenne par circuit.<br>' +
+      '🇬🇧 Average Top 5 and Average Top 10 FIS Points are calculated from the first 10 ranked athletes in each race. The simulated applied penalty is calculated race by race using the selected additive and the minimum penalty, then displayed as an average by circuit.';
   }
 
   const status =
     document.getElementById('simStatus');
 
   if (status) {
-    status.textContent =
-      'Simulation updated automatically from the current values.';
+    status.innerHTML =
+      '🇫🇷 La simulation est mise à jour automatiquement à chaque modification des paramètres.<br>' +
+      '🇬🇧 The simulation is updated automatically whenever a parameter is changed.';
   }
 }
 
