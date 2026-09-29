@@ -461,6 +461,99 @@
   }
 </style>
 
+
+<style>
+  /* Adder Simulator – discipline colors */
+  #simDisciplineButtons .sim-disc {
+    border-width: 1px;
+    font-weight: 800;
+  }
+
+  #simDisciplineButtons .sim-sl {
+    background:#eef6ff;
+    border-color:#b8d5ff;
+    color:#2f6fb3;
+  }
+  #simDisciplineButtons .sim-sl.active {
+    background:#6ea8ff !important;
+    border-color:#4f8fe8 !important;
+    color:#fff !important;
+  }
+
+  #simDisciplineButtons .sim-gs {
+    background:#fff0f7;
+    border-color:#f4bfd5;
+    color:#b95b86;
+  }
+  #simDisciplineButtons .sim-gs.active {
+    background:#f3a6c8 !important;
+    border-color:#dc86ad !important;
+    color:#6b2146 !important;
+  }
+
+  #simDisciplineButtons .sim-sg {
+    background:#eefbf2;
+    border-color:#bce6c9;
+    color:#2f7d4a;
+  }
+  #simDisciplineButtons .sim-sg.active {
+    background:#7ad39a !important;
+    border-color:#56b879 !important;
+    color:#154d2d !important;
+  }
+
+  #simDisciplineButtons .sim-dh {
+    background:#fff9db;
+    border-color:#f1df8a;
+    color:#8a6d00;
+  }
+  #simDisciplineButtons .sim-dh.active {
+    background:#f4d35e !important;
+    border-color:#d8b93f !important;
+    color:#5f4b00 !important;
+  }
+
+  /* Gender colors */
+  #simGenderButtons .sim-men {
+    background:#eef2ff;
+    border-color:#c8d1f6;
+    color:#1e3a8a;
+    font-weight:800;
+  }
+  #simGenderButtons .sim-men.active {
+    background:#1e3a8a !important;
+    border-color:#1e3a8a !important;
+    color:#fff !important;
+  }
+
+  #simGenderButtons .sim-women {
+    background:#fff4fa;
+    border-color:#f6c8df;
+    color:#b85b8d;
+    font-weight:800;
+  }
+  #simGenderButtons .sim-women.active {
+    background:#f8b4d9 !important;
+    border-color:#e992c1 !important;
+    color:#6f2951 !important;
+  }
+
+  /* Simulator table emphasis */
+  .sim-table td.sim-result {
+    background:#f8fafc;
+    font-weight:800;
+  }
+
+  .sim-table td.sim-additive {
+    background:#fff7ed;
+    font-weight:900;
+  }
+
+  .sim-table td:first-child strong {
+    font-weight:900;
+  }
+</style>
+
 </head>
 
 <body>
@@ -470,7 +563,7 @@
     <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
-    <button id="navSimulator" class="sim-nav-button" onclick="showPage('simulator')">Additive Simulator</button>
+    <button id="navSimulator" class="sim-nav-button" onclick="showPage('simulator')">Adder Simulator</button>
     <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
@@ -766,7 +859,7 @@
 
   
   <section id="page-simulator" class="page-section">
-    <h1>Continental Cups – Additive Simulator 2026</h1>
+    <h1>Continental Cups – Adder Simulator 2026</h1>
     <div class="subtitle">
       Test an additive from the Top 10 / Top 5 participation coefficient while keeping the current minimum penalty.
     </div>
@@ -776,18 +869,18 @@
       <div class="control">
         <div class="control-label">Discipline</div>
         <div class="button-row" id="simDisciplineButtons">
-          <button data-discipline="SL" class="active">SL</button>
-          <button data-discipline="GS">GS</button>
-          <button data-discipline="SG">SG</button>
-          <button data-discipline="DH">DH</button>
+          <button data-discipline="SL" class="sim-disc sim-sl active">SL</button>
+          <button data-discipline="GS" class="sim-disc sim-gs">GS</button>
+          <button data-discipline="SG" class="sim-disc sim-sg">SG</button>
+          <button data-discipline="DH" class="sim-disc sim-dh">DH</button>
         </div>
       </div>
 
       <div class="control">
         <div class="control-label">Gender</div>
         <div class="button-row" id="simGenderButtons">
-          <button data-gender="M" class="active">Men</button>
-          <button data-gender="W">Women</button>
+          <button data-gender="M" class="sim-gender sim-men active">Men</button>
+          <button data-gender="W" class="sim-gender sim-women">Women</button>
         </div>
       </div>
 
@@ -856,14 +949,14 @@
             <tr>
               <th>Circuit</th>
               <th>Races</th>
-              <th>Avg calculated</th>
+              <th>Calculated Penalty</th>
               <th>Top 5 avg</th>
               <th>Top 10 avg</th>
               <th>Top10 / Top5</th>
               <th>Additive</th>
-              <th>Current avg applied</th>
-              <th>Simulated avg applied</th>
-              <th>Δ</th>
+              <th>Current Applied Penalty</th>
+              <th>Simulated Applied Penalty</th>
+              <th>Difference</th>
             </tr>
           </thead>
           <tbody id="simTableBody"></tbody>
@@ -871,6 +964,7 @@
       </div>
 
       <div class="note" id="simNote"></div>
+      <div id="simStatus" style="margin-top:6px;font-size:10px;color:#6b7280;"></div>
     </div>
   </section>
 
@@ -3399,7 +3493,7 @@ function initAppliedPage() {
 initAppliedPage();
 
 /* ============================================================
-   ADDITIVE SIMULATOR
+   ADDER SIMULATOR
    ============================================================ */
 
 let SIM_DISCIPLINE = 'SL';
@@ -3601,7 +3695,7 @@ function renderSimulator() {
         ${Number.isFinite(additive) ? '+' + additive.toFixed(1) : '—'}
       </td>
       <td>${fmtSim(currentApplied)}</td>
-      <td><strong>${fmtSim(simulatedApplied)}</strong></td>
+      <td class="sim-result"><strong>${fmtSim(simulatedApplied)}</strong></td>
       <td class="${Number.isFinite(delta) && delta > 0.01 ? 'sim-positive' : ''}">
         ${Number.isFinite(delta) ? (delta >= 0 ? '+' : '') + delta.toFixed(2) : '—'}
       </td>
@@ -3628,6 +3722,14 @@ function renderSimulator() {
     note.textContent =
       'Top 5 and Top 10 are calculated from the comparable Top 10 cohort. ' +
       'The simulated applied penalty is then calculated race by race using the selected additive and the minimum penalty.';
+  }
+
+  const status =
+    document.getElementById('simStatus');
+
+  if (status) {
+    status.textContent =
+      'Simulation updated automatically from the current values.';
   }
 }
 
@@ -3668,7 +3770,7 @@ function initSimulator() {
     disc.addEventListener('click', event => {
 
       const btn =
-        event.target.closest('button');
+        event.target.closest('button[data-discipline]');
 
       if (!btn) return;
 
@@ -3676,16 +3778,18 @@ function initSimulator() {
         btn.dataset.discipline;
 
       disc
-        .querySelectorAll('button')
+        .querySelectorAll('button[data-discipline]')
         .forEach(b =>
-          b.classList.remove('active')
+          b.classList.toggle(
+            'active',
+            b === btn
+          )
         );
-
-      btn.classList.add('active');
 
       renderSimulator();
     });
   }
+
 
   const gender =
     document.getElementById('simGenderButtons');
@@ -3694,7 +3798,7 @@ function initSimulator() {
     gender.addEventListener('click', event => {
 
       const btn =
-        event.target.closest('button');
+        event.target.closest('button[data-gender]');
 
       if (!btn) return;
 
@@ -3702,33 +3806,44 @@ function initSimulator() {
         btn.dataset.gender;
 
       gender
-        .querySelectorAll('button')
+        .querySelectorAll('button[data-gender]')
         .forEach(b =>
-          b.classList.remove('active')
+          b.classList.toggle(
+            'active',
+            b === btn
+          )
         );
-
-      btn.classList.add('active');
 
       renderSimulator();
     });
   }
 
-  [
+
+  const numericIds = [
     'simMinPenalty',
     'simT1','simT2','simT3','simT4',
     'simA1','simA2','simA3','simA4','simA5'
-  ].forEach(id => {
+  ];
+
+  numericIds.forEach(id => {
 
     const el =
       document.getElementById(id);
 
     if (!el) return;
 
-    el.addEventListener(
-      'input',
-      renderSimulator
-    );
+    const recalc = function() {
+      renderSimulator();
+    };
+
+    /*
+     * input = immediate update while typing
+     * change = reliable fallback on mobile browsers
+     */
+    el.addEventListener('input', recalc);
+    el.addEventListener('change', recalc);
   });
+
 
   const reset =
     document.getElementById('simResetButton');
@@ -3739,6 +3854,7 @@ function initSimulator() {
       resetSimulatorDefaults
     );
   }
+
 
   renderSimulator();
 }
