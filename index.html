@@ -259,8 +259,9 @@
 
   <div class="top-nav">
     <button id="navField" class="active" onclick="showPage('field')">Field Level</button>
-    <button id="navPenalty" onclick="showPage('penalty')">Race Penalties</button>
-    <button id="navCross" onclick="showPage('cross')">Penalty vs Field Level</button>
+    <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
+    <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
+    <button id="navCross" onclick="showPage('cross')">Key Findings</button>
   </div>
 
   <section id="page-field" class="page-section active">
@@ -460,16 +461,94 @@
     </div>
   </section>
 
-  <section id="page-cross" class="page-section">
-    <h1>Continental Cups – Penalty vs Field Level 2026</h1>
+  <section id="page-applied" class="page-section">
+    <h1>Continental Cups – Applied Penalties 2026</h1>
     <div class="subtitle">
-      Relationship between race penalty and field depth
+      Applied penalties after FIS minimum-penalty rules
+    </div>
+
+    <div class="controls">
+
+      <div class="control">
+        <div class="control-label">Group</div>
+        <div class="button-row" id="appGroupButtons">
+          <button data-group="TECH" class="active">TECH – SL + GS</button>
+          <button data-group="SPEED">SPEED – SG + DH</button>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-label">Disciplines</div>
+        <div id="appDisciplineFilters" class="checks"></div>
+      </div>
+
+      <div class="control">
+        <div class="control-label">Gender</div>
+        <div id="appGenderFilters" class="checks">
+          <label class="check-item">
+            <input type="checkbox" class="app-gender-check" value="M" checked style="accent-color:#1e3a8a">
+            <span style="color:#1e3a8a;font-weight:700">Men</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" class="app-gender-check" value="W" checked style="accent-color:#f8b4d9">
+            <span style="color:#f8b4d9;font-weight:700">Women</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="control">
+        <div class="control-label">Circuits</div>
+        <div id="appCircuitFilters" class="checks"></div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="chart-title">Applied Penalty Distribution</div>
+      <div class="chart-subtitle">
+        Same races and filters as the Calculated Penalties page · yellow point = average
+      </div>
+      <div id="appliedBoxPlot" style="width:100%;height:500px;"></div>
+      <div class="note" id="appliedSummaryNote"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="chart-title">Share of Races by Applied Penalty Threshold</div>
+      <div class="chart-subtitle">
+        Percentage of races with an applied penalty at or below selected thresholds
+      </div>
+
+      <div class="control" style="margin-bottom:10px;">
+        <div class="control-label">Penalty thresholds</div>
+        <div id="appThresholdFilters" class="checks">
+          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="10" checked> ≤10</label>
+          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="12" checked> ≤12</label>
+          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="15" checked> ≤15</label>
+          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="18" checked> ≤18</label>
+          <label class="check-item"><input type="checkbox" class="app-threshold-check" value="20" checked> ≤20</label>
+        </div>
+      </div>
+
+      <div class="chart-wrap-main">
+        <canvas id="appliedThresholdChart"></canvas>
+      </div>
+
+      <div class="note">
+        When a single threshold is selected, the vertical scale automatically zooms to make small differences easier to read.
+      </div>
+    </div>
+  </section>
+
+  <section id="page-cross" class="page-section">
+    <h1>Continental Cups – Key Findings</h1>
+    <div class="subtitle">
+      Field strength → calculated penalties → applied penalties
     </div>
 
     <div class="placeholder-card">
       <div>
-        <strong>Penalty vs Field Level</strong>
-        This third view will combine race penalty and field-level indicators.
+        <strong>Key Findings</strong>
+        This final page will summarize the effect of the current penalty rules after the three analytical views are validated.
       </div>
     </div>
   </section>
@@ -479,7 +558,7 @@
 
 function showPage(page) {
 
-  const pages = ['field', 'penalty', 'cross'];
+  const pages = ['field', 'penalty', 'applied', 'cross'];
 
   pages.forEach(function(name) {
 
@@ -492,7 +571,9 @@ function showPage(page) {
           ? 'navField'
           : name === 'penalty'
             ? 'navPenalty'
-            : 'navCross'
+            : name === 'applied'
+              ? 'navApplied'
+              : 'navCross'
       );
 
     if (section) {
@@ -537,6 +618,22 @@ function showPage(page) {
       ) {
         PEN_THRESHOLD_CHART.resize();
         PEN_THRESHOLD_CHART.update('none');
+      }
+    }, 80);
+  }
+
+  if (page === 'applied') {
+    setTimeout(function() {
+      if (typeof Plotly !== 'undefined') {
+        const el = document.getElementById('appliedBoxPlot');
+        if (el) Plotly.Plots.resize(el);
+      }
+      if (
+        typeof APP_THRESHOLD_CHART !== 'undefined' &&
+        APP_THRESHOLD_CHART
+      ) {
+        APP_THRESHOLD_CHART.resize();
+        APP_THRESHOLD_CHART.update('none');
       }
     }, 80);
   }
@@ -2065,6 +2162,477 @@ function initPenaltyPage() {
 }
 
 initPenaltyPage();
+
+
+/* ============================================================
+   APPLIED PENALTIES
+   ============================================================ */
+
+let APP_GROUP = 'TECH';
+let APP_THRESHOLD_CHART = null;
+
+function buildAppliedCircuitFilters() {
+
+  const available =
+    [...new Set(PENALTY_DATA.map(r => r.circuit))]
+      .filter(Boolean)
+      .sort((a,b) =>
+        PEN_CIRCUIT_ORDER.indexOf(a) - PEN_CIRCUIT_ORDER.indexOf(b)
+      );
+
+  const box = document.getElementById('appCircuitFilters');
+  if (!box) return;
+
+  box.innerHTML = '';
+
+  available.forEach(circuit => {
+
+    const label = document.createElement('label');
+    label.className = 'check-item';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.value = circuit;
+    input.checked = true;
+    input.className = 'app-circuit-check';
+    input.style.accentColor = PEN_COLORS[circuit] || '#374151';
+
+    const txt = document.createElement('span');
+    txt.textContent = circuit;
+    txt.style.color = PEN_COLORS[circuit] || '#374151';
+    txt.style.fontWeight = '700';
+
+    label.appendChild(input);
+    label.appendChild(txt);
+    box.appendChild(label);
+  });
+}
+
+function buildAppliedDisciplineFilters() {
+
+  const available =
+    [...new Set(
+      PENALTY_DATA
+        .filter(r => r.group === APP_GROUP)
+        .map(r => r.discipline)
+    )]
+      .filter(Boolean)
+      .sort();
+
+  const box = document.getElementById('appDisciplineFilters');
+  if (!box) return;
+
+  box.innerHTML = '';
+
+  available.forEach(discipline => {
+
+    const label = document.createElement('label');
+    label.className = 'check-item';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.value = discipline;
+    input.checked = true;
+    input.className = 'app-discipline-check';
+    input.style.accentColor =
+      PEN_DISC_COLORS[discipline] || '#374151';
+
+    const txt = document.createElement('span');
+    txt.textContent = discipline;
+    txt.style.color =
+      PEN_DISC_COLORS[discipline] || '#374151';
+    txt.style.fontWeight = '700';
+
+    label.appendChild(input);
+    label.appendChild(txt);
+    box.appendChild(label);
+  });
+}
+
+function getAppliedRows() {
+
+  const circuits = penaltySelected('.app-circuit-check');
+  const disciplines = penaltySelected('.app-discipline-check');
+  const genders = penaltySelected('.app-gender-check');
+
+  return PENALTY_DATA.filter(r =>
+    r.group === APP_GROUP &&
+    circuits.has(r.circuit) &&
+    disciplines.has(r.discipline) &&
+    genders.has(r.gender) &&
+    Number.isFinite(r.appliedPenalty)
+  );
+}
+
+function renderAppliedBoxPlot(rows) {
+
+  const circuits =
+    PEN_CIRCUIT_ORDER.filter(c =>
+      rows.some(r => r.circuit === c)
+    );
+
+  const traces = [];
+
+  circuits.forEach(circuit => {
+
+    const arr =
+      rows.filter(r => r.circuit === circuit);
+
+    const vals =
+      arr.map(r => r.appliedPenalty);
+
+    const avg =
+      vals.length
+        ? vals.reduce((a,b) => a+b, 0) / vals.length
+        : null;
+
+    traces.push({
+      type: 'box',
+      name: circuit,
+      y: vals,
+      text: arr.map(r =>
+        `${r.place} · ${r.discipline} · ${r.gender} · ${r.raceDate}`
+      ),
+      boxpoints: 'all',
+      jitter: 0.35,
+      pointpos: 0,
+      marker: {
+        color: PEN_COLORS[circuit] || '#374151',
+        size: 5,
+        opacity: 0.65
+      },
+      line: {
+        color: PEN_COLORS[circuit] || '#374151'
+      },
+      fillcolor: 'rgba(255,255,255,0)',
+      hovertemplate:
+        '<b>%{text}</b><br>' +
+        'Applied penalty: %{y:.2f}<extra>' + circuit + '</extra>',
+      showlegend: false
+    });
+
+    if (Number.isFinite(avg)) {
+      traces.push({
+        type: 'scatter',
+        mode: 'markers',
+        x: [circuit],
+        y: [avg],
+        name: 'Average',
+        marker: {
+          color: '#facc15',
+          size: 12,
+          line: {
+            color: '#111827',
+            width: 1
+          },
+          symbol: 'circle'
+        },
+        hovertemplate:
+          '<b>' + circuit + '</b><br>' +
+          'Average applied penalty: %{y:.2f}<extra>Average</extra>',
+        showlegend:
+          circuit === circuits[0]
+      });
+    }
+  });
+
+  Plotly.react(
+    'appliedBoxPlot',
+    traces,
+    {
+      margin: {l:60,r:20,t:20,b:55},
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      yaxis: {
+        title: 'Applied Penalty',
+        rangemode: 'tozero',
+        gridcolor: '#e5e7eb'
+      },
+      xaxis: {
+        title: 'Circuit'
+      },
+      legend: {
+        orientation: 'h',
+        x: 0.5,
+        xanchor: 'center',
+        y: 1.08
+      },
+      hovermode: 'closest'
+    },
+    {
+      responsive: true,
+      displaylogo: false
+    }
+  );
+}
+
+function renderAppliedThresholdChart(rows) {
+
+  const circuits =
+    PEN_CIRCUIT_ORDER.filter(c =>
+      rows.some(r => r.circuit === c)
+    );
+
+  const selectedThresholds =
+    [...document.querySelectorAll('.app-threshold-check:checked')]
+      .map(el => Number(el.value))
+      .filter(Number.isFinite)
+      .sort((a,b) => a-b);
+
+  const datasets =
+    circuits.map(circuit => {
+
+      const vals =
+        rows
+          .filter(r => r.circuit === circuit)
+          .map(r => r.appliedPenalty)
+          .filter(Number.isFinite);
+
+      return {
+        label: circuit,
+        data:
+          selectedThresholds.map(t => ({
+            x: '≤' + t,
+            y: vals.length
+              ? 100 * vals.filter(v => v <= t).length / vals.length
+              : 0,
+            racesBelow: vals.filter(v => v <= t).length,
+            totalRaces: vals.length
+          })),
+        backgroundColor:
+          PEN_COLORS[circuit] || '#374151',
+        borderColor:
+          PEN_COLORS[circuit] || '#374151',
+        borderWidth: 1
+      };
+    });
+
+  const canvas =
+    document.getElementById('appliedThresholdChart');
+
+  if (!canvas) return;
+
+  if (APP_THRESHOLD_CHART) {
+    APP_THRESHOLD_CHART.destroy();
+  }
+
+  let yMax = 100;
+
+  if (selectedThresholds.length === 1) {
+
+    let observedMax = 0;
+
+    datasets.forEach(ds => {
+      ds.data.forEach(p => {
+        if (Number.isFinite(p.y)) {
+          observedMax = Math.max(observedMax, p.y);
+        }
+      });
+    });
+
+    if (observedMax <= 10) {
+      yMax = 12;
+    } else if (observedMax <= 20) {
+      yMax = Math.ceil((observedMax + 2) / 5) * 5;
+    } else if (observedMax <= 40) {
+      yMax = Math.ceil((observedMax + 4) / 10) * 10;
+    } else if (observedMax <= 70) {
+      yMax = Math.ceil((observedMax + 5) / 10) * 10;
+    } else {
+      yMax = 100;
+    }
+  }
+
+  APP_THRESHOLD_CHART =
+    new Chart(
+      canvas.getContext('2d'),
+      {
+        type: 'bar',
+
+        data: {
+          labels:
+            selectedThresholds.map(t => '≤' + t),
+
+          datasets:
+            datasets.map(ds => ({
+              label: ds.label,
+              data: ds.data.map(p => p.y),
+              backgroundColor: ds.backgroundColor,
+              borderColor: ds.borderColor,
+              borderWidth: ds.borderWidth,
+              _rawPoints: ds.data
+            }))
+        },
+
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(ctx) {
+
+                  const rawPoint =
+                    ctx.dataset._rawPoints
+                      ? ctx.dataset._rawPoints[ctx.dataIndex]
+                      : null;
+
+                  const pct =
+                    Number(ctx.parsed.y || 0);
+
+                  let txt =
+                    ctx.dataset.label +
+                    ': ' +
+                    pct.toFixed(1) +
+                    '%';
+
+                  if (rawPoint) {
+                    txt +=
+                      ' (' +
+                      rawPoint.racesBelow +
+                      '/' +
+                      rawPoint.totalRaces +
+                      ' races)';
+                  }
+
+                  return txt;
+                }
+              }
+            }
+          },
+
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Applied Penalty Threshold'
+              }
+            },
+
+            y: {
+              min: 0,
+              max: yMax,
+
+              title: {
+                display: true,
+                text: 'Races at or below threshold (%)'
+              },
+
+              ticks: {
+                callback: v => v + '%'
+              }
+            }
+          }
+        }
+      }
+    );
+}
+
+function renderAppliedSummary(rows) {
+
+  const parts = [];
+
+  PEN_CIRCUIT_ORDER.forEach(circuit => {
+
+    const vals =
+      rows
+        .filter(r => r.circuit === circuit)
+        .map(r => r.appliedPenalty);
+
+    if (!vals.length) return;
+
+    parts.push(
+      `${circuit}: ${vals.length} races · median ${median(vals).toFixed(2)}`
+    );
+  });
+
+  const el =
+    document.getElementById('appliedSummaryNote');
+
+  if (el) {
+    el.textContent = parts.join(' · ');
+  }
+}
+
+function renderAppliedPage() {
+
+  const rows =
+    getAppliedRows();
+
+  renderAppliedBoxPlot(rows);
+  renderAppliedThresholdChart(rows);
+  renderAppliedSummary(rows);
+}
+
+function initAppliedPage() {
+
+  buildAppliedCircuitFilters();
+  buildAppliedDisciplineFilters();
+
+  const groupButtons =
+    document.getElementById('appGroupButtons');
+
+  if (groupButtons) {
+    groupButtons.addEventListener('click', event => {
+
+      const btn =
+        event.target.closest('button');
+
+      if (!btn) return;
+
+      APP_GROUP =
+        btn.dataset.group;
+
+      document
+        .querySelectorAll('#appGroupButtons button')
+        .forEach(b => b.classList.remove('active'));
+
+      btn.classList.add('active');
+
+      buildAppliedDisciplineFilters();
+      renderAppliedPage();
+    });
+  }
+
+  const disc =
+    document.getElementById('appDisciplineFilters');
+
+  if (disc) {
+    disc.addEventListener('change', renderAppliedPage);
+  }
+
+  const gender =
+    document.getElementById('appGenderFilters');
+
+  if (gender) {
+    gender.addEventListener('change', renderAppliedPage);
+  }
+
+  const circuits =
+    document.getElementById('appCircuitFilters');
+
+  if (circuits) {
+    circuits.addEventListener('change', renderAppliedPage);
+  }
+
+  const thresholds =
+    document.getElementById('appThresholdFilters');
+
+  if (thresholds) {
+    thresholds.addEventListener('change', renderAppliedPage);
+  }
+
+  renderAppliedPage();
+}
+
+initAppliedPage();
 
 </script>
 
