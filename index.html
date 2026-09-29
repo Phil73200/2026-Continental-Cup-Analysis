@@ -958,6 +958,36 @@
   }
 </style>
 
+
+<style>
+  .tooltip-target {
+    cursor: help;
+  }
+
+  .static-pill {
+    display:inline-flex;
+    align-items:center;
+    min-height:34px;
+    padding:6px 11px;
+    border:1px solid #d1d5db;
+    border-radius:8px;
+    background:#fff;
+    color:#111827;
+    font-size:12px;
+    font-weight:700;
+  }
+
+  /* Coefficient Simulator uses the same nav styling as all other tabs. */
+  #navSimulator {
+    border-color:#d1d5db !important;
+  }
+
+  #navSimulator:not(.active) {
+    background:#fff !important;
+    color:#111827 !important;
+  }
+</style>
+
 </head>
 
 <body>
@@ -967,7 +997,7 @@
     <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
-    <button id="navSimulator" class="sim-nav-button" onclick="showPage('simulator')">Coefficient Simulator</button>
+    <button id="navSimulator" onclick="showPage('simulator')">Coefficient Simulator</button>
     <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
@@ -975,8 +1005,9 @@
 
   <h1>Continental Cups – Competitive Participation 2026</h1>
 
-  <div class="subtitle">
-    Constant race sample within each selected Top cohort
+  <div class="subtitle tooltip-target"
+       title="🇫🇷 Niveau des points FIS des concurrents selon leur rang sur la liste de départ. Les comparaisons utilisent des groupes de courses comparables.">
+    FIS point level by start list rank
   </div>
     <div class="page-qr" aria-label="Interactive dashboard QR code">
       <div class="page-qr-title">📱 Interactive Dashboard</div>
@@ -1025,12 +1056,11 @@
 
 
     <div class="control">
-      <div class="control-label">FIS points scale</div>
-      <div class="button-row" id="scaleButtons">
-        <button data-scale="LINEAR">Linear 10–80</button>
-        <button data-scale="LOG">Log 10–80</button>
-        <button data-scale="PERF" class="active">Performance 10–25</button>
+      <div class="control-label tooltip-target"
+           title="🇫🇷 Niveau des points FIS affichés pour les concurrents classés dans la plage 10 à 80 points.">
+        FIS Point Level
       </div>
+      <div class="static-pill">10–80 FIS Points</div>
     </div>
 
     <div class="control">
@@ -1052,19 +1082,16 @@
 
     <div class="chart-title">Competitive Participation</div>
 
-    <div class="chart-subtitle">
-      X = rank by FIS points · Y = average FIS points
+    <div class="chart-subtitle tooltip-target"
+         title="🇫🇷 Axe X : rang sur la liste de départ. Axe Y : moyenne des points FIS au départ de la course.">
+      FIS Points by Start List Rank
     </div>
 
     <div class="chart-wrap">
       <canvas id="fieldChart"></canvas>
     </div>
 
-    <div class="note">
-      “Performance 10–25” is a deliberately non-linear display scale: it gives most vertical space to the 10–25 FIS-point range while still keeping values up to 80 visible. Tooltips always show the true FIS points.
-    </div>
-
-    <div class="note">
+<div class="note">
       Dashed circuit curves indicate a small sample: fewer than 6 races in the current selection.
     </div>
 
@@ -1329,7 +1356,7 @@
     </div>
 
     <div class="card">
-      <div class="chart-title">Absolute Participation Coefficient</div>
+      <div class="chart-title">Competition Level Coefficient</div>
 
       <div class="chart-subtitle" id="absFormulaText">
         🇫🇷 Le coefficient compare la moyenne des points FIS du Top 10 de chaque circuit à la meilleure moyenne Top 10 observée pour la même discipline et le même sexe.<br>
@@ -1462,14 +1489,18 @@
 
         <div style="padding:16px;border-left:4px solid #7c3aed;background:#f8fafc;border-radius:8px;">
           <div style="font-weight:700;margin-bottom:6px;">
-            2. Appliquer un additif spécifique
+            2. Appliquer un coefficient de niveau spécifique
           </div>
-          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp; Déterminé <strong>par circuit, par discipline et par sexe</strong>,
-            à partir des différences observées de niveau et de densité de participation.
+          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp;
+            Déterminé <strong>par circuit, par discipline et par sexe</strong>,
+            à partir de la <strong>moyenne des points FIS des X premiers du résultat</strong>
+            (<em>X à déterminer</em>).
           </div>
-          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp; <strong>Apply a specific additive</strong>,
+          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp;
+            <strong>Apply a specific competition level coefficient</strong>,
             defined <strong>for each circuit, discipline and gender</strong>,
-            based on the observed differences in participation level and depth.
+            from the <strong>average FIS points of the top X finishers</strong>
+            (<em>X to be determined</em>).
           </div>
         </div>
 
@@ -1582,7 +1613,7 @@ let RAW = [];
 let CHART = null;
 
 let COHORT = 30;
-let SCALE_MODE = 'PERF';
+let SCALE_MODE = 'LOG';
 
 const CIRCUIT_ORDER = [
   'EC',
@@ -1956,39 +1987,6 @@ function bindEvents() {
         render();
       }
     );
-
-  const scaleButtons =
-    document.getElementById('scaleButtons');
-
-  if (scaleButtons) {
-
-    scaleButtons.addEventListener(
-      'click',
-      event => {
-
-        const btn =
-          event.target.closest('button');
-
-        if (!btn) return;
-
-        SCALE_MODE =
-          btn.dataset.scale;
-
-        document
-          .querySelectorAll(
-            '#scaleButtons button'
-          )
-          .forEach(
-            b =>
-              b.classList.remove('active')
-          );
-
-        btn.classList.add('active');
-
-        render();
-      }
-    );
-  }
 
 }
 
@@ -2387,7 +2385,7 @@ function buildYScale(datasets) {
 
       title: {
         display: true,
-        text: 'Average FIS points – logarithmic scale'
+        text: 'Average FIS points'
       },
 
       ticks: {
