@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #20242b;
+      --muted: #6b7280;
+      --border: #dfe3e8;
+      --active: #111827;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 16px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin: 4px 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .card,
+    .controls {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .controls {
+      padding: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: end;
+    }
+
+    .control {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    select {
+      min-width: 125px;
+      padding: 7px 9px;
+      border-radius: 7px;
+      border: 1px solid #cfd4dc;
+      background: white;
+    }
+
+    .button-row,
+    .checks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    button {
+      padding: 7px 10px;
+      border: 1px solid #cfd4dc;
+      border-radius: 7px;
+      background: white;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    button.active {
+      background: var(--active);
+      color: white;
+      border-color: var(--active);
+    }
+
+    .check-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .card {
+      padding: 12px;
+    }
+
+    .chart-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .chart-subtitle,
+    .note {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .chart-subtitle {
+      margin-bottom: 8px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 520px;
+    }
+
+    .note {
+      margin-top: 8px;
+    }
+
+    .loading {
+      padding: 30px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .error {
+      padding: 14px;
+      color: #991b1b;
+      background: #fff1f2;
+      border: 1px solid #ef4444;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Continental Cups – Field Level 2026</h1>
+
+  <div class="subtitle">
+    Constant race sample within each selected Top cohort
+  </div>
+
+  <div class="controls">
+
+    <div class="control">
+      <div class="control-label">Group</div>
+
+      <select id="groupFilter">
+        <option value="TECH">TECH – SL + GS</option>
+        <option value="SPEED">SPEED – SG + DH</option>
+      </select>
+    </div>
+
+
+    <div class="control">
+      <div class="control-label">Disciplines</div>
+      <div id="disciplineFilters" class="checks"></div>
+    </div>
+
+
+    <div class="control">
+      <div class="control-label">Gender</div>
+      <div id="genderFilters" class="checks">
+        <label class="check-item">
+          <input type="checkbox" class="gender-check" value="M" checked style="accent-color:#1e3a8a">
+          <span style="color:#1e3a8a;font-weight:700">Men</span>
+        </label>
+        <label class="check-item">
+          <input type="checkbox" class="gender-check" value="W" checked style="accent-color:#f8b4d9">
+          <span style="color:#f8b4d9;font-weight:700">Women</span>
+        </label>
+      </div>
+    </div>
+
+
+    <div class="control">
+      <div class="control-label">Circuits</div>
+      <div id="circuitFilters" class="checks"></div>
+    </div>
+
+
+    <div class="control">
+      <div class="control-label">FIS points scale</div>
+      <div class="button-row" id="scaleButtons">
+        <button data-scale="LINEAR">Linear 10–80</button>
+        <button data-scale="LOG">Log 10–80</button>
+        <button data-scale="PERF" class="active">Performance 10–25</button>
+      </div>
+    </div>
+
+    <div class="control">
+      <div class="control-label">Comparable cohort</div>
+
+      <div class="button-row" id="rankButtons">
+        <button data-rank="10">Top 10</button>
+        <button data-rank="20">Top 20</button>
+        <button data-rank="30" class="active">Top 30</button>
+        <button data-rank="40">Top 40</button>
+        <button data-rank="60">Top 60</button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="chart-title">Field Level</div>
+
+    <div class="chart-subtitle">
+      X = rank by FIS points · Y = average FIS points
+    </div>
+
+    <div class="chart-wrap">
+      <canvas id="fieldChart"></canvas>
+    </div>
+
+    <div class="note">
+      “Performance 10–25” is a deliberately non-linear display scale: it gives most vertical space to the 10–25 FIS-point range while still keeping values up to 80 visible. Tooltips always show the true FIS points.
+    </div>
+
+    <div class="note">
+      Dashed circuit curves indicate a small sample: fewer than 6 races in the current selection.
+    </div>
+
+    <div class="note" id="sampleNote"></div>
+
+  </div>
+
+
+  <div id="loading" class="loading">
+    Loading Field Level data…
+  </div>
+
+
+<script>
+
+let RAW = [];
+let CHART = null;
+
+let COHORT = 30;
+let SCALE_MODE = 'PERF';
+
+const CIRCUIT_ORDER = [
+  'EC',
+  'NAC',
+  'FEC',
+  'SAC',
+  'ANC'
+];
+
+const COLORS = {
+  EC:  '#2563eb',
+  NAC: '#dc2626',
+  FEC: '#16a34a',
+  SAC: '#d97706',
+  ANC: '#7c3aed'
+};
+
+
+const DISCIPLINE_COLORS = {
+  GS: '#f3a6c8',
+  SL: '#6ea8ff',
+  SG: '#7ad39a',
+  DH: '#f4d35e'
+};
+
+const GENDER_COLORS = {
+  M: '#1e3a8a',
+  W: '#f8b4d9'
+};
+
+
+function init(data) {
+
+  RAW = data || [];
+
+  document
+    .getElementById('loading')
+    .style.display = 'none';
+
+  buildCircuitFilters();
+  buildDisciplineFilters();
+  bindEvents();
+
+  // Vue d'entrée : Top 30
+  COHORT = 30;
+
+  document
+    .querySelectorAll('#rankButtons button')
+    .forEach(
+      b => b.classList.remove('active')
+    );
+
+  const defaultButton =
+    document.querySelector(
+      '#rankButtons button[data-rank="30"]'
+    );
+
+  if (defaultButton) {
+    defaultButton.classList.add('active');
+  }
+
+  render();
+}
+
+
+function waitForChartAndRender(attempt) {
+
+  if (typeof Chart !== 'undefined') {
+
+    // Laisse encore une frame au navigateur pour dimensionner le canvas.
+    requestAnimationFrame(function() {
+      render();
+    });
+
+    return;
+  }
+
+  if (attempt >= 50) {
+
+    showError(
+      new Error(
+        'Chart.js ne s’est pas chargé. Recharge la page du Dashboard.'
+      )
+    );
+
+    return;
+  }
+
+  setTimeout(function() {
+    waitForChartAndRender(attempt + 1);
+  }, 100);
+}
+
+
+function waitForVisibleCanvasAndRender(attempt) {
+
+  const canvas =
+    document.getElementById('fieldChart');
+
+  if (!canvas) {
+    return;
+  }
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+  const chartReady =
+    typeof Chart !== 'undefined';
+
+  const canvasReady =
+    rect.width > 300 &&
+    rect.height > 200;
+
+  if (chartReady && canvasReady) {
+
+    /*
+     * On force une création neuve du graphique
+     * une fois la taille réellement disponible.
+     */
+    if (CHART) {
+      CHART.destroy();
+      CHART = null;
+    }
+
+    render();
+
+    return;
+  }
+
+  if (attempt >= 80) {
+
+    /*
+     * Sécurité après ~8 secondes :
+     * on tente quand même un rendu.
+     */
+    render();
+
+    return;
+  }
+
+  setTimeout(function() {
+    waitForVisibleCanvasAndRender(attempt + 1);
+  }, 100);
+}
+
+
+function showError(err) {
+
+  const el =
+    document.getElementById('loading');
+
+  el.className = 'error';
+
+  el.innerText =
+    err && err.message
+      ? err.message
+      : String(err);
+}
+
+
+function buildCircuitFilters() {
+
+  const available =
+    [...new Set(
+      RAW.map(r => r.circuit)
+    )]
+      .filter(Boolean)
+      .sort(
+        (a, b) =>
+          CIRCUIT_ORDER.indexOf(a) -
+          CIRCUIT_ORDER.indexOf(b)
+      );
+
+  const box =
+    document.getElementById(
+      'circuitFilters'
+    );
+
+  box.innerHTML = '';
+
+  available.forEach(circuit => {
+
+    const label =
+      document.createElement('label');
+
+    label.className =
+      'check-item';
+
+    const input =
+      document.createElement('input');
+
+    input.type = 'checkbox';
+    input.value = circuit;
+    input.checked = true;
+    input.className = 'circuit-check';
+    input.style.accentColor =
+      COLORS[circuit] || '#374151';
+
+    label.appendChild(input);
+
+    const txt = document.createElement('span');
+    txt.textContent = circuit;
+    txt.style.color =
+      COLORS[circuit] || '#374151';
+    txt.style.fontWeight = '700';
+
+    label.appendChild(txt);
+
+    box.appendChild(label);
+  });
+}
+
+
+function buildDisciplineFilters() {
+
+  const group =
+    document
+      .getElementById('groupFilter')
+      .value;
+
+  const available =
+    [...new Set(
+      RAW
+        .filter(r => r.group === group)
+        .map(r => r.discipline)
+    )]
+      .filter(Boolean)
+      .sort();
+
+  const box =
+    document.getElementById(
+      'disciplineFilters'
+    );
+
+  box.innerHTML = '';
+
+  available.forEach(discipline => {
+
+    const label =
+      document.createElement('label');
+
+    label.className =
+      'check-item';
+
+    const input =
+      document.createElement('input');
+
+    input.type = 'checkbox';
+    input.value = discipline;
+    input.checked = true;
+    input.className = 'discipline-check';
+    input.style.accentColor =
+      DISCIPLINE_COLORS[discipline] || '#374151';
+
+    label.appendChild(input);
+
+    const txt = document.createElement('span');
+    txt.textContent = discipline;
+    txt.style.color =
+      DISCIPLINE_COLORS[discipline] || '#374151';
+    txt.style.fontWeight = '700';
+
+    label.appendChild(txt);
+
+    box.appendChild(label);
+  });
+}
+
+
+function bindEvents() {
+
+  document
+    .getElementById('groupFilter')
+    .addEventListener(
+      'change',
+      () => {
+        buildDisciplineFilters();
+        render();
+      }
+    );
+
+  document
+    .getElementById('genderFilters')
+    .addEventListener(
+      'change',
+      render
+    );
+
+  document
+    .getElementById('disciplineFilters')
+    .addEventListener(
+      'change',
+      render
+    );
+
+  document
+    .getElementById('circuitFilters')
+    .addEventListener(
+      'change',
+      render
+    );
+
+  document
+    .getElementById('rankButtons')
+    .addEventListener(
+      'click',
+      event => {
+
+        const btn =
+          event.target.closest(
+            'button'
+          );
+
+        if (!btn) return;
+
+        COHORT =
+          Number(
+            btn.dataset.rank
+          );
+
+        document
+          .querySelectorAll(
+            '#rankButtons button'
+          )
+          .forEach(
+            b =>
+              b.classList.remove(
+                'active'
+              )
+          );
+
+        btn.classList.add(
+          'active'
+        );
+
+        render();
+      }
+    );
+
+  const scaleButtons =
+    document.getElementById('scaleButtons');
+
+  if (scaleButtons) {
+
+    scaleButtons.addEventListener(
+      'click',
+      event => {
+
+        const btn =
+          event.target.closest('button');
+
+        if (!btn) return;
+
+        SCALE_MODE =
+          btn.dataset.scale;
+
+        document
+          .querySelectorAll(
+            '#scaleButtons button'
+          )
+          .forEach(
+            b =>
+              b.classList.remove('active')
+          );
+
+        btn.classList.add('active');
+
+        render();
+      }
+    );
+  }
+
+}
+
+
+function selectedValues(selector) {
+
+  return new Set(
+    [...document.querySelectorAll(selector)]
+      .filter(el => el.checked)
+      .map(el => el.value)
+  );
+}
+
+
+function filteredRows() {
+
+  const group =
+    document
+      .getElementById('groupFilter')
+      .value;
+
+  const genders =
+    selectedValues(
+      '.gender-check'
+    );
+
+  const circuits =
+    selectedValues(
+      '.circuit-check'
+    );
+
+  const disciplines =
+    selectedValues(
+      '.discipline-check'
+    );
+
+
+  return RAW.filter(r => {
+
+    if (
+      r.cohortMaxRank !== COHORT
+    ) {
+      return false;
+    }
+
+    if (
+      r.group !== group
+    ) {
+      return false;
+    }
+
+    if (
+      !genders.has(
+        r.gender
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      !circuits.has(
+        r.circuit
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      !disciplines.has(
+        r.discipline
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+
+/*
+ * Si plusieurs disciplines ou les deux sexes sont cochés,
+ * on refait une moyenne pondérée par SampleRaces.
+ */
+function aggregateRows(rows) {
+
+  const map =
+    new Map();
+
+  rows.forEach(r => {
+
+    const key =
+      r.circuit +
+      '|' +
+      r.rank;
+
+    if (!map.has(key)) {
+
+      map.set(
+        key,
+        {
+          circuit: r.circuit,
+          rank: r.rank,
+          weighted: 0,
+          weight: 0,
+          sampleRaces: 0
+        }
+      );
+    }
+
+    const x =
+      map.get(key);
+
+    const n =
+      Number(r.sampleRaces) || 0;
+
+    const avg =
+      Number(r.avgFisPoints);
+
+    if (
+      n > 0 &&
+      Number.isFinite(avg)
+    ) {
+
+      x.weighted +=
+        avg * n;
+
+      x.weight += n;
+
+      x.sampleRaces += n;
+    }
+  });
+
+
+  const out = [];
+
+  map.forEach(x => {
+
+    if (!x.weight) return;
+
+    out.push({
+      circuit: x.circuit,
+      rank: x.rank,
+      avgFisPoints:
+        x.weighted / x.weight,
+      sampleRaces:
+        x.sampleRaces
+    });
+  });
+
+  return out;
+}
+
+
+function render() {
+
+  const filtered =
+    filteredRows();
+
+  const rows =
+    aggregateRows(
+      filtered
+    );
+
+  renderChart(rows);
+  renderSampleNote(rows);
+}
+
+
+
+/* ============================================================
+   ÉCHELLES VERTICALES
+   ============================================================ */
+
+/*
+ * Vue "Performance" :
+ * échelle visuelle non linéaire volontairement concentrée sur 10–25 pts.
+ *
+ * Répartition verticale :
+ * 10 -> 25 pts : 70 % de la hauteur
+ * 25 -> 40 pts : 20 %
+ * 40 -> 80 pts : 10 %
+ *
+ * Les valeurs affichées dans les infobulles restent les vrais points FIS.
+ */
+function performanceTransform(v) {
+
+  v = Number(v);
+
+  if (!Number.isFinite(v)) return null;
+
+  if (v <= 10) return 0;
+
+  if (v <= 25) {
+    return (v - 10) / 15 * 70;
+  }
+
+  if (v <= 40) {
+    return 70 + (v - 25) / 15 * 20;
+  }
+
+  if (v <= 80) {
+    return 90 + (v - 40) / 40 * 10;
+  }
+
+  return 100;
+}
+
+
+function performanceInverse(y) {
+
+  y = Number(y);
+
+  if (y <= 0) return 10;
+
+  if (y <= 70) {
+    return 10 + y / 70 * 15;
+  }
+
+  if (y <= 90) {
+    return 25 + (y - 70) / 20 * 15;
+  }
+
+  return 40 + (y - 90) / 10 * 40;
+}
+
+
+function displayY(v) {
+
+  if (SCALE_MODE === 'PERF') {
+    return performanceTransform(v);
+  }
+
+  return v;
+}
+
+
+function buildYScale() {
+
+  if (SCALE_MODE === 'LINEAR') {
+
+    return {
+      type: 'linear',
+      min: 10,
+      max: 80,
+
+      title: {
+        display: true,
+        text: 'Average FIS points – linear scale'
+      },
+
+      ticks: {
+        stepSize: 5
+      }
+    };
+  }
+
+
+  if (SCALE_MODE === 'LOG') {
+
+    return {
+      type: 'logarithmic',
+      min: 10,
+      max: 80,
+
+      title: {
+        display: true,
+        text: 'Average FIS points – logarithmic scale'
+      },
+
+      ticks: {
+        callback: function(value) {
+
+          const keep = [
+            10, 12, 15, 18, 20, 22, 25, 30, 40, 50, 60, 80
+          ];
+
+          return keep.includes(Number(value))
+            ? value
+            : '';
+        }
+      }
+    };
+  }
+
+
+  /*
+   * Performance view.
+   * L'axe graphique est 0–100 mais les graduations affichent
+   * les vraies valeurs FIS correspondantes.
+   */
+  return {
+    type: 'linear',
+    min: 0,
+    max: 100,
+
+    title: {
+      display: true,
+      text: 'Average FIS points – performance view (focus 10–25)'
+    },
+
+    afterBuildTicks: function(axis) {
+
+      const fisTicks = [
+        10, 12, 15, 18, 20, 22, 25, 30, 40, 60, 80
+      ];
+
+      axis.ticks =
+        fisTicks.map(function(v) {
+          return {
+            value: performanceTransform(v)
+          };
+        });
+    },
+
+    ticks: {
+      callback: function(value) {
+
+        const fis =
+          performanceInverse(value);
+
+        const rounded =
+          Math.round(fis);
+
+        const keep = [
+          10, 12, 15, 18, 20, 22, 25, 30, 40, 60, 80
+        ];
+
+        return keep.includes(rounded)
+          ? rounded
+          : '';
+      }
+    }
+  };
+}
+
+
+function renderChart(rows) {
+
+  const circuits =
+    [...new Set(
+      rows.map(r => r.circuit)
+    )]
+      .sort(
+        (a, b) =>
+          CIRCUIT_ORDER.indexOf(a) -
+          CIRCUIT_ORDER.indexOf(b)
+      );
+
+
+  const datasets =
+    circuits.map(circuit => {
+
+      const data =
+        rows
+          .filter(
+            r =>
+              r.circuit === circuit
+          )
+          .sort(
+            (a, b) =>
+              a.rank - b.rank
+          )
+          .map(
+            r => ({
+              x: r.rank,
+              y: displayY(r.avgFisPoints),
+              originalY: r.avgFisPoints,
+              sampleRaces:
+                r.sampleRaces
+            })
+          );
+
+
+      const sample =
+        data.length
+          ? Number(data[0].sampleRaces) || 0
+          : 0;
+
+      const smallSample =
+        sample > 0 &&
+        sample < 6;
+
+      return {
+
+        label:
+          smallSample
+            ? circuit + ' (' + sample + ' races)'
+            : circuit,
+
+        circuit: circuit,
+
+        data: data,
+
+        borderColor:
+          COLORS[circuit] ||
+          '#374151',
+
+        backgroundColor:
+          COLORS[circuit] ||
+          '#374151',
+
+        borderWidth: 3,
+
+        borderDash:
+          smallSample
+            ? [8, 6]
+            : [],
+
+        pointRadius: 0,
+
+        tension: 0.08,
+
+        spanGaps: false
+
+      };
+    });
+
+
+  const canvas =
+    document.getElementById(
+      'fieldChart'
+    );
+
+  const ctx =
+    canvas.getContext('2d');
+
+
+  if (CHART) {
+    CHART.destroy();
+  }
+
+
+  CHART =
+    new Chart(
+      ctx,
+      {
+
+        type: 'line',
+
+        data: {
+          datasets: datasets
+        },
+
+        options: {
+
+          responsive: true,
+          maintainAspectRatio: false,
+          parsing: false,
+          animation: false,
+
+          interaction: {
+            mode: 'nearest',
+            intersect: false
+          },
+
+          plugins: {
+
+            tooltip: {
+
+              callbacks: {
+
+                title: items =>
+                  items.length
+                    ? (
+                        'FIS Points Rank in Field: ' +
+                        items[0].parsed.x
+                      )
+                    : '',
+
+                label: ctx => {
+
+                  const raw =
+                    ctx.raw || {};
+
+                  return (
+                    ctx.dataset.circuit +
+                    ': ' +
+                    Number(raw.originalY).toFixed(2) +
+                    ' FIS pts' +
+                    ' · sample ' +
+                    raw.sampleRaces +
+                    ' races'
+                  );
+                }
+              }
+            }
+          },
+
+          scales: {
+
+            x: {
+
+              type: 'linear',
+              min: 1,
+              max: COHORT,
+
+              title: {
+                display: true,
+                text:
+                  'FIS Points Rank in Field'
+              },
+
+              afterBuildTicks: axis => {
+
+                const wanted =
+                  [
+                    1,
+                    5,
+                    10,
+                    20,
+                    30,
+                    40,
+                    50,
+                    60
+                  ]
+                    .filter(
+                      v => v <= COHORT
+                    );
+
+                axis.ticks =
+                  wanted.map(
+                    v => ({
+                      value: v
+                    })
+                  );
+              }
+            },
+
+
+            y: buildYScale()
+          }
+        }
+      }
+    );
+}
+
+
+function renderSampleNote(rows) {
+
+  const byCircuit =
+    new Map();
+
+  rows.forEach(r => {
+
+    if (
+      !byCircuit.has(
+        r.circuit
+      )
+    ) {
+      byCircuit.set(
+        r.circuit,
+        r.sampleRaces
+      );
+    }
+  });
+
+
+  const parts = [];
+
+  CIRCUIT_ORDER.forEach(circuit => {
+
+    if (
+      byCircuit.has(circuit)
+    ) {
+
+      parts.push(
+        circuit +
+        ': ' +
+        byCircuit.get(circuit) +
+        ' races'
+      );
+    }
+  });
+
+
+  document
+    .getElementById(
+      'sampleNote'
+    )
+    .textContent =
+      'Displayed sample – ' +
+      parts.join(' · ') +
+      '. All available circuits are displayed; small samples are shown rather than hidden.';
+}
+
+
+window.addEventListener('resize', function() {
+  if (CHART) {
+    CHART.resize();
+  }
+});
+
+
+
+google.script.run
+  .withSuccessHandler(init)
+  .withFailureHandler(showError)
+  .getFieldLevelDashboardData();
+
+</script>
+
+</body>
+</html>
