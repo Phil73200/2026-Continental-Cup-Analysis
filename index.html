@@ -158,9 +158,88 @@
     }
   </style>
 
+
+  <style>
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: -16px -16px 14px;
+      padding: 10px 16px;
+      background: rgba(245,246,248,.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .top-nav button {
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 8px 14px;
+    }
+
+    .top-nav button.active {
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+    }
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .placeholder-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .placeholder-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 760px) {
+      .top-nav {
+        margin: -8px -8px 10px;
+        padding: 8px;
+        gap: 6px;
+      }
+
+      .top-nav button {
+        flex: 1 1 auto;
+        font-size: 11px;
+        padding: 8px 10px;
+      }
+    }
+  </style>
+
 </head>
 
 <body>
+
+  <div class="top-nav">
+    <button id="navField" class="active" onclick="showPage('field')">Field Level</button>
+    <button id="navPenalty" onclick="showPage('penalty')">Race Penalties</button>
+    <button id="navCross" onclick="showPage('cross')">Penalty vs Field Level</button>
+  </div>
+
+  <section id="page-field" class="page-section active">
 
   <h1>Continental Cups – Field Level 2026</h1>
 
@@ -261,7 +340,93 @@
   </div>
 
 
+  </section>
+
+  <section id="page-penalty" class="page-section">
+    <h1>Continental Cups – Race Penalties 2026</h1>
+    <div class="subtitle">
+      Calculated penalty analysis by circuit, discipline and gender
+    </div>
+
+    <div class="placeholder-card">
+      <div>
+        <strong>Race Penalties</strong>
+        The penalty dataset is ready. The next step is to build this second interactive analysis here.
+      </div>
+    </div>
+  </section>
+
+  <section id="page-cross" class="page-section">
+    <h1>Continental Cups – Penalty vs Field Level 2026</h1>
+    <div class="subtitle">
+      Relationship between race penalty and field depth
+    </div>
+
+    <div class="placeholder-card">
+      <div>
+        <strong>Penalty vs Field Level</strong>
+        This third view will combine race penalty and field-level indicators.
+      </div>
+    </div>
+  </section>
+
+
 <script>
+
+function showPage(page) {
+
+  const pages = ['field', 'penalty', 'cross'];
+
+  pages.forEach(function(name) {
+
+    const section =
+      document.getElementById('page-' + name);
+
+    const button =
+      document.getElementById(
+        name === 'field'
+          ? 'navField'
+          : name === 'penalty'
+            ? 'navPenalty'
+            : 'navCross'
+      );
+
+    if (section) {
+      section.classList.toggle(
+        'active',
+        name === page
+      );
+    }
+
+    if (button) {
+      button.classList.toggle(
+        'active',
+        name === page
+      );
+    }
+  });
+
+  /*
+   * Quand on revient au Field Level, on force Chart.js
+   * à reprendre la largeur réellement disponible.
+   */
+  if (
+    page === 'field' &&
+    typeof CHART !== 'undefined' &&
+    CHART
+  ) {
+    setTimeout(function() {
+      CHART.resize();
+      CHART.update('none');
+    }, 50);
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
 
 let RAW = [];
 let CHART = null;
