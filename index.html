@@ -622,7 +622,14 @@
     border-width:2px !important;
   }
 
+  .sim-race-factor-grid {
+    grid-template-columns:repeat(3,minmax(180px,1fr));
+  }
+
   @media (max-width:760px) {
+    .sim-race-factor-grid {
+      grid-template-columns:1fr;
+    }
   }
 </style>
 
@@ -785,6 +792,86 @@
   }
 </style>
 
+
+<style>
+  .coef-table-wrap {
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    margin-top:12px;
+  }
+
+  .coef-table {
+    width:100%;
+    min-width:900px;
+    border-collapse:collapse;
+    font-size:12px;
+  }
+
+  .coef-table th,
+  .coef-table td {
+    border-bottom:1px solid #e5e7eb;
+    padding:8px 9px;
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  .coef-table th:first-child,
+  .coef-table td:first-child {
+    text-align:left;
+    position:sticky;
+    left:0;
+    background:#fff;
+    z-index:1;
+  }
+
+  .coef-table th {
+    background:#f8fafc;
+    font-weight:800;
+    color:#374151;
+  }
+
+  #coefDisciplineButtons .coef-disc,
+  #coefGenderButtons .coef-gender {
+    border-width:2px !important;
+    font-weight:800;
+  }
+
+  #coefDisciplineButtons .coef-sl { background:#eef6ff; border-color:#b8d5ff; color:#2f6fb3; }
+  #coefDisciplineButtons .coef-gs { background:#fff0f7; border-color:#f4bfd5; color:#b95b86; }
+  #coefDisciplineButtons .coef-sg { background:#eefbf2; border-color:#bce6c9; color:#2f7d4a; }
+  #coefDisciplineButtons .coef-dh { background:#fff9db; border-color:#f1df8a; color:#8a6d00; }
+
+  #coefGenderButtons .coef-men { background:#eef2ff; border-color:#c8d1f6; color:#1e3a8a; }
+  #coefGenderButtons .coef-women { background:#fff4fa; border-color:#f6c8df; color:#b85b8d; }
+
+  #coefDisciplineButtons button.active,
+  #coefGenderButtons button.active {
+    border:3px solid #111 !important;
+    box-shadow:0 0 0 2px #fff !important;
+    opacity:1 !important;
+    font-weight:900 !important;
+  }
+
+  #coefDisciplineButtons button:not(.active),
+  #coefGenderButtons button:not(.active) {
+    opacity:.66;
+  }
+
+  #coefDisciplineButtons .coef-sl.active { background:#6ea8ff !important; color:#fff !important; }
+  #coefDisciplineButtons .coef-gs.active { background:#f3a6c8 !important; color:#6b2146 !important; }
+  #coefDisciplineButtons .coef-sg.active { background:#7ad39a !important; color:#154d2d !important; }
+  #coefDisciplineButtons .coef-dh.active { background:#f4d35e !important; color:#5f4b00 !important; }
+
+  #coefGenderButtons .coef-men.active { background:#1e3a8a !important; color:#fff !important; }
+  #coefGenderButtons .coef-women.active { background:#f8b4d9 !important; color:#6f2951 !important; }
+
+  @media (max-width:760px) {
+    .coef-table { font-size:11px; min-width:760px; }
+    .coef-table th, .coef-table td { padding:7px; }
+  }
+</style>
+
 </head>
 
 <body>
@@ -794,7 +881,7 @@
     <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
-    <button id="navSimulator" class="sim-nav-button" onclick="showPage('simulator')">Adder Simulator</button>
+    <button id="navSimulator" class="sim-nav-button" onclick="showPage('simulator')">Coefficient Simulator</button>
     <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
@@ -1108,152 +1195,81 @@
 
   
   <section id="page-simulator" class="page-section">
-    <h1>Adder Simulator 2026</h1>
+    <h1>Coefficient Simulator 2026</h1>
     <div class="subtitle">
-      🇫🇷 Test d'un additif calculé à partir du coefficient Top 10 / Top 5, tout en conservant la pénalité minimale actuelle.<br>
-      🇬🇧 Test an additive derived from the Top 10 / Top 5 coefficient while keeping the current minimum penalty.
-    </div>
-    <div class="page-qr" aria-label="Interactive dashboard QR code">
-      <div class="page-qr-title">📱 Interactive Dashboard</div>
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHoElEQVR4nO3dQW4jORBFwfHA979yzwEGKBjgY2eWHLFvWS7JD1x8sL/+/PnzD0Dn3+k3AHwaWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWKyAsS+T/7x19dX9T6WmLrZ9/lJPr+rk0/h5Ped+vTvPY2dP3fKyXfDaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbJ9NLVaf3VtDvnFnebLu3blIfjb1nn/b34LTChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQu7iyfTZ15+iJezfO7ryt9sTU7/vs5F3d88a/hWdOK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitAbGxly8+dbCWnbtg9ec9Tm+OdG9w3cloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT9ee95ejOG3anbm+d2hz/Nk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsbGXrZtCfm3pW9za4U3fK7tzgft7fgtMKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChC7uLL9bfeG7lydTt1WO+XeQvfEG5/kCacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD29Xn3aN6zc8F54t5vNPXKz974Gb2R0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2X7ePalT6897pj6FNy50f9unf4/TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQ+7730p938+uJk7Xr5+1Kp/7tySvf+8a+cY/+zGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgd3WV7z85l4b1ndfL7Ti1l7+2Gp9auUzf7Tt0Jfe9JOq0AMVkBYrICxGQFiMkKEJMVICYrQExWgJisALGLK9udt6juXBU/m1qs7ryNeOenP7WUPWFlC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NHK9o072p3v+dnOZfDO/e7OxerOW3JPXvmZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEPue+sFv3NE+m9qG7tyVnnjjbzT1rZt6Vs+cVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2MW7bJ/tvOv03rvauYbceUvuTlP3wu68M/iZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2R794Gur053L0and8LOdW+cTO9/VlKm/BacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD2ffKPp273PDF1H+3O20yfTW1wd+6kn+385jy79wk6rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsaO7bHf+X/b3XvmenU/yxBvvhb23lJ36uVPfHKcVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSB2dJfts53L0Z2b1Ht2rl137lnvvfLzb7TzruITTitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQOxoZTu1lTxxb6F77+ee2LlI3vnd+G3vyl22wGvIChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIfb3x9tapNeTUYnXn3a47bwXe+d2Y+gSnPiOnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgdnSX7dSG796y8GQNuXPf+ezkWb3xJuNnOzfH925Qdpct8BqyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiRyvbEzu3sG72/TuvfO/zfePm+N63zl22wIeQFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQG1vZTt2EunNHu/Me3Kkl9Od9N3buaN1lC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NjK9tnOu2yn7lidMrV2fTa1WJ3yxm+O0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2U7t/964O7x3b+gbb41940J357p35zLYaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbHcu/E48LylPNqk774WdWujeWxXv3A3/tj260woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2T7beePszntDd25w7938+tv22SfeuAx2WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYhdXts+mFqtTdu5Kp+6UfXbvEzzZ/n7eJ3jvOTutADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxsZUtP7dzN3zi3k23U8/q3l75xNSTdFoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT5ei91Sk/N7WUnbq79x6nFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgNrayfeP9rDu3sDuf5Mmq+J6prfPUN8fKFvgQsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYl87/6f7KTt3tCembti9929P7FzKft5zdloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJHK1uA/3NaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiP0HCDvP5uASVvgAAAAASUVORK5CYII=" alt="QR code for Continental Cup Analysis">
-      <div class="page-qr-scan">Scan to open</div>
-      <div class="page-qr-url">phil73200.github.io</div>
+      🇫🇷 Comparaison de plusieurs profondeurs de participation pour identifier le coefficient le plus pertinent.<br>
+      🇬🇧 Comparison of several participation depths to identify the most relevant coefficient.
     </div>
 
     <div class="controls">
-
       <div class="control">
         <div class="control-label">Discipline</div>
-        <div class="button-row" id="simDisciplineButtons">
-          <button data-discipline="SL" class="sim-disc sim-sl active">SL</button>
-          <button data-discipline="GS" class="sim-disc sim-gs">GS</button>
-          <button data-discipline="SG" class="sim-disc sim-sg">SG</button>
-          <button data-discipline="DH" class="sim-disc sim-dh">DH</button>
+        <div class="button-row" id="coefDisciplineButtons">
+          <button data-discipline="SL" class="coef-disc coef-sl active">SL</button>
+          <button data-discipline="GS" class="coef-disc coef-gs">GS</button>
+          <button data-discipline="SG" class="coef-disc coef-sg">SG</button>
+          <button data-discipline="DH" class="coef-disc coef-dh">DH</button>
         </div>
       </div>
 
       <div class="control">
         <div class="control-label">Gender</div>
-        <div class="button-row" id="simGenderButtons">
-          <button data-gender="M" class="sim-gender sim-men active">Men</button>
-          <button data-gender="W" class="sim-gender sim-women">Women</button>
+        <div class="button-row" id="coefGenderButtons">
+          <button data-gender="M" class="coef-gender coef-men active">Men</button>
+          <button data-gender="W" class="coef-gender coef-women">Women</button>
         </div>
       </div>
-
-      <div class="control">
-        <div class="control-label">Minimum penalty</div>
-        <input id="simMinPenalty" type="number" min="0" step="0.5" value="15"
-               style="width:88px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
-      </div>
-
     </div>
 
-    
     <div class="card">
-      <div class="chart-title">Relative Race Count</div>
+      <div class="chart-title">Participation Depth Comparison</div>
       <div class="chart-subtitle">
-        🇫🇷 Le nombre de courses relatif compare le nombre de courses de chaque circuit au nombre maximal de courses observé pour la même discipline et le même sexe. Le calcul est entièrement automatique.<br>
-        🇬🇧 Relative Race Count compares the number of races in each circuit with the maximum number of races observed for the same discipline and gender. The calculation is fully automatic.
+        🇫🇷 Pour chaque profondeur, le coefficient est calculé sur un groupe comparable de courses : moyenne Top N ÷ moyenne Top 5. Plus le coefficient est proche de 1, plus la participation reste dense au-delà des 5 meilleurs.<br>
+        🇬🇧 For each depth, the coefficient is calculated from a comparable race sample: Average Top N ÷ Average Top 5. The closer the coefficient is to 1, the denser the participation remains beyond the top 5.
       </div>
 
-      <div style="margin-top:12px;padding:12px;border:1px solid #e5e7eb;border-radius:9px;background:#f8fafc;font-size:12px;line-height:1.6;">
-        <div>
-          🇫🇷 <strong>Nombre de courses relatif</strong> = nombre de courses du circuit ÷ nombre maximal de courses observé.
-        </div>
-        <div style="margin-top:5px;color:#4b5563;">
-          🇬🇧 <strong>Relative Race Count</strong> = circuit race count ÷ maximum observed race count.
-        </div>
-
-        <div style="margin-top:10px;">
-          🇫🇷 <strong>Coefficient ajusté</strong> = 1 + (Coefficient − 1) ÷ Nombre de courses relatif.
-        </div>
-        <div style="margin-top:5px;color:#4b5563;">
-          🇬🇧 <strong>Adjusted Coefficient</strong> = 1 + (Coefficient − 1) ÷ Relative Race Count.
-        </div>
-      </div>
-    </div>
-
-<div class="card">
-      <div class="chart-title">Continuous Adder Calculation</div>
-      <div class="chart-subtitle">
-        🇫🇷 L’Adder est calculé automatiquement à partir du coefficient ajusté, sans tranches fixes, puis arrondi à l’entier le plus proche. Plus le coefficient s’éloigne de 1,00, plus l’Adder augmente progressivement.<br>
-        🇬🇧 The Adder is calculated automatically from the adjusted coefficient, without fixed thresholds, then rounded to the nearest integer. The further the coefficient moves away from 1.00, the more the Adder progressively increases.
-      </div>
-
-      <div class="sim-grid sim-continuous-grid" style="margin-top:14px;">
-
-        <div class="sim-rule">
-          <div class="sim-rule-title">Maximum Adder</div>
-          <div>
-            <input id="simMaxAdder" type="number" min="0" step="0.5" value="4.00">
-          </div>
-        </div>
-
-        <div class="sim-rule">
-          <div class="sim-rule-title">Coefficient for Maximum Adder</div>
-          <div>
-            <input id="simCoefMax" type="number" min="1.01" step="0.01" value="1.20">
-          </div>
-        </div>
-
-        <div class="sim-rule">
-          <div class="sim-rule-title">Progression</div>
-          <div>
-            <input id="simCurvePower" type="number" min="1" max="3" step="1" value="2">
-          </div>
-          <div style="margin-top:6px;font-size:10px;line-height:1.35;color:#6b7280;">
-            1 = Linear · 2 = Progressive · 3 = Strong
-          </div>
-        </div>
-
-      </div>
-
-      <div class="chart-subtitle" style="margin-top:10px;">
-        🇫🇷 Formule : Adder = Max Adder × ((Coefficient ajusté − 1) / (Coefficient Max − 1))<sup>Progression</sup>, limité entre 0 et le Max Adder. Progression contrôle la vitesse à laquelle l’Adder augmente lorsque le coefficient s’éloigne de 1.<br>
-        🇬🇧 Formula: Adder = Max Adder × ((Adjusted Coefficient − 1) / (Maximum Coefficient − 1))<sup>Progression</sup>, capped between 0 and the Maximum Adder. Progression controls how quickly the Adder increases as the coefficient moves away from 1.
-      </div>
-
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="simResetButton">Reset default parameters</button>
-      </div>
-    </div>
-
-    <div class="card" style="margin-top:14px;">
-      <div class="chart-title" id="simTableTitle">Simulation – SL Men</div>
-      <div class="chart-subtitle">
-        🇫🇷 L'additif est appliqué course par course avant la pénalité minimale : Pénalité finale = MAX(Pénalité minimale ; Pénalité calculée + Additif). Les valeurs affichées dans le tableau sont ensuite des moyennes par circuit.<br>
-        🇬🇧 The additive is applied race by race before the minimum penalty: Final penalty = MAX(Minimum penalty ; Calculated penalty + Additive). The values displayed in the table are then averages by circuit.
-      </div>
-
-      <div style="margin-top:10px;font-size:11px;line-height:1.45;color:#4b5563;">
-        🇫🇷 Toutes les valeurs de pénalité du tableau sont des <strong>moyennes par circuit</strong>.<br>
-        🇬🇧 All penalty values shown in the table are <strong>averages by circuit</strong>.
-      </div>
-
-      <div class="sim-table-wrap">
-        <table class="sim-table">
+      <div class="coef-table-wrap">
+        <table class="coef-table">
           <thead>
             <tr>
               <th>Circuit</th>
-              <th>Races</th>
-              <th>Average Calculated Penalty</th>
-              <th>Average Top 5 FIS Points</th>
-              <th>Average Top 10 FIS Points</th>
+              <th>Races Top 10</th>
               <th>Coef. (Top 10 / Top 5)</th>
-              <th>Relative Race Count</th>
-              <th>Adjusted Coef.</th>
-              <th>Adder</th>
-              <th>Average Current Applied Penalty</th>
-              <th>Average Simulated Applied Penalty</th>
-              <th>Difference</th>
+              <th>Races Top 15</th>
+              <th>Coef. (Top 15 / Top 5)</th>
+              <th>Races Top 20</th>
+              <th>Coef. (Top 20 / Top 5)</th>
             </tr>
           </thead>
-          <tbody id="simTableBody"></tbody>
+          <tbody id="coefTableBody"></tbody>
         </table>
       </div>
 
-      <div class="note" id="simNote"></div>
-      <div id="simStatus" style="margin-top:6px;font-size:10px;color:#6b7280;"></div>
+      <div class="note" id="coefNote"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="chart-title">Average FIS Points Behind Each Coefficient</div>
+      <div class="chart-subtitle">
+        🇫🇷 Les valeurs ci-dessous permettent de vérifier directement d'où vient chaque coefficient.<br>
+        🇬🇧 The values below show directly how each coefficient is built.
+      </div>
+
+      <div class="coef-table-wrap">
+        <table class="coef-table coef-detail-table">
+          <thead>
+            <tr>
+              <th>Circuit</th>
+              <th>Top 5 avg<br>(Top 10 sample)</th>
+              <th>Top 10 avg</th>
+              <th>Top 5 avg<br>(Top 20 sample)</th>
+              <th>Top 15 avg</th>
+              <th>Top 20 avg</th>
+            </tr>
+          </thead>
+          <tbody id="coefDetailBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -3787,419 +3803,163 @@ function initAppliedPage() {
 
 initAppliedPage();
 
+
+bindInteractiveToggles();
+
+
 /* ============================================================
-   ADDER SIMULATOR
+   COEFFICIENT SIMULATOR
    ============================================================ */
 
-let SIM_DISCIPLINE = 'SL';
-let SIM_GENDER = 'M';
+let COEF_DISCIPLINE = 'SL';
+let COEF_GENDER = 'M';
 
-function simNum(id, fallback) {
-  const el = document.getElementById(id);
-  if (!el) return fallback;
-  const v = Number(el.value);
-  return Number.isFinite(v) ? v : fallback;
-}
-
-
-
-
-
-
-function simAdditive(coef) {
-
-  if (!Number.isFinite(coef)) {
-    return null;
-  }
-
-  const maxAdder =
-    Math.max(
-      0,
-      simNum('simMaxAdder', 4.00)
-    );
-
-  const coefMax =
-    Math.max(
-      1.01,
-      simNum('simCoefMax', 1.20)
-    );
-
-  const progression =
-    Math.max(
-      1,
-      Math.min(
-        3,
-        Math.round(
-          simNum('simCurvePower', 2)
-        )
-      )
-    );
-
-  const normalized =
-    Math.max(
-      0,
-      (coef - 1) / (coefMax - 1)
-    );
-
-  const rawAdder =
-    Math.min(
-      maxAdder,
-      Math.max(
-        0,
-        maxAdder *
-        Math.pow(
-          normalized,
-          progression
-        )
-      )
-    );
-
-  return Math.round(rawAdder);
-}
-
-function simFieldRows(circuit) {
-
+function coefRows(circuit, cohortMaxRank) {
   return RAW.filter(r =>
-    Number(r.cohortMaxRank) === 10 &&
+    Number(r.cohortMaxRank) === cohortMaxRank &&
     r.circuit === circuit &&
-    r.discipline === SIM_DISCIPLINE &&
-    r.gender === SIM_GENDER &&
+    r.discipline === COEF_DISCIPLINE &&
+    r.gender === COEF_GENDER &&
     Number.isFinite(Number(r.rank)) &&
     Number.isFinite(Number(r.avgFisPoints))
   );
 }
 
-function simTopAverage(rows, maxRank) {
-
-  const vals =
-    rows
-      .filter(r => Number(r.rank) <= maxRank)
-      .map(r => Number(r.avgFisPoints))
-      .filter(Number.isFinite);
+function coefAverageTop(rows, maxRank) {
+  const vals = rows
+    .filter(r => Number(r.rank) <= maxRank)
+    .map(r => Number(r.avgFisPoints))
+    .filter(Number.isFinite);
 
   if (!vals.length) return null;
-
   return vals.reduce((a,b) => a+b, 0) / vals.length;
 }
 
-function simPenaltyRows(circuit) {
+function coefSampleRaces(rows) {
+  const vals = rows
+    .map(r => Number(r.sampleRaces))
+    .filter(Number.isFinite);
 
-  return PENALTY_DATA.filter(r =>
-    r.circuit === circuit &&
-    r.discipline === SIM_DISCIPLINE &&
-    r.gender === SIM_GENDER &&
-    Number.isFinite(Number(r.calculatedPenalty))
+  if (!vals.length) return 0;
+  return Math.round(vals.reduce((a,b) => a+b, 0) / vals.length);
+}
+
+function coefFmt(v, digits=3) {
+  return Number.isFinite(v) ? v.toFixed(digits) : '—';
+}
+
+function coefFor(circuit, targetRank) {
+  /*
+   * Top 10 uses the comparable Top 10 cohort.
+   * Top 15 and Top 20 use the comparable Top 20 cohort so that
+   * Top 5 and Top N are always calculated on the same race sample.
+   */
+  const cohort = targetRank === 10 ? 10 : 20;
+  const rows = coefRows(circuit, cohort);
+  const top5 = coefAverageTop(rows, 5);
+  const topN = coefAverageTop(rows, targetRank);
+  const races = coefSampleRaces(rows);
+
+  const coef =
+    Number.isFinite(top5) &&
+    top5 > 0 &&
+    Number.isFinite(topN)
+      ? topN / top5
+      : null;
+
+  return { cohort, rows, top5, topN, races, coef };
+}
+
+function renderCoefficientSimulator() {
+  const circuits = PEN_CIRCUIT_ORDER.filter(c =>
+    RAW.some(r =>
+      r.circuit === c &&
+      r.discipline === COEF_DISCIPLINE &&
+      r.gender === COEF_GENDER
+    )
   );
-}
 
-function avgOf(vals) {
-  const a = vals.filter(Number.isFinite);
-  if (!a.length) return null;
-  return a.reduce((x,y) => x+y,0) / a.length;
-}
-
-function fmtSim(v, digits=2) {
-  return Number.isFinite(v)
-    ? v.toFixed(digits)
-    : '—';
-}
-
-function renderSimulator() {
-
-  const minPenalty =
-    simNum('simMinPenalty', 15);
-
-  const circuits =
-    PEN_CIRCUIT_ORDER.filter(c =>
-      PENALTY_DATA.some(r =>
-        r.circuit === c &&
-        r.discipline === SIM_DISCIPLINE &&
-        r.gender === SIM_GENDER
-      )
-    );
-
-  const maxRaces =
-    Math.max(
-      1,
-      ...circuits.map(circuit =>
-        simPenaltyRows(circuit).length
-      )
-    );
-
-  const body =
-    document.getElementById('simTableBody');
-
-  if (!body) return;
+  const body = document.getElementById('coefTableBody');
+  const detail = document.getElementById('coefDetailBody');
+  if (!body || !detail) return;
 
   body.innerHTML = '';
+  detail.innerHTML = '';
 
   circuits.forEach(circuit => {
+    const c10 = coefFor(circuit, 10);
+    const c15 = coefFor(circuit, 15);
+    const c20 = coefFor(circuit, 20);
 
-    const frows =
-      simFieldRows(circuit);
+    const color = PEN_COLORS[circuit] || '#374151';
 
-    const top5 =
-      simTopAverage(frows, 5);
-
-    const top10 =
-      simTopAverage(frows, 10);
-
-    const coef =
-      (
-        Number.isFinite(top5) &&
-        top5 > 0 &&
-        Number.isFinite(top10)
-      )
-        ? top10 / top5
-        : null;
-
-    const prows =
-      simPenaltyRows(circuit);
-
-    const relativeRaceCount =
-      prows.length > 0
-        ? prows.length / maxRaces
-        : null;
-
-    const adjustedCoef =
-      (
-        Number.isFinite(coef) &&
-        Number.isFinite(relativeRaceCount) &&
-        relativeRaceCount > 0
-      )
-        ? 1 + ((coef - 1) / relativeRaceCount)
-        : null;
-
-    const additive =
-      simAdditive(adjustedCoef);
-
-    const avgCalc =
-      avgOf(
-        prows.map(r =>
-          Number(r.calculatedPenalty)
-        )
-      );
-
-    const currentApplied =
-      avgOf(
-        prows
-          .map(r => Number(r.appliedPenalty))
-          .filter(Number.isFinite)
-      );
-
-    const simulatedValues =
-      prows.map(r => {
-
-        const calc =
-          Number(r.calculatedPenalty);
-
-        if (
-          !Number.isFinite(calc) ||
-          !Number.isFinite(additive)
-        ) {
-          return NaN;
-        }
-
-        return Math.max(
-          minPenalty,
-          calc + additive
-        );
-      });
-
-    const simulatedApplied =
-      avgOf(simulatedValues);
-
-    const delta =
-      (
-        Number.isFinite(simulatedApplied) &&
-        Number.isFinite(currentApplied)
-      )
-        ? simulatedApplied - currentApplied
-        : null;
-
-    const tr =
-      document.createElement('tr');
-
-    const color =
-      PEN_COLORS[circuit] || '#374151';
-
+    const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>
-        <strong style="color:${color}">
-          ${circuit}
-        </strong>
-      </td>
-      <td>${prows.length}</td>
-      <td>${fmtSim(avgCalc)}</td>
-      <td>${fmtSim(top5)}</td>
-      <td>${fmtSim(top10)}</td>
-      <td><strong>${fmtSim(coef,3)}</strong></td>
-      <td>${Number.isFinite(relativeRaceCount) ? (relativeRaceCount * 100).toFixed(0) + '%' : '—'}</td>
-      <td><strong>${fmtSim(adjustedCoef,3)}</strong></td>
-      <td class="sim-additive">
-        ${Number.isFinite(additive) ? '+' + additive.toFixed(0) : '—'}
-      </td>
-      <td>${fmtSim(currentApplied)}</td>
-      <td class="sim-result"><strong>${fmtSim(simulatedApplied)}</strong></td>
-      <td class="${Number.isFinite(delta) && delta > 0.01 ? 'sim-positive' : ''}">
-        ${Number.isFinite(delta) ? (delta >= 0 ? '+' : '') + delta.toFixed(2) : '—'}
-      </td>
+      <td><strong style="color:${color}">${circuit}</strong></td>
+      <td>${c10.races || '—'}</td>
+      <td><strong>${coefFmt(c10.coef)}</strong></td>
+      <td>${c15.races || '—'}</td>
+      <td><strong>${coefFmt(c15.coef)}</strong></td>
+      <td>${c20.races || '—'}</td>
+      <td><strong>${coefFmt(c20.coef)}</strong></td>
     `;
-
     body.appendChild(tr);
+
+    const td = document.createElement('tr');
+    td.innerHTML = `
+      <td><strong style="color:${color}">${circuit}</strong></td>
+      <td>${coefFmt(c10.top5,2)}</td>
+      <td>${coefFmt(c10.topN,2)}</td>
+      <td>${coefFmt(c20.top5,2)}</td>
+      <td>${coefFmt(c15.topN,2)}</td>
+      <td>${coefFmt(c20.topN,2)}</td>
+    `;
+    detail.appendChild(td);
   });
 
-  const title =
-    document.getElementById('simTableTitle');
-
-  if (title) {
-    title.textContent =
-      'Simulation – ' +
-      SIM_DISCIPLINE +
-      ' ' +
-      (SIM_GENDER === 'M' ? 'Men' : 'Women');
-  }
-
-  const note =
-    document.getElementById('simNote');
-
+  const note = document.getElementById('coefNote');
   if (note) {
     note.innerHTML =
-      '🇫🇷 Les moyennes Top 5 et Top 10 sont calculées à partir des 10 premiers concurrents de chaque course. La pénalité appliquée simulée est calculée course par course à partir de l\'additif sélectionné et de la pénalité minimale, puis affichée sous forme de moyenne par circuit.<br>' +
-      '🇬🇧 Average Top 5 and Average Top 10 FIS Points are calculated from the first 10 ranked athletes in each race. Adjusted Coef. = 1 + (Coef. (Top 10 / Top 5) − 1) ÷ Relative Race Count. The Adder is calculated from this adjusted coefficient. The simulated applied penalty is calculated race by race and then displayed as an average by circuit.';
-  }
-
-  const status =
-    document.getElementById('simStatus');
-
-  if (status) {
-    status.innerHTML =
-      '🇫🇷 La simulation est mise à jour automatiquement à chaque modification des paramètres.<br>' +
-      '🇬🇧 The simulation is updated automatically whenever a parameter is changed.';
+      '🇫🇷 Top 10 est calculé sur le groupe comparable Top 10. Top 15 et Top 20 sont calculés sur le groupe comparable Top 20 afin que le Top 5 et le Top N utilisent exactement les mêmes courses.<br>' +
+      '🇬🇧 Top 10 is calculated from the comparable Top 10 sample. Top 15 and Top 20 are calculated from the comparable Top 20 sample so that Top 5 and Top N use exactly the same races.';
   }
 }
 
-function resetSimulatorDefaults() {
-
-  const defaults = {
-    simMinPenalty: 15,
-    simMaxAdder: 4.00,
-    simCoefMax: 1.20,
-    simCurvePower: 2.00
-  };
-
-  Object.entries(defaults)
-    .forEach(([id, value]) => {
-      const el =
-        document.getElementById(id);
-
-      if (el) {
-        el.value = value;
-      }
-    });
-
-  renderSimulator();
-}
-
-function initSimulator() {
-
-  const disc =
-    document.getElementById('simDisciplineButtons');
-
+function initCoefficientSimulator() {
+  const disc = document.getElementById('coefDisciplineButtons');
   if (disc) {
     disc.addEventListener('click', event => {
-
-      const btn =
-        event.target.closest('button[data-discipline]');
-
+      const btn = event.target.closest('button[data-discipline]');
       if (!btn) return;
 
-      SIM_DISCIPLINE =
-        btn.dataset.discipline;
+      COEF_DISCIPLINE = btn.dataset.discipline;
 
-      disc
-        .querySelectorAll('button[data-discipline]')
-        .forEach(b =>
-          b.classList.toggle(
-            'active',
-            b === btn
-          )
-        );
+      disc.querySelectorAll('button[data-discipline]')
+        .forEach(b => b.classList.toggle('active', b === btn));
 
-      renderSimulator();
+      renderCoefficientSimulator();
     });
   }
 
-
-  const gender =
-    document.getElementById('simGenderButtons');
-
+  const gender = document.getElementById('coefGenderButtons');
   if (gender) {
     gender.addEventListener('click', event => {
-
-      const btn =
-        event.target.closest('button[data-gender]');
-
+      const btn = event.target.closest('button[data-gender]');
       if (!btn) return;
 
-      SIM_GENDER =
-        btn.dataset.gender;
+      COEF_GENDER = btn.dataset.gender;
 
-      gender
-        .querySelectorAll('button[data-gender]')
-        .forEach(b =>
-          b.classList.toggle(
-            'active',
-            b === btn
-          )
-        );
+      gender.querySelectorAll('button[data-gender]')
+        .forEach(b => b.classList.toggle('active', b === btn));
 
-      renderSimulator();
+      renderCoefficientSimulator();
     });
   }
 
-
-  const numericIds = [
-    'simMinPenalty',
-    'simMaxAdder','simCoefMax','simCurvePower'
-  ];
-
-  numericIds.forEach(id => {
-
-    const el =
-      document.getElementById(id);
-
-    if (!el) return;
-
-    const recalc = function() {
-      renderSimulator();
-    };
-
-    /*
-     * input = immediate update while typing
-     * change = reliable fallback on mobile browsers
-     */
-    el.addEventListener('input', recalc);
-    el.addEventListener('change', recalc);
-  });
-
-
-  const reset =
-    document.getElementById('simResetButton');
-
-  if (reset) {
-    reset.addEventListener(
-      'click',
-      resetSimulatorDefaults
-    );
-  }
-
-
-  renderSimulator();
+  renderCoefficientSimulator();
 }
 
-initSimulator();
-bindInteractiveToggles();
+initCoefficientSimulator();
 
 </script>
 
