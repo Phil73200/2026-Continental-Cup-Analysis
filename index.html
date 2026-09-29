@@ -622,14 +622,7 @@
     border-width:2px !important;
   }
 
-  .sim-race-factor-grid {
-    grid-template-columns:repeat(3,minmax(180px,1fr));
-  }
-
   @media (max-width:760px) {
-    .sim-race-factor-grid {
-      grid-template-columns:1fr;
-    }
   }
 </style>
 
@@ -709,6 +702,89 @@
   }
 </style>
 
+
+<style>
+  #simDisciplineButtons button,
+  #simGenderButtons button {
+    box-sizing: border-box;
+  }
+
+  #simDisciplineButtons button.active,
+  #simGenderButtons button.active {
+    border: 3px solid #111111 !important;
+    outline: 2px solid #ffffff !important;
+    outline-offset: -5px !important;
+    box-shadow: 0 0 0 2px #111111 !important;
+    font-weight: 900 !important;
+    opacity: 1 !important;
+  }
+
+  #simDisciplineButtons button:not(.active),
+  #simGenderButtons button:not(.active) {
+    opacity: .66 !important;
+    box-shadow: none !important;
+  }
+</style>
+
+
+<style>
+  .page-section {
+    position: relative;
+  }
+
+  .page-qr {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    width: 170px;
+    text-align: center;
+    color: #374151;
+    z-index: 20;
+  }
+
+  .page-qr-title {
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+
+  .page-qr img {
+    display: block;
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 4px;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+
+  .page-qr-scan {
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .page-qr-url {
+    font-size: 9px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+
+  @media (min-width: 761px) {
+    .page-section > h1,
+    .page-section > .subtitle {
+      padding-right: 190px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .page-qr {
+      display: none;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -729,9 +805,11 @@
   <div class="subtitle">
     Constant race sample within each selected Top cohort
   </div>
-    <div class="page-qr" aria-label="Open this dashboard on your phone">
-      <img src="data:image/png;base64,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" alt="QR code for Continental Cup Analysis">
-      <div>Open on your phone</div>
+    <div class="page-qr" aria-label="Interactive dashboard QR code">
+      <div class="page-qr-title">📱 Interactive Dashboard</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHoElEQVR4nO3dQW4jORBFwfHA979yzwEGKBjgY2eWHLFvWS7JD1x8sL/+/PnzD0Dn3+k3AHwaWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWKyAsS+T/7x19dX9T6WmLrZ9/lJPr+rk0/h5Ped+vTvPY2dP3fKyXfDaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbJ9NLVaf3VtDvnFnebLu3blIfjb1nn/b34LTChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQu7iyfTZ15+iJezfO7ryt9sTU7/vs5F3d88a/hWdOK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitAbGxly8+dbCWnbtg9ec9Tm+OdG9w3cloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT9ee95ejOG3anbm+d2hz/Nk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsbGXrZtCfm3pW9za4U3fK7tzgft7fgtMKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChC7uLL9bfeG7lydTt1WO+XeQvfEG5/kCacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD29Xn3aN6zc8F54t5vNPXKz974Gb2R0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2X7ePalT6897pj6FNy50f9unf4/TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQ+7730p938+uJk7Xr5+1Kp/7tySvf+8a+cY/+zGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgd3WV7z85l4b1ndfL7Ti1l7+2Gp9auUzf7Tt0Jfe9JOq0AMVkBYrICxGQFiMkKEJMVICYrQExWgJisALGLK9udt6juXBU/m1qs7ryNeOenP7WUPWFlC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NHK9o072p3v+dnOZfDO/e7OxerOW3JPXvmZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEPue+sFv3NE+m9qG7tyVnnjjbzT1rZt6Vs+cVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2MW7bJ/tvOv03rvauYbceUvuTlP3wu68M/iZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2R794Gur053L0and8LOdW+cTO9/VlKm/BacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD2ffKPp273PDF1H+3O20yfTW1wd+6kn+385jy79wk6rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsaO7bHf+X/b3XvmenU/yxBvvhb23lJ36uVPfHKcVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSB2dJfts53L0Z2b1Ht2rl137lnvvfLzb7TzruITTitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQOxoZTu1lTxxb6F77+ee2LlI3vnd+G3vyl22wGvIChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIfb3x9tapNeTUYnXn3a47bwXe+d2Y+gSnPiOnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgdnSX7dSG796y8GQNuXPf+ezkWb3xJuNnOzfH925Qdpct8BqyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiRyvbEzu3sG72/TuvfO/zfePm+N63zl22wIeQFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQG1vZTt2EunNHu/Me3Kkl9Od9N3buaN1lC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NjK9tnOu2yn7lidMrV2fTa1WJ3yxm+O0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2U7t/964O7x3b+gbb41940J357p35zLYaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbHcu/E48LylPNqk774WdWujeWxXv3A3/tj260woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2T7beePszntDd25w7938+tv22SfeuAx2WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYhdXts+mFqtTdu5Kp+6UfXbvEzzZ/n7eJ3jvOTutADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxsZUtP7dzN3zi3k23U8/q3l75xNSTdFoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT5ei91Sk/N7WUnbq79x6nFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgNrayfeP9rDu3sDuf5Mmq+J6prfPUN8fKFvgQsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYl87/6f7KTt3tCembti9929P7FzKft5zdloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJHK1uA/3NaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiP0HCDvP5uASVvgAAAAASUVORK5CYII=" alt="QR code for Continental Cup Analysis">
+      <div class="page-qr-scan">Scan to open</div>
+      <div class="page-qr-url">phil73200.github.io</div>
     </div>
 
   <div class="controls">
@@ -834,9 +912,11 @@
     <div class="subtitle">
       Calculated penalty analysis by circuit, discipline and gender
     </div>
-    <div class="page-qr" aria-label="Open this dashboard on your phone">
-      <img src="data:image/png;base64,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" alt="QR code for Continental Cup Analysis">
-      <div>Open on your phone</div>
+    <div class="page-qr" aria-label="Interactive dashboard QR code">
+      <div class="page-qr-title">📱 Interactive Dashboard</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHoElEQVR4nO3dQW4jORBFwfHA979yzwEGKBjgY2eWHLFvWS7JD1x8sL/+/PnzD0Dn3+k3AHwaWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWKyAsS+T/7x19dX9T6WmLrZ9/lJPr+rk0/h5Ped+vTvPY2dP3fKyXfDaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbJ9NLVaf3VtDvnFnebLu3blIfjb1nn/b34LTChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQu7iyfTZ15+iJezfO7ryt9sTU7/vs5F3d88a/hWdOK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitAbGxly8+dbCWnbtg9ec9Tm+OdG9w3cloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT9ee95ejOG3anbm+d2hz/Nk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsbGXrZtCfm3pW9za4U3fK7tzgft7fgtMKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChC7uLL9bfeG7lydTt1WO+XeQvfEG5/kCacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD29Xn3aN6zc8F54t5vNPXKz974Gb2R0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2X7ePalT6897pj6FNy50f9unf4/TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQ+7730p938+uJk7Xr5+1Kp/7tySvf+8a+cY/+zGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgd3WV7z85l4b1ndfL7Ti1l7+2Gp9auUzf7Tt0Jfe9JOq0AMVkBYrICxGQFiMkKEJMVICYrQExWgJisALGLK9udt6juXBU/m1qs7ryNeOenP7WUPWFlC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NHK9o072p3v+dnOZfDO/e7OxerOW3JPXvmZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEPue+sFv3NE+m9qG7tyVnnjjbzT1rZt6Vs+cVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2MW7bJ/tvOv03rvauYbceUvuTlP3wu68M/iZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2R794Gur053L0and8LOdW+cTO9/VlKm/BacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD2ffKPp273PDF1H+3O20yfTW1wd+6kn+385jy79wk6rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsaO7bHf+X/b3XvmenU/yxBvvhb23lJ36uVPfHKcVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSB2dJfts53L0Z2b1Ht2rl137lnvvfLzb7TzruITTitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQOxoZTu1lTxxb6F77+ee2LlI3vnd+G3vyl22wGvIChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIfb3x9tapNeTUYnXn3a47bwXe+d2Y+gSnPiOnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgdnSX7dSG796y8GQNuXPf+ezkWb3xJuNnOzfH925Qdpct8BqyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiRyvbEzu3sG72/TuvfO/zfePm+N63zl22wIeQFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQG1vZTt2EunNHu/Me3Kkl9Od9N3buaN1lC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NjK9tnOu2yn7lidMrV2fTa1WJ3yxm+O0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2U7t/964O7x3b+gbb41940J357p35zLYaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbHcu/E48LylPNqk774WdWujeWxXv3A3/tj260woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2T7beePszntDd25w7938+tv22SfeuAx2WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYhdXts+mFqtTdu5Kp+6UfXbvEzzZ/n7eJ3jvOTutADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxsZUtP7dzN3zi3k23U8/q3l75xNSTdFoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT5ei91Sk/N7WUnbq79x6nFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgNrayfeP9rDu3sDuf5Mmq+J6prfPUN8fKFvgQsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYl87/6f7KTt3tCembti9929P7FzKft5zdloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJHK1uA/3NaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiP0HCDvP5uASVvgAAAAASUVORK5CYII=" alt="QR code for Continental Cup Analysis">
+      <div class="page-qr-scan">Scan to open</div>
+      <div class="page-qr-url">phil73200.github.io</div>
     </div>
 
     <div class="controls">
@@ -940,9 +1020,11 @@
     <div class="subtitle">
       Applied penalties after FIS minimum-penalty rules
     </div>
-    <div class="page-qr" aria-label="Open this dashboard on your phone">
-      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASgAAAEoCAIAAABkZftOAAAF+ElEQVR4nO3dMZJbNxBAQdPl+195FVgpAlgYP2C3O16R1CdfIZgC8Pn6+voL+H/9XX8A+ImEBwHhQUB4EBAeBIQHAeFBQHgQEB4EhAcB4UFAeBAQHgSEBwHhQeCf3X/w+XwmPsdx0/sMV89h9b67z233809/L6f+X9XrT9v9vqx4EBAeBIQHAeFBQHgQEB4EhAeB7TneSnU+56k5z23zot05YTW3XJn+PK//3qx4EBAeBIQHAeFBQHgQEB4EhAeBY3O8len9WrtO7aOr9t3tmv78p973lNt+bytWPAgIDwLCg4DwICA8CAgPAsKDwPgc76d55TzM3b8/NZ+s5nu3seJBQHgQEB4EhAcB4UFAeBAQHgTM8X7bnVOdmmtV+wDda9ey4kFAeBAQHgSEBwHhQUB4EBAeBMbneD9tn9Ur52RO75er5nuv/N6seBAQHgSEBwHhQUB4EBAeBIQHgWNzvNf3X1VzsOr+ulNevwevYsWDgPAgIDwICA8CwoOA8CAgPAh8Xtm/dMor97Od+pzTr7Ny2/O8jRUPAsKDgPAgIDwICA8CwoOA8CCwPcd7Zf/Y9JzqlOnndtvc7/Xv5RQrHgSEBwHhQUB4EBAeBIQHAeFBYPxczdf3ZU3fI1fNu6b/fvd1Tv1Obpsnr1jxICA8CAgPAsKDgPAgIDwICA8C2bmar++zmj5n8tTrT9/Xt2t6n+H0ftFTz8GKBwHhQUB4EBAeBIQHAeFBQHgQODbHcw/bv6bnZtW+x+p7ue0cV3M8eJjwICA8CAgPAsKDgPAgIDwIjN+Pt/s6K9X5lrtu29/4ynNbqe4PnJ5bWvEgIDwICA8CwoOA8CAgPAgIDwLH7sdbuW1et/u+K9X9ciu3nXu5Us2Nd19/mhUPAsKDgPAgIDwICA8CwoOA8CBwbD/eSrUfrLo/7ZTbzgudVt03WM2NrXgQEB4EhAcB4UFAeBAQHgSEB4Fj9+Mt3+CHnVe5+zorr5yHeds5nKdM/96seBAQHgSEBwHhQUB4EBAeBIQHge1zNaf3Te2a3l9X7fva/Tyn5nu37QOsvseVU8/ZigcB4UFAeBAQHgSEBwHhQUB4EDh2ruZt52dOu+2cxpXb9r9Nn1/6yrzUigcB4UFAeBAQHgSEBwHhQUB4ENjej7divvff3Hb/3m3noO5+ztv2Z65Y8SAgPAgIDwLCg4DwICA8CAgPAttzvOn5z67qnrpTqrll9X29/r7248HDhAcB4UFAeBAQHgSEBwHhQWD7XM1p03Oe2+67W3llX2L1fVXncNqPBw8THgSEBwHhQUB4EBAeBIQHge39eNPzjVNzld05z+vzw9v2Sa68sv/Q/XjwDQkPAsKDgPAgIDwICA8CwoPAsfvxVqr523fdZ1jtQ9t9nZXp+eSp791+PPiGhAcB4UFAeBAQHgSEBwHhQWB8jnfb+ZOn3Hae5PRc7rbvq5rX2Y8HDxMeBIQHAeFBQHgQEB4EhAeB8TneSrUfb3q/2bTq/Mzpudm0275HKx4EhAcB4UFAeBAQHgSEBwHhQWB7jjc9D7lt3vLK/Wy7bpv7VXPCaq5oxYOA8CAgPAgIDwLCg4DwICA8CGzP8aq5x67p+9amn8P03G/6XrvpeePr82QrHgSEBwHhQUB4EBAeBIQHAeFB4Ni5mq/cUzd9z9sr+9xen8fuum2uaMWDgPAgIDwICA8CwoOA8CAgPAiM3483PTeb9sp9bqfmS6ee8+788JXnfOr5WPEgIDwICA8CwoOA8CAgPAgIDwLjc7yf5rb7/VZO7dO77XzL6v5A+/HgAcKDgPAgIDwICA8CwoOA8CBgjvfbK/fmvW56Lje9n/AUKx4EhAcB4UFAeBAQHgSEBwHhQWB8jnfb/rRX7rU75dR5m9Pve2pe98o5rlY8CAgPAsKDgPAgIDwICA8CwoPApzq3cNor++Wm9wGe+vtd1VzuledjxYOA8CAgPAgIDwLCg4DwICA8CGzP8YA/Z8WDgPAgIDwICA8CwoOA8CAgPAgIDwLCg4DwICA8CAgPAsKDgPAgIDwI/AIsgM9SukeVbQAAAABJRU5ErkJggg==" alt="QR code for Continental Cup Analysis">
-      <div>Open on your phone</div>
+    <div class="page-qr" aria-label="Interactive dashboard QR code">
+      <div class="page-qr-title">📱 Interactive Dashboard</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHoElEQVR4nO3dQW4jORBFwfHA979yzwEGKBjgY2eWHLFvWS7JD1x8sL/+/PnzD0Dn3+k3AHwaWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWKyAsS+T/7x19dX9T6WmLrZ9/lJPr+rk0/h5Ped+vTvPY2dP3fKyXfDaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbJ9NLVaf3VtDvnFnebLu3blIfjb1nn/b34LTChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQu7iyfTZ15+iJezfO7ryt9sTU7/vs5F3d88a/hWdOK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitAbGxly8+dbCWnbtg9ec9Tm+OdG9w3cloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT9ee95ejOG3anbm+d2hz/Nk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsbGXrZtCfm3pW9za4U3fK7tzgft7fgtMKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChC7uLL9bfeG7lydTt1WO+XeQvfEG5/kCacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD29Xn3aN6zc8F54t5vNPXKz974Gb2R0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2X7ePalT6897pj6FNy50f9unf4/TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQ+7730p938+uJk7Xr5+1Kp/7tySvf+8a+cY/+zGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgd3WV7z85l4b1ndfL7Ti1l7+2Gp9auUzf7Tt0Jfe9JOq0AMVkBYrICxGQFiMkKEJMVICYrQExWgJisALGLK9udt6juXBU/m1qs7ryNeOenP7WUPWFlC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NHK9o072p3v+dnOZfDO/e7OxerOW3JPXvmZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEPue+sFv3NE+m9qG7tyVnnjjbzT1rZt6Vs+cVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2MW7bJ/tvOv03rvauYbceUvuTlP3wu68M/iZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2R794Gur053L0and8LOdW+cTO9/VlKm/BacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD2ffKPp273PDF1H+3O20yfTW1wd+6kn+385jy79wk6rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsaO7bHf+X/b3XvmenU/yxBvvhb23lJ36uVPfHKcVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSB2dJfts53L0Z2b1Ht2rl137lnvvfLzb7TzruITTitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQOxoZTu1lTxxb6F77+ee2LlI3vnd+G3vyl22wGvIChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIfb3x9tapNeTUYnXn3a47bwXe+d2Y+gSnPiOnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgdnSX7dSG796y8GQNuXPf+ezkWb3xJuNnOzfH925Qdpct8BqyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiRyvbEzu3sG72/TuvfO/zfePm+N63zl22wIeQFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQG1vZTt2EunNHu/Me3Kkl9Od9N3buaN1lC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NjK9tnOu2yn7lidMrV2fTa1WJ3yxm+O0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2U7t/964O7x3b+gbb41940J357p35zLYaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbHcu/E48LylPNqk774WdWujeWxXv3A3/tj260woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2T7beePszntDd25w7938+tv22SfeuAx2WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYhdXts+mFqtTdu5Kp+6UfXbvEzzZ/n7eJ3jvOTutADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxsZUtP7dzN3zi3k23U8/q3l75xNSTdFoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT5ei91Sk/N7WUnbq79x6nFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgNrayfeP9rDu3sDuf5Mmq+J6prfPUN8fKFvgQsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYl87/6f7KTt3tCembti9929P7FzKft5zdloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJHK1uA/3NaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiP0HCDvP5uASVvgAAAAASUVORK5CYII=" alt="QR code for Continental Cup Analysis">
+      <div class="page-qr-scan">Scan to open</div>
+      <div class="page-qr-url">phil73200.github.io</div>
     </div>
 
     <div class="controls">
@@ -1031,9 +1113,11 @@
       🇫🇷 Test d'un additif calculé à partir du coefficient Top 10 / Top 5, tout en conservant la pénalité minimale actuelle.<br>
       🇬🇧 Test an additive derived from the Top 10 / Top 5 coefficient while keeping the current minimum penalty.
     </div>
-    <div class="page-qr" aria-label="Open this dashboard on your phone">
-      <img src="data:image/png;base64,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" alt="QR code for Continental Cup Analysis">
-      <div>Open on your phone</div>
+    <div class="page-qr" aria-label="Interactive dashboard QR code">
+      <div class="page-qr-title">📱 Interactive Dashboard</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHoElEQVR4nO3dQW4jORBFwfHA979yzwEGKBjgY2eWHLFvWS7JD1x8sL/+/PnzD0Dn3+k3AHwaWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWKyAsS+T/7x19dX9T6WmLrZ9/lJPr+rk0/h5Ped+vTvPY2dP3fKyXfDaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbJ9NLVaf3VtDvnFnebLu3blIfjb1nn/b34LTChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQu7iyfTZ15+iJezfO7ryt9sTU7/vs5F3d88a/hWdOK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitAbGxly8+dbCWnbtg9ec9Tm+OdG9w3cloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT9ee95ejOG3anbm+d2hz/Nk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsbGXrZtCfm3pW9za4U3fK7tzgft7fgtMKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChC7uLL9bfeG7lydTt1WO+XeQvfEG5/kCacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD29Xn3aN6zc8F54t5vNPXKz974Gb2R0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2X7ePalT6897pj6FNy50f9unf4/TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQ+7730p938+uJk7Xr5+1Kp/7tySvf+8a+cY/+zGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgd3WV7z85l4b1ndfL7Ti1l7+2Gp9auUzf7Tt0Jfe9JOq0AMVkBYrICxGQFiMkKEJMVICYrQExWgJisALGLK9udt6juXBU/m1qs7ryNeOenP7WUPWFlC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NHK9o072p3v+dnOZfDO/e7OxerOW3JPXvmZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEPue+sFv3NE+m9qG7tyVnnjjbzT1rZt6Vs+cVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2MW7bJ/tvOv03rvauYbceUvuTlP3wu68M/iZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2R794Gur053L0and8LOdW+cTO9/VlKm/BacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD2ffKPp273PDF1H+3O20yfTW1wd+6kn+385jy79wk6rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsaO7bHf+X/b3XvmenU/yxBvvhb23lJ36uVPfHKcVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSB2dJfts53L0Z2b1Ht2rl137lnvvfLzb7TzruITTitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQOxoZTu1lTxxb6F77+ee2LlI3vnd+G3vyl22wGvIChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIfb3x9tapNeTUYnXn3a47bwXe+d2Y+gSnPiOnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgdnSX7dSG796y8GQNuXPf+ezkWb3xJuNnOzfH925Qdpct8BqyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiRyvbEzu3sG72/TuvfO/zfePm+N63zl22wIeQFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQG1vZTt2EunNHu/Me3Kkl9Od9N3buaN1lC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NjK9tnOu2yn7lidMrV2fTa1WJ3yxm+O0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2U7t/964O7x3b+gbb41940J357p35zLYaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbHcu/E48LylPNqk774WdWujeWxXv3A3/tj260woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2T7beePszntDd25w7938+tv22SfeuAx2WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYhdXts+mFqtTdu5Kp+6UfXbvEzzZ/n7eJ3jvOTutADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxsZUtP7dzN3zi3k23U8/q3l75xNSTdFoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT5ei91Sk/N7WUnbq79x6nFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgNrayfeP9rDu3sDuf5Mmq+J6prfPUN8fKFvgQsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYl87/6f7KTt3tCembti9929P7FzKft5zdloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJHK1uA/3NaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiP0HCDvP5uASVvgAAAAASUVORK5CYII=" alt="QR code for Continental Cup Analysis">
+      <div class="page-qr-scan">Scan to open</div>
+      <div class="page-qr-url">phil73200.github.io</div>
     </div>
 
     <div class="controls">
@@ -1066,73 +1150,34 @@
 
     
     <div class="card">
-      <div class="chart-title">Race Count Adjustment</div>
+      <div class="chart-title">Relative Race Count</div>
       <div class="chart-subtitle">
-        🇫🇷 Ajustement léger du coefficient en fonction du nombre de courses afin de tenir compte de la représentativité de l'échantillon.<br>
-        🇬🇧 Slight adjustment of the coefficient according to the number of races to account for sample representativeness.
-      </div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #e5e7eb;">
-        <div style="font-weight:800;margin-bottom:8px;">Race Count Adjustment</div>
-
-        <div class="sim-grid sim-race-factor-grid">
-
-          <div class="sim-rule">
-            <div class="sim-rule-title">From</div>
-            <div>
-              <input id="simRaceHigh" type="number" min="2" step="1" value="9">
-              races
-            </div>
-            <div>
-              Factor
-              <input id="simRF10" type="number" min="1" step="0.01" value="1.00">
-            </div>
-          </div>
-
-          <div class="sim-rule">
-            <div class="sim-rule-title">Between</div>
-            <div>Between these limits</div>
-            <div>
-              Factor
-              <input id="simRF6" type="number" min="1" step="0.01" value="1.02">
-            </div>
-          </div>
-
-          <div class="sim-rule">
-            <div class="sim-rule-title">Up to</div>
-            <div>
-              <input id="simRaceLow" type="number" min="1" step="1" value="5">
-              races
-            </div>
-            <div>
-              Factor
-              <input id="simRF5" type="number" min="1" step="0.01" value="1.04">
-            </div>
-          </div>
-
-        </div>
-
-        <div id="simRaceFactorRangeText"
-             style="margin-top:8px;font-size:11px;font-weight:700;color:#374151;">
-        </div>
-
-        <div id="simRaceFactorWarning"
-             style="margin-top:5px;font-size:11px;color:#b45309;">
-        </div>
-
-        <div class="chart-subtitle" style="margin-top:8px;">
-          🇫🇷 Vous pouvez modifier à la fois le nombre de courses définissant les trois groupes et le facteur appliqué à chacun. Le coefficient corrigé sert ensuite à déterminer l’Adder.<br>
-          🇬🇧 You can change both the number of races defining the three groups and the factor applied to each group. The corrected coefficient is then used to determine the Adder.
-        </div>
+        🇫🇷 Le nombre de courses relatif compare le nombre de courses de chaque circuit au nombre maximal de courses observé pour la même discipline et le même sexe. Le calcul est entièrement automatique.<br>
+        🇬🇧 Relative Race Count compares the number of races in each circuit with the maximum number of races observed for the same discipline and gender. The calculation is fully automatic.
       </div>
 
-      
+      <div style="margin-top:12px;padding:12px;border:1px solid #e5e7eb;border-radius:9px;background:#f8fafc;font-size:12px;line-height:1.6;">
+        <div>
+          🇫🇷 <strong>Nombre de courses relatif</strong> = nombre de courses du circuit ÷ nombre maximal de courses observé.
+        </div>
+        <div style="margin-top:5px;color:#4b5563;">
+          🇬🇧 <strong>Relative Race Count</strong> = circuit race count ÷ maximum observed race count.
+        </div>
+
+        <div style="margin-top:10px;">
+          🇫🇷 <strong>Coefficient ajusté</strong> = 1 + (Coefficient − 1) ÷ Nombre de courses relatif.
+        </div>
+        <div style="margin-top:5px;color:#4b5563;">
+          🇬🇧 <strong>Adjusted Coefficient</strong> = 1 + (Coefficient − 1) ÷ Relative Race Count.
+        </div>
+      </div>
     </div>
 
 <div class="card">
       <div class="chart-title">Continuous Adder Calculation</div>
       <div class="chart-subtitle">
-        🇫🇷 L’Adder est calculé automatiquement à partir du coefficient ajusté, sans tranches fixes. Plus le coefficient s’éloigne de 1,00, plus l’Adder augmente progressivement.<br>
-        🇬🇧 The Adder is calculated automatically from the adjusted coefficient, without fixed thresholds. The further the coefficient moves away from 1.00, the more the Adder progressively increases.
+        🇫🇷 L’Adder est calculé automatiquement à partir du coefficient ajusté, sans tranches fixes, puis arrondi à l’entier le plus proche. Plus le coefficient s’éloigne de 1,00, plus l’Adder augmente progressivement.<br>
+        🇬🇧 The Adder is calculated automatically from the adjusted coefficient, without fixed thresholds, then rounded to the nearest integer. The further the coefficient moves away from 1.00, the more the Adder progressively increases.
       </div>
 
       <div class="sim-grid sim-continuous-grid" style="margin-top:14px;">
@@ -1152,17 +1197,20 @@
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Curve Power</div>
+          <div class="sim-rule-title">Progression</div>
           <div>
-            <input id="simCurvePower" type="number" min="0.25" step="0.25" value="2.00">
+            <input id="simCurvePower" type="number" min="1" max="3" step="1" value="2">
+          </div>
+          <div style="margin-top:6px;font-size:10px;line-height:1.35;color:#6b7280;">
+            1 = Linear · 2 = Progressive · 3 = Strong
           </div>
         </div>
 
       </div>
 
       <div class="chart-subtitle" style="margin-top:10px;">
-        🇫🇷 Formule : Adder = Max Adder × ((Coefficient ajusté − 1) / (Coefficient Max − 1))<sup>Puissance</sup>, limité entre 0 et le Max Adder. Une puissance supérieure à 1 réduit l’Adder pour les coefficients proches de 1 et augmente progressivement l’écart pour les coefficients plus élevés.<br>
-        🇬🇧 Formula: Adder = Max Adder × ((Adjusted Coefficient − 1) / (Maximum Coefficient − 1))<sup>Power</sup>, capped between 0 and the Maximum Adder. A power above 1 keeps the Adder low for coefficients close to 1 and progressively increases the gap for higher coefficients.
+        🇫🇷 Formule : Adder = Max Adder × ((Coefficient ajusté − 1) / (Coefficient Max − 1))<sup>Progression</sup>, limité entre 0 et le Max Adder. Progression contrôle la vitesse à laquelle l’Adder augmente lorsque le coefficient s’éloigne de 1.<br>
+        🇬🇧 Formula: Adder = Max Adder × ((Adjusted Coefficient − 1) / (Maximum Coefficient − 1))<sup>Progression</sup>, capped between 0 and the Maximum Adder. Progression controls how quickly the Adder increases as the coefficient moves away from 1.
       </div>
 
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
@@ -1192,9 +1240,9 @@
               <th>Average Top 5 FIS Points</th>
               <th>Average Top 10 FIS Points</th>
               <th>Coef. (Top 10 / Top 5)</th>
-              <th>Race Count Adjustment</th>
+              <th>Relative Race Count</th>
               <th>Adjusted Coef.</th>
-              <th>Continuous Adder</th>
+              <th>Adder</th>
               <th>Average Current Applied Penalty</th>
               <th>Average Simulated Applied Penalty</th>
               <th>Difference</th>
@@ -1214,9 +1262,11 @@
     <div class="subtitle">
       Constats et pistes de réflexion / Findings and possible approaches
     </div>
-    <div class="page-qr" aria-label="Open this dashboard on your phone">
-      <img src="data:image/png;base64,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" alt="QR code for Continental Cup Analysis">
-      <div>Open on your phone</div>
+    <div class="page-qr" aria-label="Interactive dashboard QR code">
+      <div class="page-qr-title">📱 Interactive Dashboard</div>
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXIAAAFyCAIAAABnRsZeAAAHoElEQVR4nO3dQW4jORBFwfHA979yzwEGKBjgY2eWHLFvWS7JD1x8sL/+/PnzD0Dn3+k3AHwaWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWKyAsS+T/7x19dX9T6WmLrZ9/lJPr+rk0/h5Ped+vTvPY2dP3fKyXfDaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbJ9NLVaf3VtDvnFnebLu3blIfjb1nn/b34LTChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQu7iyfTZ15+iJezfO7ryt9sTU7/vs5F3d88a/hWdOK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitAbGxly8+dbCWnbtg9ec9Tm+OdG9w3cloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT9ee95ejOG3anbm+d2hz/Nk4rQExWgJisADFZAWKyAsRkBYjJChCTFSAmK0BsbGXrZtCfm3pW9za4U3fK7tzgft7fgtMKEJMVICYrQExWgJisADFZAWKyAsRkBYjJChC7uLL9bfeG7lydTt1WO+XeQvfEG5/kCacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD29Xn3aN6zc8F54t5vNPXKz974Gb2R0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2X7ePalT6897pj6FNy50f9unf4/TChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQ+7730p938+uJk7Xr5+1Kp/7tySvf+8a+cY/+zGkFiMkKEJMVICYrQExWgJisADFZAWKyAsRkBYgd3WV7z85l4b1ndfL7Ti1l7+2Gp9auUzf7Tt0Jfe9JOq0AMVkBYrICxGQFiMkKEJMVICYrQExWgJisALGLK9udt6juXBU/m1qs7ryNeOenP7WUPWFlC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NHK9o072p3v+dnOZfDO/e7OxerOW3JPXvmZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEPue+sFv3NE+m9qG7tyVnnjjbzT1rZt6Vs+cVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2MW7bJ/tvOv03rvauYbceUvuTlP3wu68M/iZ0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2R794Gur053L0and8LOdW+cTO9/VlKm/BacVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSD2ffKPp273PDF1H+3O20yfTW1wd+6kn+385jy79wk6rQAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAsaO7bHf+X/b3XvmenU/yxBvvhb23lJ36uVPfHKcVICYrQExWgJisADFZAWKyAsRkBYjJChCTFSB2dJfts53L0Z2b1Ht2rl137lnvvfLzb7TzruITTitATFaAmKwAMVkBYrICxGQFiMkKEJMVICYrQOxoZTu1lTxxb6F77+ee2LlI3vnd+G3vyl22wGvIChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIfb3x9tapNeTUYnXn3a47bwXe+d2Y+gSnPiOnFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgdnSX7dSG796y8GQNuXPf+ezkWb3xJuNnOzfH925Qdpct8BqyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFiRyvbEzu3sG72/TuvfO/zfePm+N63zl22wIeQFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQG1vZTt2EunNHu/Me3Kkl9Od9N3buaN1lC7yGrAAxWQFisgLEZAWIyQoQkxUgJitATFaA2NjK9tnOu2yn7lidMrV2fTa1WJ3yxm+O0woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2U7t/964O7x3b+gbb41940J357p35zLYaQWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiB2tbHcu/E48LylPNqk774WdWujeWxXv3A3/tj260woQkxUgJitATFaAmKwAMVkBYrICxGQFiMkKEDta2T7beePszntDd25w7938+tv22SfeuAx2WgFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYhdXts+mFqtTdu5Kp+6UfXbvEzzZ/n7eJ3jvOTutADFZAWKyAsRkBYjJChCTFSAmK0BMVoCYrACxsZUtP7dzN3zi3k23U8/q3l75xNSTdFoBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJWtpmT5ei91Sk/N7WUnbq79x6nFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgNrayfeP9rDu3sDuf5Mmq+J6prfPUN8fKFvgQsgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYl87/6f7KTt3tCembti9929P7FzKft5zdloBYrICxGQFiMkKEJMVICYrQExWgJisADFZAWJHK1uA/3NaAWKyAsRkBYjJChCTFSAmK0BMVoCYrAAxWQFisgLEZAWIyQoQkxUgJitATFaAmKwAMVkBYrICxGQFiP0HCDvP5uASVvgAAAAASUVORK5CYII=" alt="QR code for Continental Cup Analysis">
+      <div class="page-qr-scan">Scan to open</div>
+      <div class="page-qr-url">phil73200.github.io</div>
     </div>
 
     <div class="card">
@@ -3754,102 +3804,6 @@ function simNum(id, fallback) {
 
 
 
-function simRaceFactor(raceCount) {
-
-  let high =
-    Math.round(
-      simNum('simRaceHigh', 9)
-    );
-
-  let low =
-    Math.round(
-      simNum('simRaceLow', 5)
-    );
-
-  /*
-   * Keep the simulator usable even while the user is typing:
-   * low must stay below high.
-   */
-  if (low < 1) low = 1;
-  if (high < 2) high = 2;
-
-  const warning =
-    document.getElementById(
-      'simRaceFactorWarning'
-    );
-
-  if (low >= high) {
-
-    if (warning) {
-      warning.textContent =
-        'The small-sample limit must be lower than the large-sample limit.';
-    }
-
-    /*
-     * Temporary safe fallback for the calculation.
-     * The entered values remain visible so the user can correct them.
-     */
-    low =
-      Math.max(
-        1,
-        high - 1
-      );
-
-  } else if (warning) {
-
-    warning.textContent = '';
-  }
-
-
-  const rangeText =
-    document.getElementById(
-      'simRaceFactorRangeText'
-    );
-
-  if (rangeText) {
-
-    rangeText.textContent =
-      'Current groups: ≤' +
-      low +
-      ' races / ' +
-      (low + 1) +
-      '–' +
-      (high - 1) +
-      ' races / ≥' +
-      high +
-      ' races';
-  }
-
-
-  const factorHigh =
-    simNum(
-      'simRF10',
-      1.00
-    );
-
-  const factorMedium =
-    simNum(
-      'simRF6',
-      1.02
-    );
-
-  const factorLow =
-    simNum(
-      'simRF5',
-      1.04
-    );
-
-
-  if (raceCount >= high) {
-    return factorHigh;
-  }
-
-  if (raceCount <= low) {
-    return factorLow;
-  }
-
-  return factorMedium;
-}
 
 
 function simAdditive(coef) {
@@ -3870,10 +3824,15 @@ function simAdditive(coef) {
       simNum('simCoefMax', 1.20)
     );
 
-  const power =
+  const progression =
     Math.max(
-      0.25,
-      simNum('simCurvePower', 2.00)
+      1,
+      Math.min(
+        3,
+        Math.round(
+          simNum('simCurvePower', 2)
+        )
+      )
     );
 
   const normalized =
@@ -3882,14 +3841,20 @@ function simAdditive(coef) {
       (coef - 1) / (coefMax - 1)
     );
 
-  const adder =
-    maxAdder *
-    Math.pow(normalized, power);
+  const rawAdder =
+    Math.min(
+      maxAdder,
+      Math.max(
+        0,
+        maxAdder *
+        Math.pow(
+          normalized,
+          progression
+        )
+      )
+    );
 
-  return Math.min(
-    maxAdder,
-    Math.max(0, adder)
-  );
+  return Math.round(rawAdder);
 }
 
 function simFieldRows(circuit) {
@@ -3953,6 +3918,14 @@ function renderSimulator() {
       )
     );
 
+  const maxRaces =
+    Math.max(
+      1,
+      ...circuits.map(circuit =>
+        simPenaltyRows(circuit).length
+      )
+    );
+
   const body =
     document.getElementById('simTableBody');
 
@@ -3983,16 +3956,22 @@ function renderSimulator() {
     const prows =
       simPenaltyRows(circuit);
 
-    const raceFactor =
-      simRaceFactor(prows.length);
+    const relativeRaceCount =
+      prows.length > 0
+        ? prows.length / maxRaces
+        : null;
 
-    const correctedCoef =
-      Number.isFinite(coef)
-        ? coef * raceFactor
+    const adjustedCoef =
+      (
+        Number.isFinite(coef) &&
+        Number.isFinite(relativeRaceCount) &&
+        relativeRaceCount > 0
+      )
+        ? 1 + ((coef - 1) / relativeRaceCount)
         : null;
 
     const additive =
-      simAdditive(correctedCoef);
+      simAdditive(adjustedCoef);
 
     const avgCalc =
       avgOf(
@@ -4055,10 +4034,10 @@ function renderSimulator() {
       <td>${fmtSim(top5)}</td>
       <td>${fmtSim(top10)}</td>
       <td><strong>${fmtSim(coef,3)}</strong></td>
-      <td>${fmtSim(raceFactor,2)}</td>
-      <td><strong>${fmtSim(correctedCoef,3)}</strong></td>
+      <td>${Number.isFinite(relativeRaceCount) ? (relativeRaceCount * 100).toFixed(0) + '%' : '—'}</td>
+      <td><strong>${fmtSim(adjustedCoef,3)}</strong></td>
       <td class="sim-additive">
-        ${Number.isFinite(additive) ? '+' + additive.toFixed(2) : '—'}
+        ${Number.isFinite(additive) ? '+' + additive.toFixed(0) : '—'}
       </td>
       <td>${fmtSim(currentApplied)}</td>
       <td class="sim-result"><strong>${fmtSim(simulatedApplied)}</strong></td>
@@ -4087,7 +4066,7 @@ function renderSimulator() {
   if (note) {
     note.innerHTML =
       '🇫🇷 Les moyennes Top 5 et Top 10 sont calculées à partir des 10 premiers concurrents de chaque course. La pénalité appliquée simulée est calculée course par course à partir de l\'additif sélectionné et de la pénalité minimale, puis affichée sous forme de moyenne par circuit.<br>' +
-      '🇬🇧 Average Top 5 and Average Top 10 FIS Points are calculated from the first 10 ranked athletes in each race. Corrected Coef. = Coef. (Top 10 / Top 5) × Race Count Adjustment. The Adder is determined from this corrected coefficient. The simulated applied penalty is calculated race by race and then displayed as an average by circuit.';
+      '🇬🇧 Average Top 5 and Average Top 10 FIS Points are calculated from the first 10 ranked athletes in each race. Adjusted Coef. = 1 + (Coef. (Top 10 / Top 5) − 1) ÷ Relative Race Count. The Adder is calculated from this adjusted coefficient. The simulated applied penalty is calculated race by race and then displayed as an average by circuit.';
   }
 
   const status =
@@ -4104,11 +4083,6 @@ function resetSimulatorDefaults() {
 
   const defaults = {
     simMinPenalty: 15,
-    simRaceHigh: 9,
-    simRaceLow: 5,
-    simRF10: 1.00,
-    simRF6: 1.02,
-    simRF5: 1.04,
     simMaxAdder: 4.00,
     simCoefMax: 1.20,
     simCurvePower: 2.00
@@ -4187,8 +4161,6 @@ function initSimulator() {
 
   const numericIds = [
     'simMinPenalty',
-    'simRaceHigh','simRaceLow',
-    'simRF10','simRF6','simRF5',
     'simMaxAdder','simCoefMax','simCurvePower'
   ];
 
