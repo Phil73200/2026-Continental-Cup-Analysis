@@ -803,7 +803,7 @@
 
   .coef-table {
     width:100%;
-    min-width:1050px;
+    min-width:1220px;
     border-collapse:collapse;
     font-size:12px;
   }
@@ -1320,6 +1320,12 @@
                style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
       </div>
 
+      <div class="control">
+        <div class="control-label">Maximum Penalty Adjustment</div>
+        <input id="absMaxAdjustment" type="number" min="0" step="0.5" value="5"
+               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
+      </div>
+
     </div>
 
     <div class="card">
@@ -1356,8 +1362,8 @@
     <div class="card" style="margin-top:14px;">
       <div class="chart-title">Penalty Simulation</div>
       <div class="chart-subtitle">
-        🇫🇷 La pénalité calculée de chaque course est multipliée par le coefficient du circuit, puis la pénalité minimale est appliquée. Les valeurs affichées sont ensuite des moyennes par circuit.<br>
-        🇬🇧 Each race calculated penalty is multiplied by the circuit coefficient, then the minimum penalty is applied. The displayed values are then averages by circuit.
+        🇫🇷 Le coefficient détermine une correction théorique. Cette correction est plafonnée par le Maximum Penalty Adjustment, puis la pénalité minimale est appliquée. Les valeurs affichées sont ensuite des moyennes par circuit.<br>
+        🇬🇧 The coefficient determines a theoretical adjustment. This adjustment is capped by the Maximum Penalty Adjustment, then the minimum penalty is applied. The displayed values are then averages by circuit.
       </div>
 
       <div class="coef-table-wrap">
@@ -1367,7 +1373,8 @@
               <th>Circuit</th>
               <th>Average Calculated Penalty</th>
               <th>Coefficient</th>
-              <th>Average Calculated Penalty × Coefficient</th>
+              <th>Average Theoretical Adjustment</th>
+              <th>Average Applied Adjustment</th>
               <th>Average Current Applied Penalty</th>
               <th>Average Simulated Applied Penalty</th>
               <th>Difference</th>
@@ -4000,6 +4007,7 @@ function renderAbsoluteSimulator() {
   topN = Math.max(1, Math.min(60, topN));
 
   const minPenalty = Math.max(0, absNum('absMinPenalty', 15));
+  const maxAdjustment = Math.max(0, absNum('absMaxAdjustment', 5));
   const cohort = absChooseCohort(topN);
 
   const circuits = PEN_CIRCUIT_ORDER.filter(c =>
@@ -4089,15 +4097,7 @@ function renderAbsoluteSimulator() {
         .filter(Number.isFinite)
     );
 
-    const avgCalculatedTimesCoef =
-      (
-        Number.isFinite(avgCalculated) &&
-        Number.isFinite(m.coefficient)
-      )
-        ? avgCalculated * m.coefficient
-        : null;
-
-    const simulatedValues = prows.map(r => {
+    const theoreticalAdjustments = prows.map(r => {
       const calc = Number(r.calculatedPenalty);
 
       if (
@@ -4108,11 +4108,35 @@ function renderAbsoluteSimulator() {
       }
 
       return Math.max(
-        minPenalty,
-        calc * m.coefficient
+        0,
+        calc * (m.coefficient - 1)
       );
     });
 
+    const appliedAdjustments = theoreticalAdjustments.map(adj => {
+      if (!Number.isFinite(adj)) return NaN;
+      return Math.min(adj, maxAdjustment);
+    });
+
+    const simulatedValues = prows.map((r, i) => {
+      const calc = Number(r.calculatedPenalty);
+      const adj = appliedAdjustments[i];
+
+      if (
+        !Number.isFinite(calc) ||
+        !Number.isFinite(adj)
+      ) {
+        return NaN;
+      }
+
+      return Math.max(
+        minPenalty,
+        calc + adj
+      );
+    });
+
+    const avgTheoreticalAdjustment = absAvg(theoreticalAdjustments);
+    const avgAppliedAdjustment = absAvg(appliedAdjustments);
     const avgSimulated = absAvg(simulatedValues);
 
     const difference =
@@ -4128,7 +4152,8 @@ function renderAbsoluteSimulator() {
       <td><strong style="color:${color}">${m.circuit}</strong></td>
       <td>${absFmt(avgCalculated,2)}</td>
       <td><strong>${absFmt(m.coefficient,3)}</strong></td>
-      <td><strong>${absFmt(avgCalculatedTimesCoef,2)}</strong></td>
+      <td>${absFmt(avgTheoreticalAdjustment,2)}</td>
+      <td><strong>${absFmt(avgAppliedAdjustment,2)}</strong></td>
       <td>${absFmt(avgCurrentApplied,2)}</td>
       <td><strong>${absFmt(avgSimulated,2)}</strong></td>
       <td>${Number.isFinite(difference) ? (difference >= 0 ? '+' : '') + difference.toFixed(2) : '—'}</td>
@@ -4146,8 +4171,8 @@ function renderAbsoluteSimulator() {
   const penaltyNote = document.getElementById('absPenaltyNote');
   if (penaltyNote) {
     penaltyNote.innerHTML =
-      `🇫🇷 Simulation : pénalité finale de chaque course = MAX(${minPenalty.toFixed(1)} ; pénalité calculée × coefficient).<br>` +
-      `🇬🇧 Simulation: each race final penalty = MAX(${minPenalty.toFixed(1)} ; calculated penalty × coefficient).`;
+      `🇫🇷 Simulation : correction théorique = pénalité calculée × (coefficient − 1). Correction retenue = MIN(correction théorique ; ${maxAdjustment.toFixed(1)}). Pénalité finale = MAX(${minPenalty.toFixed(1)} ; pénalité calculée + correction retenue).<br>` +
+      `🇬🇧 Simulation: theoretical adjustment = calculated penalty × (coefficient − 1). Applied adjustment = MIN(theoretical adjustment ; ${maxAdjustment.toFixed(1)}). Final penalty = MAX(${minPenalty.toFixed(1)} ; calculated penalty + applied adjustment).`;
   }
 }
 
@@ -4182,7 +4207,7 @@ function initAbsoluteSimulator() {
     });
   }
 
-  ['absTopN','absMinPenalty'].forEach(id => {
+  ['absTopN','absMinPenalty','absMaxAdjustment'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
 
