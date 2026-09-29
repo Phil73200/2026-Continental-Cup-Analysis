@@ -292,6 +292,42 @@
     }
   </style>
 
+
+<style>
+@media (max-width: 760px) {
+  .chart-wrap-main {
+    min-height: 360px;
+  }
+
+  #fieldChart {
+    max-height: 430px;
+  }
+}
+</style>
+
+
+<style>
+@media (max-width: 760px) {
+  .top-nav button {
+    font-size: 10px !important;
+    padding: 7px 8px !important;
+  }
+
+  .controls {
+    grid-template-columns: 1fr !important;
+  }
+
+  .check-item {
+    font-size: 11px !important;
+  }
+
+  #penaltyBoxPlot,
+  #appliedBoxPlot {
+    height: 370px !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -446,6 +482,14 @@
         <div id="penCircuitFilters" class="checks"></div>
       </div>
 
+      <div class="control">
+        <div class="control-label">Display</div>
+        <label class="check-item">
+          <input type="checkbox" id="penInteractiveToggle">
+          <span style="font-weight:700">Interactive</span>
+        </label>
+      </div>
+
     </div>
 
     <div class="card">
@@ -458,13 +502,13 @@
     </div>
 
     <div class="card" style="margin-top:12px;">
-      <div class="chart-title">Races Below Penalty Threshold</div>
+      <div class="chart-title">Races Below Penalty Level</div>
       <div class="chart-subtitle">
-        Percentage of races with a calculated penalty at or below selected thresholds
+        Percentage of races with a calculated penalty at or below selected penalty levels
       </div>
 
       <div class="control" style="margin-bottom:10px;">
-        <div class="control-label">Penalty thresholds</div>
+        <div class="control-label">Penalty levels</div>
         <div id="penThresholdFilters" class="checks">
           <label class="check-item">
             <input type="checkbox" class="pen-threshold-check" value="10" checked>
@@ -541,6 +585,14 @@
         <div id="appCircuitFilters" class="checks"></div>
       </div>
 
+      <div class="control">
+        <div class="control-label">Display</div>
+        <label class="check-item">
+          <input type="checkbox" id="appInteractiveToggle">
+          <span style="font-weight:700">Interactive</span>
+        </label>
+      </div>
+
     </div>
 
     <div class="card">
@@ -553,13 +605,13 @@
     </div>
 
     <div class="card" style="margin-top:12px;">
-      <div class="chart-title">Share of Races by Applied Penalty Threshold</div>
+      <div class="chart-title">Share of Races by Applied Penalty Level</div>
       <div class="chart-subtitle">
-        Percentage of races with an applied penalty at or below selected thresholds
+        Percentage of races with an applied penalty at or below selected penalty levels
       </div>
 
       <div class="control" style="margin-bottom:10px;">
-        <div class="control-label">Penalty thresholds</div>
+        <div class="control-label">Penalty levels</div>
         <div id="appThresholdFilters" class="checks">
           <label class="check-item"><input type="checkbox" class="app-threshold-check" value="15" checked> ≤15</label>
           <label class="check-item"><input type="checkbox" class="app-threshold-check" value="18" checked> ≤18</label>
@@ -590,26 +642,22 @@
 
         <div style="padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;">
           <div style="font-weight:700;margin-bottom:6px;">Constat 1</div>
-          <div style="margin-bottom:8px;">
-            Les circuits continentaux présentent des différences importantes de
+          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp; Les circuits continentaux présentent des différences importantes de
             <strong>niveau et de densité de participation</strong>.
           </div>
-          <div style="color:#4b5563;font-style:italic;">
-            Continental Cup circuits show substantial differences in the
+          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp; Continental Cup circuits show substantial differences in the
             <strong>level and depth of participation</strong>.
           </div>
         </div>
 
         <div style="padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;">
           <div style="font-weight:700;margin-bottom:6px;">Constat 2</div>
-          <div style="margin-bottom:8px;">
-            Les pénalités calculées permettent de différencier les circuits,
+          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp; Les pénalités calculées permettent de différencier les circuits,
             mais ne reflètent pas toujours le niveau et la densité de participation.
             Une course réunissant quelques athlètes de très haut niveau peut produire
             une excellente pénalité calculée malgré une participation globalement moins dense.
           </div>
-          <div style="color:#4b5563;font-style:italic;">
-            Calculated penalties distinguish between circuits but do not always reflect
+          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp; Calculated penalties distinguish between circuits but do not always reflect
             the overall level and depth of participation. A race with a small number of
             top-ranked athletes may produce an excellent calculated penalty despite a
             less dense overall participation.
@@ -618,12 +666,10 @@
 
         <div style="padding:16px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;">
           <div style="font-weight:700;margin-bottom:6px;">Constat 3</div>
-          <div style="margin-bottom:8px;">
-            L'application des règles actuelles de pénalité appliquée réduit fortement
+          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp; L'application des règles actuelles de pénalité appliquée réduit fortement
             les différences observées entre les circuits.
           </div>
-          <div style="color:#4b5563;font-style:italic;">
-            The current applied-penalty rules substantially reduce the differences
+          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp; The current applied-penalty rules substantially reduce the differences
             observed between Continental Cup circuits.
           </div>
         </div>
@@ -640,12 +686,10 @@
           <div style="font-weight:700;margin-bottom:6px;">
             1. Appliquer directement la pénalité calculée
           </div>
-          <div style="margin-bottom:8px;">
-            En évaluant les effets de bord avec les athlètes de Coupe du monde liés à
+          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp; En évaluant les effets de bord avec les athlètes de Coupe du monde liés à
             l'attribution de points FIS inférieurs à 15.
           </div>
-          <div style="color:#4b5563;font-style:italic;">
-            <strong>Apply the calculated penalty directly.</strong>
+          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp; <strong>Apply the calculated penalty directly.</strong>
             Assess the boundary effects with World Cup athletes related to awarding
             FIS points below 15.
           </div>
@@ -655,12 +699,10 @@
           <div style="font-weight:700;margin-bottom:6px;">
             2. Appliquer un additif spécifique
           </div>
-          <div style="margin-bottom:8px;">
-            Déterminé <strong>par circuit, par discipline et par sexe</strong>,
+          <div style="margin-bottom:8px;"><strong style="font-size:16px;">🇫🇷</strong>&nbsp; Déterminé <strong>par circuit, par discipline et par sexe</strong>,
             à partir des différences observées de niveau et de densité de participation.
           </div>
-          <div style="color:#4b5563;font-style:italic;">
-            <strong>Apply a specific additive</strong>,
+          <div style="color:#4b5563;font-style:italic;"><strong style="font-size:16px;">🇬🇧</strong>&nbsp; <strong>Apply a specific additive</strong>,
             defined <strong>for each circuit, discipline and gender</strong>,
             based on the observed differences in participation level and depth.
           </div>
@@ -1410,14 +1452,137 @@ function displayY(v) {
 }
 
 
-function buildYScale() {
+function buildYScale(datasets) {
+
+  const originalValues = [];
+  const displayValues = [];
+
+  (datasets || []).forEach(ds => {
+    (ds.data || []).forEach(p => {
+      const original = Number(p.originalY);
+      const shown = Number(p.y);
+
+      if (Number.isFinite(original)) {
+        originalValues.push(original);
+      }
+
+      if (Number.isFinite(shown)) {
+        displayValues.push(shown);
+      }
+    });
+  });
+
+
+  function linearRange() {
+
+    if (!originalValues.length) {
+      return { min: 10, max: 40 };
+    }
+
+    const lo = Math.min(...originalValues);
+    const hi = Math.max(...originalValues);
+    const spread = Math.max(2, hi - lo);
+
+    const lowPad = Math.max(1, spread * 0.10);
+    const highPad = Math.max(1.5, spread * 0.15);
+
+    let min =
+      Math.floor((lo - lowPad) / 2) * 2;
+
+    let max =
+      Math.ceil((hi + highPad) / 2) * 2;
+
+    min = Math.max(0, min);
+
+    if (max - min < 8) {
+      max = min + 8;
+    }
+
+    return { min, max };
+  }
+
+
+  function logRange() {
+
+    if (!originalValues.length) {
+      return { min: 10, max: 40 };
+    }
+
+    const lo = Math.max(
+      0.1,
+      Math.min(...originalValues)
+    );
+
+    const hi =
+      Math.max(...originalValues);
+
+    return {
+      min: Math.max(
+        0.1,
+        Math.floor(lo * 0.90)
+      ),
+      max: Math.ceil(hi * 1.12)
+    };
+  }
+
+
+  function performanceRange() {
+
+    if (!displayValues.length) {
+      return { min: 0, max: 80 };
+    }
+
+    const lo =
+      Math.min(...displayValues);
+
+    const hi =
+      Math.max(...displayValues);
+
+    const spread =
+      Math.max(8, hi - lo);
+
+    let min =
+      Math.max(
+        0,
+        Math.floor(
+          (lo - Math.max(4, spread * 0.08))
+          / 5
+        ) * 5
+      );
+
+    let max =
+      Math.min(
+        100,
+        Math.ceil(
+          (hi + Math.max(5, spread * 0.12))
+          / 5
+        ) * 5
+      );
+
+    if (max - min < 25) {
+      max =
+        Math.min(
+          100,
+          min + 25
+        );
+    }
+
+    return { min, max };
+  }
+
 
   if (SCALE_MODE === 'LINEAR') {
 
+    const range =
+      linearRange();
+
+    const span =
+      range.max - range.min;
+
     return {
       type: 'linear',
-      min: 10,
-      max: 80,
+      min: range.min,
+      max: range.max,
 
       title: {
         display: true,
@@ -1425,7 +1590,12 @@ function buildYScale() {
       },
 
       ticks: {
-        stepSize: 5
+        stepSize:
+          span <= 16
+            ? 2
+            : span <= 35
+              ? 5
+              : 10
       }
     };
   }
@@ -1433,10 +1603,13 @@ function buildYScale() {
 
   if (SCALE_MODE === 'LOG') {
 
+    const range =
+      logRange();
+
     return {
       type: 'logarithmic',
-      min: 10,
-      max: 80,
+      min: range.min,
+      max: range.max,
 
       title: {
         display: true,
@@ -1447,7 +1620,8 @@ function buildYScale() {
         callback: function(value) {
 
           const keep = [
-            10, 12, 15, 18, 20, 22, 25, 30, 40, 50, 60, 80
+            8, 10, 12, 15, 18, 20, 22,
+            25, 30, 40, 50, 60, 80
           ];
 
           return keep.includes(Number(value))
@@ -1460,14 +1634,18 @@ function buildYScale() {
 
 
   /*
-   * Performance view.
-   * L'axe graphique est 0–100 mais les graduations affichent
-   * les vraies valeurs FIS correspondantes.
+   * Performance view:
+   * custom transformed scale focused on low FIS points.
+   * The visible range now follows the selected data instead of
+   * always displaying the full 0–100 transformed axis.
    */
+  const range =
+    performanceRange();
+
   return {
     type: 'linear',
-    min: 0,
-    max: 100,
+    min: range.min,
+    max: range.max,
 
     title: {
       display: true,
@@ -1477,15 +1655,23 @@ function buildYScale() {
     afterBuildTicks: function(axis) {
 
       const fisTicks = [
-        10, 12, 15, 18, 20, 22, 25, 30, 40, 60, 80
+        10, 12, 15, 18, 20, 22,
+        25, 30, 40, 60, 80
       ];
 
       axis.ticks =
-        fisTicks.map(function(v) {
-          return {
-            value: performanceTransform(v)
-          };
-        });
+        fisTicks
+          .map(function(v) {
+            return {
+              value: performanceTransform(v)
+            };
+          })
+          .filter(function(t) {
+            return (
+              t.value >= range.min &&
+              t.value <= range.max
+            );
+          });
     },
 
     ticks: {
@@ -1498,7 +1684,8 @@ function buildYScale() {
           Math.round(fis);
 
         const keep = [
-          10, 12, 15, 18, 20, 22, 25, 30, 40, 60, 80
+          10, 12, 15, 18, 20, 22,
+          25, 30, 40, 60, 80
         ];
 
         return keep.includes(rounded)
@@ -1703,7 +1890,7 @@ function renderChart(rows) {
             },
 
 
-            y: buildYScale()
+            y: buildYScale(datasets)
           }
         }
       }
@@ -1772,6 +1959,86 @@ const EMBEDDED_DATA = [{"cohortMaxRank":10,"circuit":"ANC","group":"TECH","disci
 
 init(EMBEDDED_DATA);
 
+
+
+
+function getInteractiveMode() {
+  try {
+    return localStorage.getItem('ccInteractiveMode') === '1';
+  } catch (e) {
+    return false;
+  }
+}
+
+function setInteractiveMode(value) {
+  try {
+    localStorage.setItem(
+      'ccInteractiveMode',
+      value ? '1' : '0'
+    );
+  } catch (e) {}
+}
+
+function syncInteractiveToggles(value) {
+
+  const ids = [
+    'penInteractiveToggle',
+    'appInteractiveToggle'
+  ];
+
+  ids.forEach(id => {
+    const el =
+      document.getElementById(id);
+
+    if (el) {
+      el.checked = value;
+    }
+  });
+}
+
+function bindInteractiveToggles() {
+
+  const ids = [
+    'penInteractiveToggle',
+    'appInteractiveToggle'
+  ];
+
+  ids.forEach(id => {
+
+    const el =
+      document.getElementById(id);
+
+    if (!el) return;
+
+    el.addEventListener(
+      'change',
+      function() {
+
+        const value =
+          !!el.checked;
+
+        setInteractiveMode(value);
+        syncInteractiveToggles(value);
+
+        if (
+          typeof renderPenaltyPage === 'function'
+        ) {
+          renderPenaltyPage();
+        }
+
+        if (
+          typeof renderAppliedPage === 'function'
+        ) {
+          renderAppliedPage();
+        }
+      }
+    );
+  });
+
+  syncInteractiveToggles(
+    getInteractiveMode()
+  );
+}
 
 
 /* ============================================================
@@ -2002,6 +2269,9 @@ function renderPenaltyBoxPlot(rows) {
   const mobile =
     window.innerWidth <= 760;
 
+  const interactive =
+    getInteractiveMode();
+
   Plotly.react(
     'penaltyBoxPlot',
     traces,
@@ -2039,13 +2309,16 @@ function renderPenaltyBoxPlot(rows) {
       },
 
       hovermode: 'closest',
+      dragmode: interactive ? 'zoom' : false,
       font: {
         size: mobile ? 10 : 12
       }
     },
     {
       responsive: true,
-      displaylogo: false
+      displaylogo: false,
+      displayModeBar: interactive,
+      scrollZoom: interactive
     }
   );
 }
@@ -2230,7 +2503,7 @@ function renderPenaltyThresholdChart(rows) {
             x: {
               title: {
                 display: true,
-                text: 'Calculated Penalty Threshold'
+                text: 'Calculated Penalty Level'
               }
             },
 
@@ -2240,7 +2513,7 @@ function renderPenaltyThresholdChart(rows) {
 
               title: {
                 display: true,
-                text: 'Races at or below threshold (%)'
+                text: 'Races at or below level (%)'
               },
 
               ticks: {
@@ -2549,6 +2822,9 @@ function renderAppliedBoxPlot(rows) {
   const mobile =
     window.innerWidth <= 760;
 
+  const interactive =
+    getInteractiveMode();
+
   Plotly.react(
     'appliedBoxPlot',
     traces,
@@ -2586,13 +2862,16 @@ function renderAppliedBoxPlot(rows) {
       },
 
       hovermode: 'closest',
+      dragmode: interactive ? 'zoom' : false,
       font: {
         size: mobile ? 10 : 12
       }
     },
     {
       responsive: true,
-      displaylogo: false
+      displaylogo: false,
+      displayModeBar: interactive,
+      scrollZoom: interactive
     }
   );
 }
@@ -2745,7 +3024,7 @@ function renderAppliedThresholdChart(rows) {
             x: {
               title: {
                 display: true,
-                text: 'Applied Penalty Threshold'
+                text: 'Applied Penalty Level'
               }
             },
 
@@ -2755,7 +3034,7 @@ function renderAppliedThresholdChart(rows) {
 
               title: {
                 display: true,
-                text: 'Races at or below threshold (%)'
+                text: 'Races at or below level (%)'
               },
 
               ticks: {
@@ -2864,6 +3143,7 @@ function initAppliedPage() {
 }
 
 initAppliedPage();
+bindInteractiveToggles();
 
 </script>
 
