@@ -554,6 +554,45 @@
   }
 </style>
 
+
+<style>
+  /* Stronger selected-state framing for simulator buttons */
+  #simDisciplineButtons .sim-disc,
+  #simGenderButtons .sim-gender {
+    border-width: 2px !important;
+    box-shadow: none;
+    transition:
+      background-color .12s ease,
+      border-color .12s ease,
+      box-shadow .12s ease,
+      transform .12s ease;
+  }
+
+  #simDisciplineButtons .sim-disc.active,
+  #simGenderButtons .sim-gender.active {
+    border-width: 3px !important;
+    box-shadow:
+      0 0 0 2px #ffffff,
+      0 0 0 4px currentColor !important;
+    transform: translateY(-1px);
+  }
+
+  /* Ensure inactive buttons stay visibly lighter */
+  #simDisciplineButtons .sim-disc:not(.active),
+  #simGenderButtons .sim-gender:not(.active) {
+    opacity: .72;
+  }
+
+  @media (max-width:760px) {
+    #simDisciplineButtons .sim-disc.active,
+    #simGenderButtons .sim-gender.active {
+      box-shadow:
+        0 0 0 1px #ffffff,
+        0 0 0 3px currentColor !important;
+    }
+  }
+</style>
+
 </head>
 
 <body>
