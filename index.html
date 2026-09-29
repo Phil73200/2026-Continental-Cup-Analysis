@@ -455,6 +455,7 @@
 
       <div class="note">
         Bars show the share of races in each circuit reaching each calculated-penalty threshold.
+        When a single threshold is selected, the vertical scale automatically zooms to make small differences easier to read.
       </div>
     </div>
   </section>
@@ -1665,15 +1666,25 @@ function renderPenaltyBoxPlot(rows) {
       rows.some(r => r.circuit === c)
     );
 
-  const traces = circuits.map(circuit => {
+  const traces = [];
+
+  circuits.forEach(circuit => {
 
     const arr =
       rows.filter(r => r.circuit === circuit);
 
-    return {
+    const vals =
+      arr.map(r => r.calculatedPenalty);
+
+    const avg =
+      vals.length
+        ? vals.reduce((a,b) => a+b, 0) / vals.length
+        : null;
+
+    traces.push({
       type: 'box',
       name: circuit,
-      y: arr.map(r => r.calculatedPenalty),
+      y: vals,
       text: arr.map(r =>
         `${r.place} · ${r.discipline} · ${r.gender} · ${r.raceDate}`
       ),
@@ -1691,8 +1702,34 @@ function renderPenaltyBoxPlot(rows) {
       fillcolor: 'rgba(255,255,255,0)',
       hovertemplate:
         '<b>%{text}</b><br>' +
-        'Calculated penalty: %{y:.2f}<extra>' + circuit + '</extra>'
-    };
+        'Calculated penalty: %{y:.2f}<extra>' + circuit + '</extra>',
+      showlegend: false
+    });
+
+    if (Number.isFinite(avg)) {
+
+      traces.push({
+        type: 'scatter',
+        mode: 'markers',
+        x: [circuit],
+        y: [avg],
+        name: 'Average',
+        marker: {
+          color: '#facc15',
+          size: 12,
+          line: {
+            color: '#111827',
+            width: 1
+          },
+          symbol: 'circle'
+        },
+        hovertemplate:
+          '<b>' + circuit + '</b><br>' +
+          'Average penalty: %{y:.2f}<extra>Average</extra>',
+        showlegend:
+          circuit === circuits[0]
+      });
+    }
   });
 
   Plotly.react(
@@ -1710,7 +1747,12 @@ function renderPenaltyBoxPlot(rows) {
       xaxis: {
         title: 'Circuit'
       },
-      showlegend: false,
+      legend: {
+        orientation: 'h',
+        x: 0.5,
+        xanchor: 'center',
+        y: 1.08
+      },
       hovermode: 'closest'
     },
     {
@@ -1777,6 +1819,50 @@ function renderPenaltyThresholdChart(rows) {
 
   if (PEN_THRESHOLD_CHART) {
     PEN_THRESHOLD_CHART.destroy();
+  }
+
+
+  /*
+   * Axe Y dynamique :
+   * - si plusieurs seuils sont affichés, on garde 0–100 %
+   *   pour permettre la comparaison globale ;
+   * - si un seul seuil est affiché, on zoome automatiquement
+   *   juste au-dessus de la plus grande barre.
+   */
+  let yMax = 100;
+
+  if (selectedThresholds.length === 1) {
+
+    let observedMax = 0;
+
+    datasets.forEach(ds => {
+      ds.data.forEach(p => {
+        if (Number.isFinite(p.y)) {
+          observedMax = Math.max(
+            observedMax,
+            p.y
+          );
+        }
+      });
+    });
+
+    if (observedMax <= 10) {
+      yMax = 12;
+    } else if (observedMax <= 20) {
+      yMax = Math.ceil(
+        (observedMax + 2) / 5
+      ) * 5;
+    } else if (observedMax <= 40) {
+      yMax = Math.ceil(
+        (observedMax + 4) / 10
+      ) * 10;
+    } else if (observedMax <= 70) {
+      yMax = Math.ceil(
+        (observedMax + 5) / 10
+      ) * 10;
+    } else {
+      yMax = 100;
+    }
   }
 
 
@@ -1860,7 +1946,7 @@ function renderPenaltyThresholdChart(rows) {
 
             y: {
               min: 0,
-              max: 100,
+              max: yMax,
 
               title: {
                 display: true,
@@ -1895,7 +1981,7 @@ function renderPenaltySummary(rows) {
       vals.reduce((a,b) => a+b, 0) / vals.length;
 
     parts.push(
-      `${circuit}: ${vals.length} races · median ${median(vals).toFixed(2)} · mean ${avg.toFixed(2)}`
+      `${circuit}: ${vals.length} races · median ${median(vals).toFixed(2)}`
     );
   });
 
