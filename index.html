@@ -1197,11 +1197,12 @@
   <section id="page-simulator" class="page-section">
     <h1>Coefficient Simulator 2026</h1>
     <div class="subtitle">
-      🇫🇷 Comparaison de plusieurs profondeurs de participation pour identifier le coefficient le plus pertinent.<br>
-      🇬🇧 Comparison of several participation depths to identify the most relevant coefficient.
+      🇫🇷 Testez directement la profondeur de participation utilisée pour calculer le coefficient, puis observez son effet sur la pénalité.<br>
+      🇬🇧 Directly test the participation depth used to calculate the coefficient, then observe its effect on the penalty.
     </div>
 
     <div class="controls">
+
       <div class="control">
         <div class="control-label">Discipline</div>
         <div class="button-row" id="coefDisciplineButtons">
@@ -1219,13 +1220,32 @@
           <button data-gender="W" class="coef-gender coef-women">Women</button>
         </div>
       </div>
+
+      <div class="control">
+        <div class="control-label">Top minimum</div>
+        <input id="coefTopMin" type="number" min="1" max="59" step="1" value="5"
+               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
+      </div>
+
+      <div class="control">
+        <div class="control-label">Top maximum</div>
+        <input id="coefTopMax" type="number" min="2" max="60" step="1" value="15"
+               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
+      </div>
+
+      <div class="control">
+        <div class="control-label">Minimum penalty</div>
+        <input id="coefMinPenalty" type="number" min="0" step="0.5" value="15"
+               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
+      </div>
+
     </div>
 
     <div class="card">
-      <div class="chart-title">Participation Depth Comparison</div>
-      <div class="chart-subtitle">
-        🇫🇷 Pour chaque profondeur, le coefficient est calculé sur un groupe comparable de courses : moyenne Top N ÷ moyenne Top 5. Plus le coefficient est proche de 1, plus la participation reste dense au-delà des 5 meilleurs.<br>
-        🇬🇧 For each depth, the coefficient is calculated from a comparable race sample: Average Top N ÷ Average Top 5. The closer the coefficient is to 1, the denser the participation remains beyond the top 5.
+      <div class="chart-title">Coefficient Calculation</div>
+      <div class="chart-subtitle" id="coefFormulaText">
+        🇫🇷 Coefficient = moyenne des points FIS du Top 15 ÷ moyenne des points FIS du Top 5.<br>
+        🇬🇧 Coefficient = Average Top 15 FIS Points ÷ Average Top 5 FIS Points.
       </div>
 
       <div class="coef-table-wrap">
@@ -1233,12 +1253,10 @@
           <thead>
             <tr>
               <th>Circuit</th>
-              <th>Races Top 10</th>
-              <th>Coef. (Top 10 / Top 5)</th>
-              <th>Races Top 15</th>
-              <th>Coef. (Top 15 / Top 5)</th>
-              <th>Races Top 20</th>
-              <th>Coef. (Top 20 / Top 5)</th>
+              <th>Races</th>
+              <th id="coefMinHeader">Average Top 5 FIS Points</th>
+              <th id="coefMaxHeader">Average Top 15 FIS Points</th>
+              <th id="coefHeader">Coef. (Top 15 / Top 5)</th>
             </tr>
           </thead>
           <tbody id="coefTableBody"></tbody>
@@ -1249,27 +1267,29 @@
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <div class="chart-title">Average FIS Points Behind Each Coefficient</div>
+      <div class="chart-title">Penalty Simulation</div>
       <div class="chart-subtitle">
-        🇫🇷 Les valeurs ci-dessous permettent de vérifier directement d'où vient chaque coefficient.<br>
-        🇬🇧 The values below show directly how each coefficient is built.
+        🇫🇷 La pénalité calculée de chaque course est multipliée par le coefficient du circuit, puis la pénalité minimale est appliquée. Les valeurs affichées sont ensuite des moyennes par circuit.<br>
+        🇬🇧 Each race calculated penalty is multiplied by the circuit coefficient, then the minimum penalty is applied. The displayed values are then averages by circuit.
       </div>
 
       <div class="coef-table-wrap">
-        <table class="coef-table coef-detail-table">
+        <table class="coef-table coef-penalty-table">
           <thead>
             <tr>
               <th>Circuit</th>
-              <th>Top 5 avg<br>(Top 10 sample)</th>
-              <th>Top 10 avg</th>
-              <th>Top 5 avg<br>(Top 20 sample)</th>
-              <th>Top 15 avg</th>
-              <th>Top 20 avg</th>
+              <th>Average Calculated Penalty</th>
+              <th>Coefficient</th>
+              <th>Average Current Applied Penalty</th>
+              <th>Average Simulated Applied Penalty</th>
+              <th>Difference</th>
             </tr>
           </thead>
-          <tbody id="coefDetailBody"></tbody>
+          <tbody id="coefPenaltyBody"></tbody>
         </table>
       </div>
+
+      <div class="note" id="coefPenaltyNote"></div>
     </div>
   </section>
 
@@ -3814,9 +3834,62 @@ bindInteractiveToggles();
 let COEF_DISCIPLINE = 'SL';
 let COEF_GENDER = 'M';
 
-function coefRows(circuit, cohortMaxRank) {
+function coefNum(id, fallback) {
+  const el = document.getElementById(id);
+  if (!el) return fallback;
+  const v = Number(el.value);
+  return Number.isFinite(v) ? v : fallback;
+}
+
+function coefAvg(vals) {
+  const clean = vals.filter(Number.isFinite);
+  if (!clean.length) return null;
+  return clean.reduce((a,b) => a+b, 0) / clean.length;
+}
+
+function coefFmt(v, digits=2) {
+  return Number.isFinite(v) ? v.toFixed(digits) : '—';
+}
+
+function coefficientSettings() {
+  let topMin = Math.round(coefNum('coefTopMin', 5));
+  let topMax = Math.round(coefNum('coefTopMax', 15));
+
+  topMin = Math.max(1, Math.min(59, topMin));
+  topMax = Math.max(2, Math.min(60, topMax));
+
+  if (topMin >= topMax) {
+    topMin = Math.max(1, topMax - 1);
+  }
+
+  const minPenalty = Math.max(0, coefNum('coefMinPenalty', 15));
+
+  return { topMin, topMax, minPenalty };
+}
+
+function availableCohorts() {
+  const vals = [...new Set(
+    RAW
+      .filter(r =>
+        r.discipline === COEF_DISCIPLINE &&
+        r.gender === COEF_GENDER
+      )
+      .map(r => Number(r.cohortMaxRank))
+      .filter(Number.isFinite)
+  )].sort((a,b) => a-b);
+
+  return vals;
+}
+
+function chooseCohort(topMax) {
+  const cohorts = availableCohorts();
+  const found = cohorts.find(v => v >= topMax);
+  return found ?? (cohorts.length ? cohorts[cohorts.length - 1] : topMax);
+}
+
+function fieldRows(circuit, cohort) {
   return RAW.filter(r =>
-    Number(r.cohortMaxRank) === cohortMaxRank &&
+    Number(r.cohortMaxRank) === cohort &&
     r.circuit === circuit &&
     r.discipline === COEF_DISCIPLINE &&
     r.gender === COEF_GENDER &&
@@ -3825,52 +3898,37 @@ function coefRows(circuit, cohortMaxRank) {
   );
 }
 
-function coefAverageTop(rows, maxRank) {
+function topAverage(rows, maxRank) {
   const vals = rows
     .filter(r => Number(r.rank) <= maxRank)
     .map(r => Number(r.avgFisPoints))
     .filter(Number.isFinite);
 
-  if (!vals.length) return null;
-  return vals.reduce((a,b) => a+b, 0) / vals.length;
+  return coefAvg(vals);
 }
 
-function coefSampleRaces(rows) {
+function sampleRaces(rows) {
   const vals = rows
     .map(r => Number(r.sampleRaces))
     .filter(Number.isFinite);
 
   if (!vals.length) return 0;
-  return Math.round(vals.reduce((a,b) => a+b, 0) / vals.length);
+  return Math.round(coefAvg(vals));
 }
 
-function coefFmt(v, digits=3) {
-  return Number.isFinite(v) ? v.toFixed(digits) : '—';
-}
-
-function coefFor(circuit, targetRank) {
-  /*
-   * Top 10 uses the comparable Top 10 cohort.
-   * Top 15 and Top 20 use the comparable Top 20 cohort so that
-   * Top 5 and Top N are always calculated on the same race sample.
-   */
-  const cohort = targetRank === 10 ? 10 : 20;
-  const rows = coefRows(circuit, cohort);
-  const top5 = coefAverageTop(rows, 5);
-  const topN = coefAverageTop(rows, targetRank);
-  const races = coefSampleRaces(rows);
-
-  const coef =
-    Number.isFinite(top5) &&
-    top5 > 0 &&
-    Number.isFinite(topN)
-      ? topN / top5
-      : null;
-
-  return { cohort, rows, top5, topN, races, coef };
+function penaltyRows(circuit) {
+  return PENALTY_DATA.filter(r =>
+    r.circuit === circuit &&
+    r.discipline === COEF_DISCIPLINE &&
+    r.gender === COEF_GENDER &&
+    Number.isFinite(Number(r.calculatedPenalty))
+  );
 }
 
 function renderCoefficientSimulator() {
+  const { topMin, topMax, minPenalty } = coefficientSettings();
+  const cohort = chooseCohort(topMax);
+
   const circuits = PEN_CIRCUIT_ORDER.filter(c =>
     RAW.some(r =>
       r.circuit === c &&
@@ -3880,48 +3938,114 @@ function renderCoefficientSimulator() {
   );
 
   const body = document.getElementById('coefTableBody');
-  const detail = document.getElementById('coefDetailBody');
-  if (!body || !detail) return;
+  const penaltyBody = document.getElementById('coefPenaltyBody');
+  if (!body || !penaltyBody) return;
 
   body.innerHTML = '';
-  detail.innerHTML = '';
+  penaltyBody.innerHTML = '';
+
+  const formula = document.getElementById('coefFormulaText');
+  if (formula) {
+    formula.innerHTML =
+      `🇫🇷 Coefficient = moyenne des points FIS du Top ${topMax} ÷ moyenne des points FIS du Top ${topMin}.<br>` +
+      `🇬🇧 Coefficient = Average Top ${topMax} FIS Points ÷ Average Top ${topMin} FIS Points.`;
+  }
+
+  const minHeader = document.getElementById('coefMinHeader');
+  const maxHeader = document.getElementById('coefMaxHeader');
+  const coefHeader = document.getElementById('coefHeader');
+
+  if (minHeader) minHeader.textContent = `Average Top ${topMin} FIS Points`;
+  if (maxHeader) maxHeader.textContent = `Average Top ${topMax} FIS Points`;
+  if (coefHeader) coefHeader.textContent = `Coef. (Top ${topMax} / Top ${topMin})`;
 
   circuits.forEach(circuit => {
-    const c10 = coefFor(circuit, 10);
-    const c15 = coefFor(circuit, 15);
-    const c20 = coefFor(circuit, 20);
+    const rows = fieldRows(circuit, cohort);
+    const avgMin = topAverage(rows, topMin);
+    const avgMax = topAverage(rows, topMax);
+    const races = sampleRaces(rows);
+
+    const coef =
+      Number.isFinite(avgMin) &&
+      avgMin > 0 &&
+      Number.isFinite(avgMax)
+        ? avgMax / avgMin
+        : null;
 
     const color = PEN_COLORS[circuit] || '#374151';
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td><strong style="color:${color}">${circuit}</strong></td>
-      <td>${c10.races || '—'}</td>
-      <td><strong>${coefFmt(c10.coef)}</strong></td>
-      <td>${c15.races || '—'}</td>
-      <td><strong>${coefFmt(c15.coef)}</strong></td>
-      <td>${c20.races || '—'}</td>
-      <td><strong>${coefFmt(c20.coef)}</strong></td>
+      <td>${races || '—'}</td>
+      <td>${coefFmt(avgMin,2)}</td>
+      <td>${coefFmt(avgMax,2)}</td>
+      <td><strong>${coefFmt(coef,3)}</strong></td>
     `;
     body.appendChild(tr);
 
-    const td = document.createElement('tr');
-    td.innerHTML = `
+    const prows = penaltyRows(circuit);
+
+    const avgCalculated = coefAvg(
+      prows.map(r => Number(r.calculatedPenalty))
+    );
+
+    const avgCurrentApplied = coefAvg(
+      prows
+        .map(r => Number(r.appliedPenalty))
+        .filter(Number.isFinite)
+    );
+
+    const simulated = prows.map(r => {
+      const calc = Number(r.calculatedPenalty);
+
+      if (
+        !Number.isFinite(calc) ||
+        !Number.isFinite(coef)
+      ) {
+        return NaN;
+      }
+
+      return Math.max(
+        minPenalty,
+        calc * coef
+      );
+    });
+
+    const avgSimulated = coefAvg(simulated);
+
+    const difference =
+      (
+        Number.isFinite(avgSimulated) &&
+        Number.isFinite(avgCurrentApplied)
+      )
+        ? avgSimulated - avgCurrentApplied
+        : null;
+
+    const ptr = document.createElement('tr');
+    ptr.innerHTML = `
       <td><strong style="color:${color}">${circuit}</strong></td>
-      <td>${coefFmt(c10.top5,2)}</td>
-      <td>${coefFmt(c10.topN,2)}</td>
-      <td>${coefFmt(c20.top5,2)}</td>
-      <td>${coefFmt(c15.topN,2)}</td>
-      <td>${coefFmt(c20.topN,2)}</td>
+      <td>${coefFmt(avgCalculated,2)}</td>
+      <td><strong>${coefFmt(coef,3)}</strong></td>
+      <td>${coefFmt(avgCurrentApplied,2)}</td>
+      <td><strong>${coefFmt(avgSimulated,2)}</strong></td>
+      <td>${Number.isFinite(difference) ? (difference >= 0 ? '+' : '') + difference.toFixed(2) : '—'}</td>
     `;
-    detail.appendChild(td);
+    penaltyBody.appendChild(ptr);
   });
 
   const note = document.getElementById('coefNote');
   if (note) {
     note.innerHTML =
-      '🇫🇷 Top 10 est calculé sur le groupe comparable Top 10. Top 15 et Top 20 sont calculés sur le groupe comparable Top 20 afin que le Top 5 et le Top N utilisent exactement les mêmes courses.<br>' +
-      '🇬🇧 Top 10 is calculated from the comparable Top 10 sample. Top 15 and Top 20 are calculated from the comparable Top 20 sample so that Top 5 and Top N use exactly the same races.';
+      `🇫🇷 Le Top ${topMin} et le Top ${topMax} sont calculés sur exactement le même groupe comparable de courses (cohorte Top ${cohort}).<br>` +
+      `🇬🇧 Top ${topMin} and Top ${topMax} are calculated from exactly the same comparable race sample (Top ${cohort} cohort).`;
+  }
+
+  const penaltyNote = document.getElementById('coefPenaltyNote');
+  if (penaltyNote) {
+    penaltyNote.innerHTML =
+      `🇫🇷 Simulation : pénalité finale de chaque course = MAX(${minPenalty.toFixed(1)} ; pénalité calculée × coefficient).<br>` +
+      `🇬🇧 Simulation: each race final penalty = MAX(${minPenalty.toFixed(1)} ; calculated penalty × coefficient).`;
   }
 }
 
@@ -3955,6 +4079,14 @@ function initCoefficientSimulator() {
       renderCoefficientSimulator();
     });
   }
+
+  ['coefTopMin','coefTopMax','coefMinPenalty'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener('input', renderCoefficientSimulator);
+    el.addEventListener('change', renderCoefficientSimulator);
+  });
 
   renderCoefficientSimulator();
 }
