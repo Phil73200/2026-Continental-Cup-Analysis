@@ -690,6 +690,25 @@
   }
 </style>
 
+
+<style>
+  .sim-continuous-grid {
+    grid-template-columns:repeat(3,minmax(190px,1fr));
+  }
+
+  .sim-continuous-grid .sim-rule input {
+    width:90px;
+    font-weight:800;
+    text-align:center;
+  }
+
+  @media (max-width:760px) {
+    .sim-continuous-grid {
+      grid-template-columns:1fr;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -1110,47 +1129,44 @@
     </div>
 
 <div class="card">
-      <div class="chart-title">Coefficient and Additive Calculation</div>
+      <div class="chart-title">Continuous Adder Calculation</div>
       <div class="chart-subtitle">
-        🇫🇷 Le coefficient est calculé comme le rapport entre la moyenne des points FIS du Top 10 et la moyenne des points FIS du Top 5. Il est ensuite légèrement corrigé par le facteur courses avant de déterminer l’Adder. Modifiez les seuils, les additifs ou les facteurs courses pour tester instantanément une autre hypothèse.<br>
-        🇬🇧 The coefficient is calculated as the ratio between the Average Top 10 FIS Points and the Average Top 5 FIS Points. It is then slightly adjusted by the race count adjustment before determining the Adder. Change the limits, additives or race count adjustments to test another hypothesis instantly.
+        🇫🇷 L’Adder est calculé automatiquement à partir du coefficient ajusté, sans tranches fixes. Plus le coefficient s’éloigne de 1,00, plus l’Adder augmente progressivement.<br>
+        🇬🇧 The Adder is calculated automatically from the adjusted coefficient, without fixed thresholds. The further the coefficient moves away from 1.00, the more the Adder progressively increases.
       </div>
 
-      <div class="sim-grid" style="margin-top:14px;">
+      <div class="sim-grid sim-continuous-grid" style="margin-top:14px;">
+
         <div class="sim-rule">
-          <div class="sim-rule-title">Adder 0</div>
-          <div>Coefficient ≤ <input id="simT1" type="number" step="0.01" value="1.05"></div>
-          <div>Additive <input id="simA1" type="number" step="0.5" value="0"></div>
+          <div class="sim-rule-title">Maximum Adder</div>
+          <div>
+            <input id="simMaxAdder" type="number" min="0" step="0.5" value="4.00">
+          </div>
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Adder 1</div>
-          <div>≤ <input id="simT2" type="number" step="0.01" value="1.10"></div>
-          <div>Additive <input id="simA2" type="number" step="0.5" value="1"></div>
+          <div class="sim-rule-title">Coefficient for Maximum Adder</div>
+          <div>
+            <input id="simCoefMax" type="number" min="1.01" step="0.01" value="1.20">
+          </div>
         </div>
 
         <div class="sim-rule">
-          <div class="sim-rule-title">Adder 2</div>
-          <div>≤ <input id="simT3" type="number" step="0.01" value="1.15"></div>
-          <div>Additive <input id="simA3" type="number" step="0.5" value="2"></div>
+          <div class="sim-rule-title">Curve Power</div>
+          <div>
+            <input id="simCurvePower" type="number" min="0.25" step="0.25" value="2.00">
+          </div>
         </div>
 
-        <div class="sim-rule">
-          <div class="sim-rule-title">Adder 3</div>
-          <div>≤ <input id="simT4" type="number" step="0.01" value="1.20"></div>
-          <div>Additive <input id="simA4" type="number" step="0.5" value="3"></div>
-        </div>
-
-        <div class="sim-rule">
-          <div class="sim-rule-title">Adder 4</div>
-          <div>&gt; last limit</div>
-          <div>Additive <input id="simA5" type="number" step="0.5" value="4"></div>
-        </div>
       </div>
 
+      <div class="chart-subtitle" style="margin-top:10px;">
+        🇫🇷 Formule : Adder = Max Adder × ((Coefficient ajusté − 1) / (Coefficient Max − 1))<sup>Puissance</sup>, limité entre 0 et le Max Adder. Une puissance supérieure à 1 réduit l’Adder pour les coefficients proches de 1 et augmente progressivement l’écart pour les coefficients plus élevés.<br>
+        🇬🇧 Formula: Adder = Max Adder × ((Adjusted Coefficient − 1) / (Maximum Coefficient − 1))<sup>Power</sup>, capped between 0 and the Maximum Adder. A power above 1 keeps the Adder low for coefficients close to 1 and progressively increases the gap for higher coefficients.
+      </div>
 
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="simResetButton">Reset default scale</button>
+        <button id="simResetButton">Reset default parameters</button>
       </div>
     </div>
 
@@ -1178,7 +1194,7 @@
               <th>Coef. (Top 10 / Top 5)</th>
               <th>Race Count Adjustment</th>
               <th>Adjusted Coef.</th>
-              <th>Additive</th>
+              <th>Continuous Adder</th>
               <th>Average Current Applied Penalty</th>
               <th>Average Simulated Applied Penalty</th>
               <th>Difference</th>
@@ -3735,21 +3751,7 @@ function simNum(id, fallback) {
   return Number.isFinite(v) ? v : fallback;
 }
 
-function simRule() {
 
-  const t1 = simNum('simT1', 1.05);
-  const t2 = simNum('simT2', 1.10);
-  const t3 = simNum('simT3', 1.15);
-  const t4 = simNum('simT4', 1.20);
-
-  const a1 = simNum('simA1', 0);
-  const a2 = simNum('simA2', 1);
-  const a3 = simNum('simA3', 2);
-  const a4 = simNum('simA4', 3);
-  const a5 = simNum('simA5', 4);
-
-  return { t1,t2,t3,t4,a1,a2,a3,a4,a5 };
-}
 
 
 function simRaceFactor(raceCount) {
@@ -3852,16 +3854,42 @@ function simRaceFactor(raceCount) {
 
 function simAdditive(coef) {
 
-  const r = simRule();
+  if (!Number.isFinite(coef)) {
+    return null;
+  }
 
-  if (!Number.isFinite(coef)) return null;
+  const maxAdder =
+    Math.max(
+      0,
+      simNum('simMaxAdder', 4.00)
+    );
 
-  if (coef <= r.t1) return r.a1;
-  if (coef <= r.t2) return r.a2;
-  if (coef <= r.t3) return r.a3;
-  if (coef <= r.t4) return r.a4;
+  const coefMax =
+    Math.max(
+      1.01,
+      simNum('simCoefMax', 1.20)
+    );
 
-  return r.a5;
+  const power =
+    Math.max(
+      0.25,
+      simNum('simCurvePower', 2.00)
+    );
+
+  const normalized =
+    Math.max(
+      0,
+      (coef - 1) / (coefMax - 1)
+    );
+
+  const adder =
+    maxAdder *
+    Math.pow(normalized, power);
+
+  return Math.min(
+    maxAdder,
+    Math.max(0, adder)
+  );
 }
 
 function simFieldRows(circuit) {
@@ -4030,7 +4058,7 @@ function renderSimulator() {
       <td>${fmtSim(raceFactor,2)}</td>
       <td><strong>${fmtSim(correctedCoef,3)}</strong></td>
       <td class="sim-additive">
-        ${Number.isFinite(additive) ? '+' + additive.toFixed(1) : '—'}
+        ${Number.isFinite(additive) ? '+' + additive.toFixed(2) : '—'}
       </td>
       <td>${fmtSim(currentApplied)}</td>
       <td class="sim-result"><strong>${fmtSim(simulatedApplied)}</strong></td>
@@ -4076,20 +4104,14 @@ function resetSimulatorDefaults() {
 
   const defaults = {
     simMinPenalty: 15,
-    simT1: 1.05,
-    simT2: 1.10,
-    simT3: 1.15,
-    simT4: 1.20,
-    simA1: 0,
-    simA2: 1,
-    simA3: 2,
-    simA4: 3,
-    simA5: 4,
     simRaceHigh: 9,
     simRaceLow: 5,
     simRF10: 1.00,
     simRF6: 1.02,
-    simRF5: 1.04
+    simRF5: 1.04,
+    simMaxAdder: 4.00,
+    simCoefMax: 1.20,
+    simCurvePower: 2.00
   };
 
   Object.entries(defaults)
@@ -4165,10 +4187,9 @@ function initSimulator() {
 
   const numericIds = [
     'simMinPenalty',
-    'simT1','simT2','simT3','simT4',
-    'simA1','simA2','simA3','simA4','simA5',
     'simRaceHigh','simRaceLow',
-    'simRF10','simRF6','simRF5'
+    'simRF10','simRF6','simRF5',
+    'simMaxAdder','simCoefMax','simCurvePower'
   ];
 
   numericIds.forEach(id => {
