@@ -424,15 +424,53 @@
   }
 </style>
 
+
+<style>
+  .sim-nav-button {
+    border: 2px solid #7c3aed !important;
+  }
+
+  .sim-nav-button:not(.active) {
+    background: #f5f3ff !important;
+    color: #6d28d9 !important;
+  }
+
+  .sim-nav-button.active {
+    background: #7c3aed !important;
+    color: #ffffff !important;
+    border-color: #7c3aed !important;
+  }
+
+  @media (max-width:760px) {
+    .top-nav {
+      display:grid !important;
+      grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+      gap:6px !important;
+    }
+
+    .top-nav button {
+      width:100% !important;
+      min-width:0 !important;
+      white-space:normal !important;
+      line-height:1.15 !important;
+    }
+
+    .sim-nav-button {
+      grid-column: 1 / -1;
+    }
+  }
+</style>
+
 </head>
 
 <body>
+<div id="buildMarker" style="position:fixed;bottom:6px;right:8px;z-index:9999;font-size:9px;color:#9ca3af;pointer-events:none;">v2026-09-29-1450</div>
 
   <div class="top-nav">
     <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
-    <button id="navSimulator" onclick="showPage('simulator')">Additive Simulator</button>
+    <button id="navSimulator" class="sim-nav-button" onclick="showPage('simulator')">Additive Simulator</button>
     <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
