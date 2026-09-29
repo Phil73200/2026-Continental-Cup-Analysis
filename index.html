@@ -367,7 +367,7 @@
 
   .sim-table {
     width:100%;
-    min-width:980px;
+    min-width:1180px;
     border-collapse:collapse;
     font-size:12px;
   }
@@ -946,10 +946,10 @@
     </div>
 
     <div class="card">
-      <div class="chart-title">🇫🇷 Calcul du coefficient et de l’additif / 🇬🇧 Coefficient and Additive Calculation</div>
+      <div class="chart-title">Coefficient and Additive Calculation</div>
       <div class="chart-subtitle">
-        🇫🇷 Le coefficient est calculé comme le rapport entre la moyenne des points FIS du Top 10 et la moyenne des points FIS du Top 5. Modifiez les seuils ou les additifs pour tester instantanément une autre hypothèse.<br>
-        🇬🇧 The coefficient is calculated as the ratio between the Average Top 10 FIS Points and the Average Top 5 FIS Points. Change the limits or additives to test another hypothesis instantly.
+        🇫🇷 Le coefficient est calculé comme le rapport entre la moyenne des points FIS du Top 10 et la moyenne des points FIS du Top 5. Il est ensuite légèrement corrigé par le facteur courses avant de déterminer l’Adder. Modifiez les seuils, les additifs ou les facteurs courses pour tester instantanément une autre hypothèse.<br>
+        🇬🇧 The coefficient is calculated as the ratio between the Average Top 10 FIS Points and the Average Top 5 FIS Points. It is then slightly adjusted by the race factor before determining the Adder. Change the limits, additives or race factors to test another hypothesis instantly.
       </div>
 
       <div class="sim-grid" style="margin-top:14px;">
@@ -984,13 +984,40 @@
         </div>
       </div>
 
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid #e5e7eb;">
+        <div style="font-weight:800;margin-bottom:8px;">Race Factor</div>
+
+        <div class="sim-grid sim-race-factor-grid">
+          <div class="sim-rule">
+            <div class="sim-rule-title">10+ races</div>
+            <div>Factor <input id="simRF10" type="number" step="0.01" value="1.00"></div>
+          </div>
+
+          <div class="sim-rule">
+            <div class="sim-rule-title">6–9 races</div>
+            <div>Factor <input id="simRF6" type="number" step="0.01" value="1.02"></div>
+          </div>
+
+          <div class="sim-rule">
+            <div class="sim-rule-title">≤5 races</div>
+            <div>Factor <input id="simRF5" type="number" step="0.01" value="1.04"></div>
+          </div>
+        </div>
+
+        <div class="chart-subtitle" style="margin-top:8px;">
+          🇫🇷 Le facteur courses corrige légèrement le coefficient lorsque le nombre de courses est faible. Le coefficient corrigé sert ensuite à déterminer l’Adder.<br>
+          🇬🇧 The race factor slightly adjusts the coefficient when the number of races is low. The corrected coefficient is then used to determine the Adder.
+        </div>
+      </div>
+
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
         <button id="simResetButton">Reset default scale</button>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px;">
-      <div class="chart-title" id="simTableTitle">🇫🇷 Simulation – SL Hommes / 🇬🇧 Simulation – SL Men</div>
+      <div class="chart-title" id="simTableTitle">Simulation – SL Men</div>
       <div class="chart-subtitle">
         🇫🇷 L'additif est appliqué course par course avant la pénalité minimale : Pénalité finale = MAX(Pénalité minimale ; Pénalité calculée + Additif). Les valeurs affichées dans le tableau sont ensuite des moyennes par circuit.<br>
         🇬🇧 The additive is applied race by race before the minimum penalty: Final penalty = MAX(Minimum penalty ; Calculated penalty + Additive). The values displayed in the table are then averages by circuit.
@@ -1011,6 +1038,8 @@
               <th>Average Top 5 FIS Points</th>
               <th>Average Top 10 FIS Points</th>
               <th>Coef. (Top 10 / Top 5)</th>
+              <th>Race Factor</th>
+              <th>Corrected Coef.</th>
               <th>Additive</th>
               <th>Average Current Applied Penalty</th>
               <th>Average Simulated Applied Penalty</th>
@@ -3580,6 +3609,30 @@ function simRule() {
   return { t1,t2,t3,t4,a1,a2,a3,a4,a5 };
 }
 
+
+function simRaceFactor(raceCount) {
+
+  const f10 =
+    simNum('simRF10', 1.00);
+
+  const f6 =
+    simNum('simRF6', 1.02);
+
+  const f5 =
+    simNum('simRF5', 1.04);
+
+  if (raceCount >= 10) {
+    return f10;
+  }
+
+  if (raceCount >= 6) {
+    return f6;
+  }
+
+  return f5;
+}
+
+
 function simAdditive(coef) {
 
   const r = simRule();
@@ -3682,11 +3735,19 @@ function renderSimulator() {
         ? top10 / top5
         : null;
 
-    const additive =
-      simAdditive(coef);
-
     const prows =
       simPenaltyRows(circuit);
+
+    const raceFactor =
+      simRaceFactor(prows.length);
+
+    const correctedCoef =
+      Number.isFinite(coef)
+        ? coef * raceFactor
+        : null;
+
+    const additive =
+      simAdditive(correctedCoef);
 
     const avgCalc =
       avgOf(
@@ -3749,6 +3810,8 @@ function renderSimulator() {
       <td>${fmtSim(top5)}</td>
       <td>${fmtSim(top10)}</td>
       <td><strong>${fmtSim(coef,3)}</strong></td>
+      <td>${fmtSim(raceFactor,2)}</td>
+      <td><strong>${fmtSim(correctedCoef,3)}</strong></td>
       <td class="sim-additive">
         ${Number.isFinite(additive) ? '+' + additive.toFixed(1) : '—'}
       </td>
@@ -3767,11 +3830,7 @@ function renderSimulator() {
 
   if (title) {
     title.textContent =
-      '🇫🇷 Simulation – ' +
-      SIM_DISCIPLINE +
-      ' ' +
-      (SIM_GENDER === 'M' ? 'Hommes' : 'Dames') +
-      ' / 🇬🇧 Simulation – ' +
+      'Simulation – ' +
       SIM_DISCIPLINE +
       ' ' +
       (SIM_GENDER === 'M' ? 'Men' : 'Women');
@@ -3783,7 +3842,7 @@ function renderSimulator() {
   if (note) {
     note.innerHTML =
       '🇫🇷 Les moyennes Top 5 et Top 10 sont calculées à partir des 10 premiers concurrents de chaque course. La pénalité appliquée simulée est calculée course par course à partir de l\'additif sélectionné et de la pénalité minimale, puis affichée sous forme de moyenne par circuit.<br>' +
-      '🇬🇧 Average Top 5 and Average Top 10 FIS Points are calculated from the first 10 ranked athletes in each race. The simulated applied penalty is calculated race by race using the selected additive and the minimum penalty, then displayed as an average by circuit.';
+      '🇬🇧 Average Top 5 and Average Top 10 FIS Points are calculated from the first 10 ranked athletes in each race. Corrected Coef. = Coef. (Top 10 / Top 5) × Race Factor. The Adder is determined from this corrected coefficient. The simulated applied penalty is calculated race by race and then displayed as an average by circuit.';
   }
 
   const status =
@@ -3808,7 +3867,10 @@ function resetSimulatorDefaults() {
     simA2: 1,
     simA3: 2,
     simA4: 3,
-    simA5: 4
+    simA5: 4,
+    simRF10: 1.00,
+    simRF6: 1.02,
+    simRF5: 1.04
   };
 
   Object.entries(defaults)
@@ -3885,7 +3947,8 @@ function initSimulator() {
   const numericIds = [
     'simMinPenalty',
     'simT1','simT2','simT3','simT4',
-    'simA1','simA2','simA3','simA4','simA5'
+    'simA1','simA2','simA3','simA4','simA5',
+    'simRF10','simRF6','simRF5'
   ];
 
   numericIds.forEach(id => {
