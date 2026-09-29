@@ -606,6 +606,33 @@
   }
 </style>
 
+
+<style>
+  #simDisciplineButtons button.active,
+  #simGenderButtons button.active {
+    border:3px solid #111827 !important;
+    box-shadow:0 0 0 2px #ffffff !important;
+    font-weight:900 !important;
+    opacity:1 !important;
+  }
+
+  #simDisciplineButtons button:not(.active),
+  #simGenderButtons button:not(.active) {
+    opacity:.68;
+    border-width:2px !important;
+  }
+
+  .sim-race-factor-grid {
+    grid-template-columns:repeat(3,minmax(180px,1fr));
+  }
+
+  @media (max-width:760px) {
+    .sim-race-factor-grid {
+      grid-template-columns:1fr;
+    }
+  }
+</style>
+
 </head>
 
 <body>
@@ -989,25 +1016,57 @@
         <div style="font-weight:800;margin-bottom:8px;">Race Factor</div>
 
         <div class="sim-grid sim-race-factor-grid">
+
           <div class="sim-rule">
-            <div class="sim-rule-title">10+ races</div>
-            <div>Factor <input id="simRF10" type="number" step="0.01" value="1.00"></div>
+            <div class="sim-rule-title">Large sample</div>
+            <div>
+              From
+              <input id="simRaceHigh" type="number" min="2" step="1" value="10">
+              races
+            </div>
+            <div>
+              Factor
+              <input id="simRF10" type="number" min="1" step="0.01" value="1.00">
+            </div>
           </div>
 
           <div class="sim-rule">
-            <div class="sim-rule-title">6–9 races</div>
-            <div>Factor <input id="simRF6" type="number" step="0.01" value="1.02"></div>
+            <div class="sim-rule-title">Medium sample</div>
+            <div>
+              Between the two limits
+            </div>
+            <div>
+              Factor
+              <input id="simRF6" type="number" min="1" step="0.01" value="1.02">
+            </div>
           </div>
 
           <div class="sim-rule">
-            <div class="sim-rule-title">≤5 races</div>
-            <div>Factor <input id="simRF5" type="number" step="0.01" value="1.04"></div>
+            <div class="sim-rule-title">Small sample</div>
+            <div>
+              Up to
+              <input id="simRaceLow" type="number" min="1" step="1" value="5">
+              races
+            </div>
+            <div>
+              Factor
+              <input id="simRF5" type="number" min="1" step="0.01" value="1.04">
+            </div>
           </div>
+
+        </div>
+
+        <div id="simRaceFactorRangeText"
+             style="margin-top:8px;font-size:11px;font-weight:700;color:#374151;">
+        </div>
+
+        <div id="simRaceFactorWarning"
+             style="margin-top:5px;font-size:11px;color:#b45309;">
         </div>
 
         <div class="chart-subtitle" style="margin-top:8px;">
-          🇫🇷 Le facteur courses corrige légèrement le coefficient lorsque le nombre de courses est faible. Le coefficient corrigé sert ensuite à déterminer l’Adder.<br>
-          🇬🇧 The race factor slightly adjusts the coefficient when the number of races is low. The corrected coefficient is then used to determine the Adder.
+          🇫🇷 Vous pouvez modifier à la fois le nombre de courses définissant les trois groupes et le facteur appliqué à chacun. Le coefficient corrigé sert ensuite à déterminer l’Adder.<br>
+          🇬🇧 You can change both the number of races defining the three groups and the factor applied to each group. The corrected coefficient is then used to determine the Adder.
         </div>
       </div>
 
@@ -3612,24 +3671,99 @@ function simRule() {
 
 function simRaceFactor(raceCount) {
 
-  const f10 =
-    simNum('simRF10', 1.00);
+  let high =
+    Math.round(
+      simNum('simRaceHigh', 10)
+    );
 
-  const f6 =
-    simNum('simRF6', 1.02);
+  let low =
+    Math.round(
+      simNum('simRaceLow', 5)
+    );
 
-  const f5 =
-    simNum('simRF5', 1.04);
+  /*
+   * Keep the simulator usable even while the user is typing:
+   * low must stay below high.
+   */
+  if (low < 1) low = 1;
+  if (high < 2) high = 2;
 
-  if (raceCount >= 10) {
-    return f10;
+  const warning =
+    document.getElementById(
+      'simRaceFactorWarning'
+    );
+
+  if (low >= high) {
+
+    if (warning) {
+      warning.textContent =
+        'The small-sample limit must be lower than the large-sample limit.';
+    }
+
+    /*
+     * Temporary safe fallback for the calculation.
+     * The entered values remain visible so the user can correct them.
+     */
+    low =
+      Math.max(
+        1,
+        high - 1
+      );
+
+  } else if (warning) {
+
+    warning.textContent = '';
   }
 
-  if (raceCount >= 6) {
-    return f6;
+
+  const rangeText =
+    document.getElementById(
+      'simRaceFactorRangeText'
+    );
+
+  if (rangeText) {
+
+    rangeText.textContent =
+      'Current groups: ≤' +
+      low +
+      ' races / ' +
+      (low + 1) +
+      '–' +
+      (high - 1) +
+      ' races / ≥' +
+      high +
+      ' races';
   }
 
-  return f5;
+
+  const factorHigh =
+    simNum(
+      'simRF10',
+      1.00
+    );
+
+  const factorMedium =
+    simNum(
+      'simRF6',
+      1.02
+    );
+
+  const factorLow =
+    simNum(
+      'simRF5',
+      1.04
+    );
+
+
+  if (raceCount >= high) {
+    return factorHigh;
+  }
+
+  if (raceCount <= low) {
+    return factorLow;
+  }
+
+  return factorMedium;
 }
 
 
@@ -3868,6 +4002,8 @@ function resetSimulatorDefaults() {
     simA3: 2,
     simA4: 3,
     simA5: 4,
+    simRaceHigh: 10,
+    simRaceLow: 5,
     simRF10: 1.00,
     simRF6: 1.02,
     simRF5: 1.04
@@ -3948,6 +4084,7 @@ function initSimulator() {
     'simMinPenalty',
     'simT1','simT2','simT3','simT4',
     'simA1','simA2','simA3','simA4','simA5',
+    'simRaceHigh','simRaceLow',
     'simRF10','simRF6','simRF5'
   ];
 
