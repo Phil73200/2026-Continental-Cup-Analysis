@@ -17,6 +17,14 @@
     }
 
     * { box-sizing: border-box; }
+    /* Freeze the Penalty Adjustment configuration while scrolling */
+    #page-simulator .controls {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0,0,0,.08);
+    }
+
 
     body {
       margin: 0;
@@ -992,13 +1000,13 @@
 </head>
 
 <body>
-<div id="buildMarker" style="position:fixed;bottom:6px;right:8px;z-index:9999;font-size:9px;color:#9ca3af;pointer-events:none;">v2026-09-30-1600</div>
+<div id="buildMarker" style="position:fixed;bottom:6px;right:8px;z-index:9999;font-size:9px;color:#9ca3af;pointer-events:none;">v2026-09-29-1450</div>
 
   <div class="top-nav">
     <button id="navField" class="active" onclick="showPage('field')">Competitive Participation</button>
     <button id="navPenalty" onclick="showPage('penalty')">Calculated Penalties</button>
     <button id="navApplied" onclick="showPage('applied')">Applied Penalties</button>
-    <button id="navSimulator" onclick="showPage('simulator')">Coefficient Simulator</button>
+    <button id="navSimulator" onclick="showPage('simulator')">Penalty Adjustment</button>
     <button id="navCross" onclick="showPage('cross')">Findings & Possible Approaches</button>
   </div>
 
@@ -1111,7 +1119,7 @@
   <section id="page-penalty" class="page-section">
     <h1>Continental Cups – Race Penalties 2026</h1>
     <div class="subtitle">
-      Calculated penalties reflect the actual density and level of athletes participating in each circuit
+      Calculated penalty analysis by circuit, discipline and gender
     </div>
     <div class="page-qr" aria-label="Interactive dashboard QR code">
       <div class="page-qr-title">📱 Interactive Dashboard</div>
@@ -1219,7 +1227,7 @@
   <section id="page-applied" class="page-section">
     <h1>Continental Cups – Applied Penalties 2026</h1>
     <div class="subtitle">
-      Applied penalties bring most races back to the same minimum level: 15 points
+      Applied penalties after FIS minimum-penalty rules
     </div>
     <div class="page-qr" aria-label="Interactive dashboard QR code">
       <div class="page-qr-title">📱 Interactive Dashboard</div>
@@ -1309,89 +1317,44 @@
 
   
   <section id="page-simulator" class="page-section">
-    <h1>Coefficient Simulator</h1>
-    <div style="margin-top:-4px;margin-bottom:8px;font-size:12px;color:#6b7280;font-style:italic;">Based on 2026 season data</div>
+    <h1>Continental Cup Penalty Adjustment</h1>
+    <div style="margin-top:-4px;margin-bottom:8px;font-size:12px;color:#6b7280;font-style:italic;">Based on previous-season participation level</div>
     <div class="subtitle">
-      🇫🇷 Testez le niveau absolu de participation à partir d’un Top N choisi, puis observez son effet sur la pénalité.<br>
-      🇬🇧 Test the absolute participation level from a selected Top N, then observe its effect on the penalty.
+      🇫🇷 Ajustement des pénalités des Coupes continentales selon le niveau sportif observé de chaque circuit. L’écart de niveau moyen du Top 10 sert à déterminer un additif fixe par circuit, discipline et sexe pour la saison suivante.<br>
+      🇬🇧 Adjustment of Continental Cup penalties according to the observed competitive level of each circuit. The Average Top 10 level gap is used to determine a fixed additive by circuit, discipline and gender for the following season.
     </div>
-
     <div class="controls">
-
-      <div class="control">
-        <div class="control-label">Discipline</div>
-        <div class="button-row" id="absDisciplineButtons">
-          <button data-discipline="SL" class="coef-disc coef-sl active">SL</button>
-          <button data-discipline="GS" class="coef-disc coef-gs">GS</button>
-          <button data-discipline="SG" class="coef-disc coef-sg">SG</button>
-          <button data-discipline="DH" class="coef-disc coef-dh">DH</button>
-        </div>
-      </div>
-
-      <div class="control">
-        <div class="control-label">Gender</div>
-        <div class="button-row" id="absGenderButtons">
-          <button data-gender="M" class="coef-gender coef-men active">Men</button>
-          <button data-gender="W" class="coef-gender coef-women">Women</button>
-        </div>
-      </div>
-
-      <div class="control" id="absTopNControl">
-        <div class="control-label">Top used</div>
-        <input id="absTopN" type="number" min="1" max="60" step="1" value="10"
-               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
-      </div>
-
-      <div class="control">
-        <div class="control-label">Minimum penalty</div>
-        <input id="absMinPenalty" type="number" min="0" step="0.5" value="15"
-               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
-      </div>
-
-      <div class="control">
-        <div class="control-label">Maximum Penalty Adjustment</div>
-        <input id="absMaxAdjustment" type="number" min="0" step="0.5" value="5"
-               style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;">
-      </div>
-
+      <div class="control"><div class="control-label">Discipline</div><div class="button-row" id="absDisciplineButtons">
+        <button data-discipline="SL" class="coef-disc coef-sl active">SL</button><button data-discipline="GS" class="coef-disc coef-gs">GS</button><button data-discipline="SG" class="coef-disc coef-sg">SG</button><button data-discipline="DH" class="coef-disc coef-dh">DH</button>
+      </div></div>
+      <div class="control"><div class="control-label">Gender</div><div class="button-row" id="absGenderButtons">
+        <button data-gender="M" class="coef-gender coef-men active">Men</button><button data-gender="W" class="coef-gender coef-women">Women</button>
+      </div></div>
+      <div class="control"><div class="control-label">Top used</div><div style="font-weight:800;padding:8px 14px;border:1px solid #d1d5db;border-radius:7px;background:#f8fafc;">Top 10</div></div>
+      <div class="control"><div class="control-label">Minimum penalty</div><input id="absMinPenalty" type="number" min="0" step="0.5" value="15" style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;"></div>
+      <div class="control"><div class="control-label">Maximum additive</div><input id="absMaxAdjustment" type="number" min="0" step="0.5" value="5" style="width:86px;padding:7px;border:1px solid #d1d5db;border-radius:7px;"></div>
     </div>
-
     <div class="card">
-      <div class="chart-title">Comparison of the Two Methods</div>
-      <div class="chart-subtitle">
-        🇫🇷 Comparaison directe, pour chaque circuit, de la méthode Top N et de la méthode fondée sur l’écart de pénalité calculée.<br>
-        🇬🇧 Direct comparison, for each circuit, of the Top N method and the calculated-penalty-gap method.
+      <div class="chart-title">Top 10–Based Circuit Additive</div>
+      <div class="chart-subtitle" id="absFormulaText"></div>
+      <div style="margin-top:10px;padding:12px 14px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;font-size:13px;line-height:1.55;">
+        🇫🇷 <strong>Additif circuit = Moyenne Top 10 du circuit − meilleure Moyenne Top 10 observée.</strong> L’additif est calculé une fois à la fin de la saison N et appliqué à toutes les courses correspondantes de la saison N+1.<br>
+        🇬🇧 <strong>Circuit Additive = circuit Average Top 10 − best observed Average Top 10.</strong> The additive is calculated once at the end of Season N and applied to all corresponding races in Season N+1.
       </div>
-      <div style="margin-top:10px;padding:10px 12px;border:1px solid #e5e7eb;border-radius:8px;background:#f8fafc;font-size:12px;line-height:1.5;">
-        🇫🇷 <strong>Top N : coefficient = moyenne Top N ÷ meilleure moyenne Top N.</strong> &nbsp; | &nbsp; <strong>Penalty gap : écart = pénalité calculée moyenne du circuit − meilleure pénalité calculée moyenne.</strong><br>
-        🇬🇧 <strong>Top N: coefficient = Average Top N ÷ best Average Top N.</strong> &nbsp; | &nbsp; <strong>Penalty gap: gap = circuit average calculated penalty − best average calculated penalty.</strong>
-      </div>
-      <div class="coef-table-wrap">
-        <table class="coef-table" style="min-width:900px;">
-          <thead><tr>
-            <th>Circuit</th><th>Races</th><th id="absTopHeader">Average Top 10 FIS Points</th><th>Top N Coefficient</th><th>Average Calculated Penalty</th><th>Penalty Gap</th>
-          </tr></thead>
-          <tbody id="absCoefTableBody"></tbody>
-        </table>
-      </div>
+      <div class="coef-table-wrap"><table class="coef-table"><thead><tr><th>Circuit</th><th>Races</th><th>Average Top 10 FIS Points</th><th>Best Average Top 10</th><th>Raw Top 10 Gap</th><th>Proposed Circuit Additive</th></tr></thead><tbody id="absCoefTableBody"></tbody></table></div>
       <div class="note" id="absCoefNote"></div>
     </div>
-
     <div class="card" style="margin-top:14px;">
-      <div class="chart-title">Penalty Simulation – Side-by-Side Comparison</div>
-      <div class="chart-subtitle">
-        🇫🇷 Les deux méthodes sont appliquées simultanément course par course, avec le même plancher et le même plafond de correction. Un exemple de course réelle est affiché sous chaque circuit.<br>
-        🇬🇧 Both methods are applied simultaneously race by race, using the same minimum penalty and maximum adjustment. A real race example is shown below each circuit.
-      </div>
-      <div class="coef-table-wrap">
-        <table class="coef-table coef-penalty-table" style="min-width:980px;">
-          <thead><tr>
-            <th>Circuit</th><th>Average Calculated Penalty</th><th>Current Applied Penalty</th><th>Top N Simulated Penalty</th><th>Top N Difference</th><th>Penalty Gap Simulated Penalty</th><th>Penalty Gap Difference</th>
-          </tr></thead>
-          <tbody id="absPenaltyBody"></tbody>
-        </table>
-      </div>
+      <div class="chart-title">Effect on Race Penalties</div>
+      <div class="chart-subtitle">🇫🇷 Le même additif fixe est appliqué à chaque course du circuit. Le minimum de pénalité est ensuite appliqué course par course.<br>🇬🇧 The same fixed additive is applied to every race in the circuit. The minimum penalty is then applied race by race.</div>
+      <div class="coef-table-wrap"><table class="coef-table coef-penalty-table"><thead><tr><th>Circuit</th><th>Average Calculated Penalty</th><th>Circuit Additive</th><th>Average Current Applied Penalty</th><th>Average Simulated Applied Penalty</th><th>Difference</th></tr></thead><tbody id="absPenaltyBody"></tbody></table></div>
       <div class="note" id="absPenaltyNote"></div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <div class="chart-title">Concrete Race Examples</div>
+      <div class="chart-subtitle">🇫🇷 Un exemple réel et représentatif par circuit pour la discipline et le sexe sélectionnés. La course retenue est celle dont la pénalité calculée est la plus proche de la moyenne du circuit.<br>🇬🇧 One real representative example per circuit for the selected discipline and gender. The selected race is the one whose calculated penalty is closest to the circuit average.</div>
+      <div class="coef-table-wrap"><table class="coef-table"><thead><tr><th>Circuit</th><th>Real race example</th><th>Calculated Penalty</th><th>Actual Applied Penalty</th><th>Fixed Circuit Additive</th><th>Simulated Penalty</th><th>Difference vs Actual Applied</th></tr></thead><tbody id="absExampleBody"></tbody></table></div>
+      <div class="note" id="absExampleNote"></div>
     </div>
   </section>
 
@@ -3901,253 +3864,33 @@ bindInteractiveToggles();
 
 
 /* ============================================================
-   ABSOLUTE PARTICIPATION COEFFICIENT SIMULATOR
+   TOP 10 CIRCUIT ADDITIVE SIMULATOR
    ============================================================ */
-
 let ABS_DISCIPLINE = 'SL';
 let ABS_GENDER = 'M';
-
-function absNum(id, fallback) {
-  const el = document.getElementById(id);
-  if (!el) return fallback;
-  const v = Number(el.value);
-  return Number.isFinite(v) ? v : fallback;
+function absNum(id,fallback){const el=document.getElementById(id);if(!el)return fallback;const v=Number(el.value);return Number.isFinite(v)?v:fallback;}
+function absAvg(vals){const clean=vals.filter(Number.isFinite);return clean.length?clean.reduce((a,b)=>a+b,0)/clean.length:null;}
+function absFmt(v,digits=2){return Number.isFinite(v)?v.toFixed(digits):'—';}
+function absFieldRows(circuit){return RAW.filter(r=>Number(r.cohortMaxRank)===10&&r.circuit===circuit&&r.discipline===ABS_DISCIPLINE&&r.gender===ABS_GENDER&&Number.isFinite(Number(r.rank))&&Number.isFinite(Number(r.avgFisPoints)));}
+function absTopAverage(rows){return absAvg(rows.filter(r=>Number(r.rank)<=10).map(r=>Number(r.avgFisPoints)).filter(Number.isFinite));}
+function absSampleRaces(rows){const vals=rows.map(r=>Number(r.sampleRaces)).filter(Number.isFinite);return vals.length?Math.round(absAvg(vals)):0;}
+function absPenaltyRows(circuit){return PENALTY_DATA.filter(r=>r.circuit===circuit&&r.discipline===ABS_DISCIPLINE&&r.gender===ABS_GENDER&&Number.isFinite(Number(r.calculatedPenalty)));}
+function renderAbsoluteSimulator(){
+ const minPenalty=Math.max(0,absNum('absMinPenalty',15)); const maxAdjustment=Math.max(0,absNum('absMaxAdjustment',5));
+ const circuits=PEN_CIRCUIT_ORDER.filter(c=>RAW.some(r=>r.circuit===c&&r.discipline===ABS_DISCIPLINE&&r.gender===ABS_GENDER));
+ const metrics=circuits.map(circuit=>{const rows=absFieldRows(circuit);return {circuit,rows,avgTopN:absTopAverage(rows),races:absSampleRaces(rows)};});
+ const available=metrics.map(m=>m.avgTopN).filter(Number.isFinite); const bestAverage=available.length?Math.min(...available):null;
+ metrics.forEach(m=>{m.rawGap=(Number.isFinite(m.avgTopN)&&Number.isFinite(bestAverage))?Math.max(0,m.avgTopN-bestAverage):null;m.additive=Number.isFinite(m.rawGap)?Math.min(m.rawGap,maxAdjustment):null;});
+ const formula=document.getElementById('absFormulaText'); if(formula)formula.innerHTML=`🇫🇷 Référence : meilleure Moyenne Top 10 observée en ${ABS_DISCIPLINE} ${ABS_GENDER==='M'?'Hommes':'Dames'}. L’écart absolu devient l’additif fixe proposé pour la saison suivante.<br>🇬🇧 Reference: best observed Average Top 10 in ${ABS_DISCIPLINE} ${ABS_GENDER==='M'?'Men':'Women'}. The absolute gap becomes the proposed fixed additive for the following season.`;
+ const cb=document.getElementById('absCoefTableBody'),pb=document.getElementById('absPenaltyBody'),eb=document.getElementById('absExampleBody'); if(!cb||!pb)return; cb.innerHTML='';pb.innerHTML='';if(eb)eb.innerHTML='';
+ metrics.forEach(m=>{const color=PEN_COLORS[m.circuit]||'#374151';const tr=document.createElement('tr');tr.innerHTML=`<td><strong style="color:${color}">${m.circuit}</strong></td><td>${m.races||'—'}</td><td>${absFmt(m.avgTopN)}</td><td>${absFmt(bestAverage)}</td><td>${Number.isFinite(m.rawGap)?'+'+absFmt(m.rawGap):'—'}</td><td><strong>${Number.isFinite(m.additive)?'+'+absFmt(m.additive):'—'}</strong></td>`;cb.appendChild(tr);
+ const prows=absPenaltyRows(m.circuit);const avgCalculated=absAvg(prows.map(r=>Number(r.calculatedPenalty)));const avgCurrent=absAvg(prows.map(r=>Number(r.appliedPenalty)).filter(Number.isFinite));const sims=prows.map(r=>Math.max(minPenalty,Number(r.calculatedPenalty)+m.additive));const avgSim=absAvg(sims);const diff=(Number.isFinite(avgSim)&&Number.isFinite(avgCurrent))?avgSim-avgCurrent:null;const pr=document.createElement('tr');pr.innerHTML=`<td><strong style="color:${color}">${m.circuit}</strong></td><td>${absFmt(avgCalculated)}</td><td><strong>+${absFmt(m.additive)}</strong></td><td>${absFmt(avgCurrent)}</td><td><strong>${absFmt(avgSim)}</strong></td><td>${Number.isFinite(diff)?(diff>=0?'+':'')+diff.toFixed(2):'—'}</td>`;pb.appendChild(pr);
+ if(eb&&prows.length&&Number.isFinite(avgCalculated)&&Number.isFinite(m.additive)){const ex=prows.reduce((best,r)=>Math.abs(Number(r.calculatedPenalty)-avgCalculated)<Math.abs(Number(best.calculatedPenalty)-avgCalculated)?r:best,prows[0]);const sim=Math.max(minPenalty,Number(ex.calculatedPenalty)+m.additive);const er=document.createElement('tr');er.style.borderTop='3px solid #94a3b8';er.innerHTML=`<td><strong style="color:${color}">${m.circuit}</strong></td><td><strong>${ex.place}</strong><br><span style="font-size:11px;color:#64748b">${ex.raceDate} · Codex ${ex.racecodex}</span></td><td><strong>${absFmt(Number(ex.calculatedPenalty))}</strong></td><td><strong>${absFmt(Number(ex.appliedPenalty))}</strong></td><td><strong>+${absFmt(m.additive)}</strong></td><td><strong>${absFmt(sim)}</strong></td><td><strong>${Number.isFinite(Number(ex.appliedPenalty))?((sim-Number(ex.appliedPenalty))>=0?'+':'')+(sim-Number(ex.appliedPenalty)).toFixed(2):'—'}</strong></td>`;eb.appendChild(er);}});
+ const note=document.getElementById('absCoefNote');if(note)note.innerHTML=`🇫🇷 Valeur brute = écart absolu de Moyenne Top 10. Additif proposé = MIN(écart brut ; ${maxAdjustment.toFixed(1)}). Aucune multiplication par la pénalité calculée.<br>🇬🇧 Raw value = absolute Average Top 10 gap. Proposed additive = MIN(raw gap ; ${maxAdjustment.toFixed(1)}). No multiplication by the calculated penalty.`;
+ const pnote=document.getElementById('absPenaltyNote');if(pnote)pnote.innerHTML=`🇫🇷 Pour chaque course : pénalité simulée = MAX(${minPenalty.toFixed(1)} ; pénalité calculée + additif fixe du circuit).<br>🇬🇧 For each race: simulated penalty = MAX(${minPenalty.toFixed(1)} ; calculated penalty + fixed circuit additive).`;
+ const enote=document.getElementById('absExampleNote');if(enote)enote.innerHTML=`🇫🇷 Exemple concret : les valeurs <strong>Calculated Penalty</strong> et <strong>Actual Applied Penalty</strong> sont celles de la course réelle. La pénalité simulée utilise l’additif fixe proposé et la dernière colonne montre son écart par rapport à la pénalité réellement appliquée.<br>🇬🇧 Concrete example: <strong>Calculated Penalty</strong> and <strong>Actual Applied Penalty</strong> are the real race values. The simulated penalty uses the proposed fixed additive, and the final column shows its difference versus the actual applied penalty.`;
 }
-
-function absAvg(vals) {
-  const clean = vals.filter(Number.isFinite);
-  if (!clean.length) return null;
-  return clean.reduce((a,b) => a+b,0) / clean.length;
-}
-
-function absFmt(v, digits=2) {
-  return Number.isFinite(v) ? v.toFixed(digits) : '—';
-}
-
-function absAvailableCohorts() {
-  return [...new Set(
-    RAW
-      .filter(r =>
-        r.discipline === ABS_DISCIPLINE &&
-        r.gender === ABS_GENDER
-      )
-      .map(r => Number(r.cohortMaxRank))
-      .filter(Number.isFinite)
-  )].sort((a,b) => a-b);
-}
-
-function absChooseCohort(topN) {
-  const cohorts = absAvailableCohorts();
-  const found = cohorts.find(v => v >= topN);
-  return found ?? (cohorts.length ? cohorts[cohorts.length - 1] : topN);
-}
-
-function absFieldRows(circuit, cohort) {
-  return RAW.filter(r =>
-    Number(r.cohortMaxRank) === cohort &&
-    r.circuit === circuit &&
-    r.discipline === ABS_DISCIPLINE &&
-    r.gender === ABS_GENDER &&
-    Number.isFinite(Number(r.rank)) &&
-    Number.isFinite(Number(r.avgFisPoints))
-  );
-}
-
-function absTopAverage(rows, topN) {
-  return absAvg(
-    rows
-      .filter(r => Number(r.rank) <= topN)
-      .map(r => Number(r.avgFisPoints))
-      .filter(Number.isFinite)
-  );
-}
-
-function absSampleRaces(rows) {
-  const vals = rows
-    .map(r => Number(r.sampleRaces))
-    .filter(Number.isFinite);
-
-  if (!vals.length) return 0;
-  return Math.round(absAvg(vals));
-}
-
-function absPenaltyRows(circuit) {
-  return PENALTY_DATA.filter(r =>
-    r.circuit === circuit &&
-    r.discipline === ABS_DISCIPLINE &&
-    r.gender === ABS_GENDER &&
-    Number.isFinite(Number(r.calculatedPenalty))
-  );
-}
-
-let ABS_METHOD = 'participation';
-
-function renderAbsoluteSimulator() {
-  const topN = Math.max(1, Math.min(60, Number(document.getElementById('absTopN')?.value) || 10));
-  const minPenalty = Math.max(0, Number(document.getElementById('absMinPenalty')?.value) || 15);
-  const maxAdjustment = Math.max(0, Number(document.getElementById('absMaxAdjustment')?.value) || 5);
-  const cohort = absChooseCohort(topN);
-
-  const circuits = PEN_CIRCUIT_ORDER.filter(c => RAW.some(r => r.circuit === c && r.discipline === ABS_DISCIPLINE && r.gender === ABS_GENDER));
-  const metrics = circuits.map(circuit => {
-    const rows = absFieldRows(circuit, cohort);
-    const prows = absPenaltyRows(circuit);
-    return {
-      circuit, rows, prows,
-      avgTopN: absTopAverage(rows, topN),
-      races: absSampleRaces(rows),
-      avgCalculatedPenalty: absAvg(prows.map(r => Number(r.calculatedPenalty)))
-    };
-  });
-
-  const topLevels = metrics.map(m => m.avgTopN).filter(Number.isFinite);
-  const bestAverage = topLevels.length ? Math.min(...topLevels) : null;
-  const penaltyLevels = metrics.map(m => m.avgCalculatedPenalty).filter(Number.isFinite);
-  const bestCalculatedPenalty = penaltyLevels.length ? Math.min(...penaltyLevels) : null;
-
-  metrics.forEach(m => {
-    m.coefficient = (Number.isFinite(m.avgTopN) && Number.isFinite(bestAverage) && bestAverage > 0) ? m.avgTopN / bestAverage : null;
-    m.penaltyGap = (Number.isFinite(m.avgCalculatedPenalty) && Number.isFinite(bestCalculatedPenalty)) ? Math.max(0, m.avgCalculatedPenalty - bestCalculatedPenalty) : null;
-  });
-
-  const topHeader = document.getElementById('absTopHeader');
-  if (topHeader) topHeader.textContent = `Average Top ${topN} FIS Points`;
-  const coefBody = document.getElementById('absCoefTableBody');
-  const penaltyBody = document.getElementById('absPenaltyBody');
-  if (!coefBody || !penaltyBody) return;
-  coefBody.innerHTML = '';
-  penaltyBody.innerHTML = '';
-
-  metrics.forEach((m, circuitIndex) => {
-    const color = PEN_COLORS[m.circuit] || '#374151';
-    const tr = document.createElement('tr');
-    if (circuitIndex > 0) tr.style.borderTop = '3px solid #94a3b8';
-    tr.innerHTML = `
-      <td><strong style="color:${color}">${m.circuit}</strong></td>
-      <td>${m.races || '—'}</td>
-      <td>${absFmt(m.avgTopN,2)}</td>
-      <td><strong>${absFmt(m.coefficient,3)}</strong></td>
-      <td>${absFmt(m.avgCalculatedPenalty,2)}</td>
-      <td><strong>${absFmt(m.penaltyGap,2)}</strong></td>`;
-    coefBody.appendChild(tr);
-
-    const avgCalculated = absAvg(m.prows.map(r => Number(r.calculatedPenalty)));
-    const avgCurrentApplied = absAvg(m.prows.map(r => Number(r.appliedPenalty)).filter(Number.isFinite));
-
-    function simulate(method) {
-      const vals = m.prows.map(r => {
-        const calc = Number(r.calculatedPenalty);
-        if (!Number.isFinite(calc)) return NaN;
-        let theoretical;
-        if (method === 'topn') {
-          if (!Number.isFinite(m.coefficient)) return NaN;
-          theoretical = Math.max(0, calc * (m.coefficient - 1));
-        } else {
-          if (!Number.isFinite(m.penaltyGap)) return NaN;
-          theoretical = m.penaltyGap;
-        }
-        const applied = Math.min(theoretical, maxAdjustment);
-        return Math.max(minPenalty, calc + applied);
-      });
-      return absAvg(vals);
-    }
-
-    const simTop = simulate('topn');
-    const simGap = simulate('gap');
-    const diffTop = Number.isFinite(simTop) && Number.isFinite(avgCurrentApplied) ? simTop - avgCurrentApplied : null;
-    const diffGap = Number.isFinite(simGap) && Number.isFinite(avgCurrentApplied) ? simGap - avgCurrentApplied : null;
-    const signed = v => Number.isFinite(v) ? (v >= 0 ? '+' : '') + v.toFixed(2) : '—';
-
-    const ptr = document.createElement('tr');
-    if (circuitIndex > 0) ptr.style.borderTop = '3px solid #94a3b8';
-    ptr.innerHTML = `
-      <td><strong style="color:${color}">${m.circuit}</strong></td>
-      <td>${absFmt(avgCalculated,2)}</td>
-      <td>${absFmt(avgCurrentApplied,2)}</td>
-      <td><strong>${absFmt(simTop,2)}</strong></td>
-      <td>${signed(diffTop)}</td>
-      <td><strong>${absFmt(simGap,2)}</strong></td>
-      <td>${signed(diffGap)}</td>`;
-    penaltyBody.appendChild(ptr);
-
-    // Concrete example: use the real race whose calculated penalty is closest to the circuit average.
-    const validExampleRows = m.prows.filter(r => Number.isFinite(Number(r.calculatedPenalty)));
-    if (validExampleRows.length) {
-      const ex = validExampleRows.reduce((best, r) =>
-        Math.abs(Number(r.calculatedPenalty) - avgCalculated) < Math.abs(Number(best.calculatedPenalty) - avgCalculated) ? r : best
-      );
-      const exCalc = Number(ex.calculatedPenalty);
-      const topTheo = Number.isFinite(m.coefficient) ? Math.max(0, exCalc * (m.coefficient - 1)) : NaN;
-      const topAdj = Number.isFinite(topTheo) ? Math.min(topTheo, maxAdjustment) : NaN;
-      const gapAdj = Number.isFinite(m.penaltyGap) ? Math.min(m.penaltyGap, maxAdjustment) : NaN;
-      const exTop = Number.isFinite(topAdj) ? Math.max(minPenalty, exCalc + topAdj) : NaN;
-      const exGap = Number.isFinite(gapAdj) ? Math.max(minPenalty, exCalc + gapAdj) : NaN;
-      const exRow = document.createElement('tr');
-      exRow.style.background = '#f8fafc';
-      const exPlace = ex.place || '—';
-      const exDate = ex.raceDate || '—';
-      const exCodex = ex.racecodex != null ? ex.racecodex : '—';
-      const topFloor = Number.isFinite(exCalc + topAdj) && exCalc + topAdj < minPenalty;
-      const gapFloor = Number.isFinite(exCalc + gapAdj) && exCalc + gapAdj < minPenalty;
-      exRow.innerHTML = `<td colspan="7" style="text-align:left;padding:9px 12px;font-size:11px;color:#4b5563;white-space:normal;line-height:1.55;">
-        <strong style="color:${color}">Example – ${exPlace} · ${exDate} · Codex ${exCodex}</strong><br>
-        <strong>Calculated Penalty: ${absFmt(exCalc,2)}</strong>
-        &nbsp; | &nbsp; <strong>Actual Applied Penalty: ${absFmt(Number(ex.appliedPenalty),2)}</strong>
-        &nbsp; | &nbsp; <strong>Option 1 — Top ${topN} Coefficient:</strong> +${absFmt(topAdj,2)} → <strong>${absFmt(exTop,2)}</strong>${topFloor ? ` (minimum ${absFmt(minPenalty,2)} applied)` : ''}
-        &nbsp; | &nbsp; <strong>Option 2 — Penalty Gap:</strong> +${absFmt(gapAdj,2)} → <strong>${absFmt(exGap,2)}</strong>${gapFloor ? ` (minimum ${absFmt(minPenalty,2)} applied)` : ''}
-      </td>`;
-      penaltyBody.appendChild(exRow);
-    }
-  });
-
-  const coefNote = document.getElementById('absCoefNote');
-  if (coefNote) coefNote.innerHTML = `🇫🇷 Références : coefficient Top ${topN} = 1,000 pour le meilleur niveau Top ${topN} ; Penalty Gap = 0,00 pour la meilleure pénalité calculée moyenne.<br>🇬🇧 References: Top ${topN} coefficient = 1.000 for the best Top ${topN} level; Penalty Gap = 0.00 for the best average calculated penalty.`;
-  const penaltyNote = document.getElementById('absPenaltyNote');
-  if (penaltyNote) penaltyNote.innerHTML = `🇫🇷 <strong>Top N</strong> : correction = pénalité calculée × (coefficient − 1). <strong>Penalty Gap</strong> : correction = écart de pénalité moyenne du circuit. Dans les deux cas : correction retenue = MIN(correction ; ${maxAdjustment.toFixed(1)}), puis pénalité finale = MAX(${minPenalty.toFixed(1)} ; pénalité calculée + correction).<br>🇬🇧 <strong>Top N</strong>: adjustment = calculated penalty × (coefficient − 1). <strong>Penalty Gap</strong>: adjustment = circuit average penalty gap. In both cases: applied adjustment = MIN(adjustment ; ${maxAdjustment.toFixed(1)}), then final penalty = MAX(${minPenalty.toFixed(1)} ; calculated penalty + adjustment).`;
-}
-
-function initAbsoluteSimulator() {
-  const disc = document.getElementById('absDisciplineButtons');
-  if (disc) {
-    disc.addEventListener('click', event => {
-      const btn = event.target.closest('button[data-discipline]');
-      if (!btn) return;
-
-      ABS_DISCIPLINE = btn.dataset.discipline;
-
-      disc.querySelectorAll('button[data-discipline]')
-        .forEach(b => b.classList.toggle('active', b === btn));
-
-      renderAbsoluteSimulator();
-    });
-  }
-
-  const gender = document.getElementById('absGenderButtons');
-  if (gender) {
-    gender.addEventListener('click', event => {
-      const btn = event.target.closest('button[data-gender]');
-      if (!btn) return;
-
-      ABS_GENDER = btn.dataset.gender;
-
-      gender.querySelectorAll('button[data-gender]')
-        .forEach(b => b.classList.toggle('active', b === btn));
-
-      renderAbsoluteSimulator();
-    });
-  }
-
-  ['absTopN','absMinPenalty','absMaxAdjustment'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    el.addEventListener('input', renderAbsoluteSimulator);
-    el.addEventListener('change', renderAbsoluteSimulator);
-  });
-
-  renderAbsoluteSimulator();
-}
-
+function initAbsoluteSimulator(){const disc=document.getElementById('absDisciplineButtons');if(disc)disc.addEventListener('click',e=>{const b=e.target.closest('button[data-discipline]');if(!b)return;ABS_DISCIPLINE=b.dataset.discipline;disc.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));renderAbsoluteSimulator();});const gender=document.getElementById('absGenderButtons');if(gender)gender.addEventListener('click',e=>{const b=e.target.closest('button[data-gender]');if(!b)return;ABS_GENDER=b.dataset.gender;gender.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));renderAbsoluteSimulator();});['absMinPenalty','absMaxAdjustment'].forEach(id=>{const el=document.getElementById(id);if(el){el.addEventListener('input',renderAbsoluteSimulator);el.addEventListener('change',renderAbsoluteSimulator);}});renderAbsoluteSimulator();}
 initAbsoluteSimulator();
 
 </script>
