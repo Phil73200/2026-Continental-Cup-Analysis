@@ -997,10 +997,260 @@
   }
 </style>
 
+
+<style>
+  /* Study navigation: season chapters + 2026 subchapters */
+  .study-nav-wrap{
+    position:sticky; top:0; z-index:250;
+    margin:-16px -16px 14px;
+    padding:10px 16px 8px;
+    background:rgba(245,246,248,.98);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .season-nav,.sub-nav-2026{
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .season-nav button{
+    font-weight:900; border-radius:999px; padding:8px 16px;
+  }
+  .season-nav button.active{
+    background:#111827; color:#fff; border-color:#111827;
+  }
+  .sub-nav-2026{
+    margin-top:8px; padding-top:8px; border-top:1px solid #e5e7eb;
+  }
+  .sub-nav-2026 button{
+    font-weight:700; border-radius:8px; padding:7px 11px;
+  }
+  .sub-nav-2026 button.active{
+    background:#1e3a5f; color:#fff; border-color:#1e3a5f;
+  }
+  .season-placeholder{
+    display:none; min-height:360px;
+  }
+  .season-placeholder.active{display:block;}
+  .season-placeholder .placeholder-card{
+    min-height:360px; flex-direction:column;
+  }
+  /* Original 2026 nav is now represented by the second navigation level. */
+  body > .top-nav{display:none !important;}
+  /* Avoid a second sticky layer from the original simulator controls. */
+  #page-simulator .controls{top:88px;}
+  @media(max-width:760px){
+    .study-nav-wrap{margin:-8px -8px 10px;padding:8px;}
+    .season-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
+    .season-nav button{padding:7px 8px;font-size:11px;}
+    .sub-nav-2026{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+    .sub-nav-2026 button{font-size:10px;padding:7px 6px;}
+  }
+</style>
+
+
+<style>
+.season-analysis{display:none;min-height:500px}
+.season-analysis.active{display:block}
+.compact-season-controls{display:flex;gap:26px;align-items:flex-end;flex-wrap:wrap}
+.season-analysis .control-block label{display:block;font-size:11px;font-weight:800;color:#6b7280;margin-bottom:7px}
+.button-row{display:flex;gap:7px}
+.button-row button{padding:8px 13px;border-radius:9px;font-weight:800}
+.button-row button.active{background:#1e3a5f;color:#fff;border-color:#1e3a5f}
+.season-note{font-size:12px;color:#5b6474;margin:2px 0 12px}
+.table-wrap{width:100%;overflow-x:auto}
+.season-table{width:100%;border-collapse:collapse;font-size:12px}
+.season-table th,.season-table td{padding:9px 10px;border-bottom:1px solid #e5e7eb;text-align:right;white-space:nowrap}
+.season-table th{background:#1e3a5f;color:#fff;font-weight:800}
+.season-table th:first-child,.season-table td:first-child{text-align:left;font-weight:800}
+.season-table .adder{font-weight:900;background:#fff7ed}
+@media(max-width:760px){.compact-season-controls{gap:14px}.season-table{min-width:760px}}
+</style>
+
+
+<style>
+.hist-min-penalty,.hist-max-additive{
+  width:88px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;
+  font:inherit;font-weight:700;background:#fff;color:#111827;
+}
+</style>
 </head>
 
 <body>
 <div id="buildMarker" style="position:fixed;bottom:6px;right:8px;z-index:9999;font-size:9px;color:#9ca3af;pointer-events:none;">v2026-09-29-1450</div>
+
+<div class="study-nav-wrap">
+  <div class="season-nav" id="seasonNav">
+    <button data-season="2023" onclick="showSeason('2023')">2023</button>
+    <button data-season="2024" onclick="showSeason('2024')">2024</button>
+    <button data-season="2025" onclick="showSeason('2025')">2025</button>
+    <button data-season="2026" class="active" onclick="showSeason('2026')">2026</button>
+    <button data-season="5year" onclick="showSeason('5year')">4-Year Analysis</button>
+  </div>
+  <div class="sub-nav-2026" id="subNav2026">
+    <button id="chapterNavField" class="active" onclick="showPage('field')">1. Competitive Participation</button>
+    <button id="chapterNavPenalty" onclick="showPage('penalty')">2. Calculated Penalties</button>
+    <button id="chapterNavApplied" onclick="showPage('applied')">3. Applied Penalties</button>
+    <button id="chapterNavSimulator" onclick="showPage('simulator')">4. Penalty Adjustment</button>
+    <button id="chapterNavCross" onclick="showPage('cross')">5. Findings &amp; Proposed Method</button>
+  </div>
+</div>
+
+
+<section id="season-2023" class="season-placeholder season-analysis">
+  <h1>Continental Cups – 2023</h1>
+  <div class="subtitle">Season summary · same additive principle as the 2026 reference</div>
+
+  <div class="card compact-season-controls">
+    <div class="control-block"><label>DISCIPLINE</label>
+      <div class="button-row season-disc" data-year="2023">
+        <button data-v="SL" class="active">SL</button><button data-v="GS">GS</button>
+        <button data-v="SG">SG</button><button data-v="DH">DH</button>
+      </div>
+    </div>
+    <div class="control-block"><label>GENDER</label>
+      <div class="button-row season-gender" data-year="2023">
+        <button data-v="M" class="active">Men</button><button data-v="W">Women</button>
+      </div>
+    </div>
+    <div class="control-block"><label>MINIMUM PENALTY</label><input class="hist-min-penalty" type="number" step="0.1" value="15"></div>
+    <div class="control-block"><label>MAXIMUM ADDITIVE</label><input class="hist-max-additive" type="number" step="0.1" min="0" value="5"></div>
+  </div>
+
+  <div class="card">
+    <h2>Circuit Additive – 2023</h2>
+    <div class="season-note">Reference = best observed <strong>Average Top 10</strong>. Circuit Additive = circuit Average Top 10 − best Average Top 10, capped at <strong>5.00</strong>.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Races</th><th>Average Top 10 FIS Points</th><th>Reference</th><th>Proposed Circuit Additive</th></tr></thead>
+      <tbody id="seasonRefBody2023"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>Effect on Race Penalties</h2>
+    <div class="season-note">The fixed circuit additive is added to each race's <strong>Calculated Penalty</strong>; the minimum penalty of 15 is then applied race by race.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Average Calculated Penalty</th><th>Circuit Additive</th><th>Current Average Applied Penalty</th><th>Estimated Average Penalty</th><th>Difference</th></tr></thead>
+      <tbody id="seasonPenaltyBody2023"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="season-2024" class="season-placeholder season-analysis">
+  <h1>Continental Cups – 2024</h1>
+  <div class="subtitle">Season summary · same additive principle as the 2026 reference</div>
+
+  <div class="card compact-season-controls">
+    <div class="control-block"><label>DISCIPLINE</label>
+      <div class="button-row season-disc" data-year="2024">
+        <button data-v="SL" class="active">SL</button><button data-v="GS">GS</button>
+        <button data-v="SG">SG</button><button data-v="DH">DH</button>
+      </div>
+    </div>
+    <div class="control-block"><label>GENDER</label>
+      <div class="button-row season-gender" data-year="2024">
+        <button data-v="M" class="active">Men</button><button data-v="W">Women</button>
+      </div>
+    </div>
+    <div class="control-block"><label>MINIMUM PENALTY</label><input class="hist-min-penalty" type="number" step="0.1" value="15"></div>
+    <div class="control-block"><label>MAXIMUM ADDITIVE</label><input class="hist-max-additive" type="number" step="0.1" min="0" value="5"></div>
+  </div>
+
+  <div class="card">
+    <h2>Circuit Additive – 2024</h2>
+    <div class="season-note">Reference = best observed <strong>Average Top 10</strong>. Circuit Additive = circuit Average Top 10 − best Average Top 10, capped at <strong>5.00</strong>.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Races</th><th>Average Top 10 FIS Points</th><th>Reference</th><th>Proposed Circuit Additive</th></tr></thead>
+      <tbody id="seasonRefBody2024"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>Effect on Race Penalties</h2>
+    <div class="season-note">The fixed circuit additive is added to each race's <strong>Calculated Penalty</strong>; the minimum penalty of 15 is then applied race by race.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Average Calculated Penalty</th><th>Circuit Additive</th><th>Current Average Applied Penalty</th><th>Estimated Average Penalty</th><th>Difference</th></tr></thead>
+      <tbody id="seasonPenaltyBody2024"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="season-2025" class="season-placeholder season-analysis">
+  <h1>Continental Cups – 2025</h1>
+  <div class="subtitle">Season summary · same additive principle as the 2026 reference</div>
+
+  <div class="card compact-season-controls">
+    <div class="control-block"><label>DISCIPLINE</label>
+      <div class="button-row season-disc" data-year="2025">
+        <button data-v="SL" class="active">SL</button><button data-v="GS">GS</button>
+        <button data-v="SG">SG</button><button data-v="DH">DH</button>
+      </div>
+    </div>
+    <div class="control-block"><label>GENDER</label>
+      <div class="button-row season-gender" data-year="2025">
+        <button data-v="M" class="active">Men</button><button data-v="W">Women</button>
+      </div>
+    </div>
+    <div class="control-block"><label>MINIMUM PENALTY</label><input class="hist-min-penalty" type="number" step="0.1" value="15"></div>
+    <div class="control-block"><label>MAXIMUM ADDITIVE</label><input class="hist-max-additive" type="number" step="0.1" min="0" value="5"></div>
+  </div>
+
+  <div class="card">
+    <h2>Circuit Additive – 2025</h2>
+    <div class="season-note">Reference = best observed <strong>Average Top 10</strong>. Circuit Additive = circuit Average Top 10 − best Average Top 10, capped at <strong>5.00</strong>.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Races</th><th>Average Top 10 FIS Points</th><th>Reference</th><th>Proposed Circuit Additive</th></tr></thead>
+      <tbody id="seasonRefBody2025"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>Effect on Race Penalties</h2>
+    <div class="season-note">The fixed circuit additive is added to each race's <strong>Calculated Penalty</strong>; the minimum penalty of 15 is then applied race by race.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Average Calculated Penalty</th><th>Circuit Additive</th><th>Current Average Applied Penalty</th><th>Estimated Average Penalty</th><th>Difference</th></tr></thead>
+      <tbody id="seasonPenaltyBody2025"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<section id="season-5year" class="season-placeholder season-analysis">
+  <h1>Continental Cups – 4-Year Analysis 2023–2026</h1>
+  <div class="subtitle">Five-season reference and estimated penalty effect</div>
+
+  <div class="card compact-season-controls">
+    <div class="control-block"><label>DISCIPLINE</label>
+      <div class="button-row" id="fiveDisc">
+        <button data-v="SL" class="active">SL</button><button data-v="GS">GS</button>
+        <button data-v="SG">SG</button><button data-v="DH">DH</button>
+      </div>
+    </div>
+    <div class="control-block"><label>GENDER</label>
+      <div class="button-row" id="fiveGender">
+        <button data-v="M" class="active">Men</button><button data-v="W">Women</button>
+      </div>
+    </div>
+    <div class="control-block"><label>MINIMUM PENALTY</label><input class="hist-min-penalty" type="number" step="0.1" value="15"></div>
+    <div class="control-block"><label>MAXIMUM ADDITIVE</label><input class="hist-max-additive" type="number" step="0.1" min="0" value="5"></div>
+  </div>
+
+  <div class="card">
+    <h2>4-Year Circuit Reference</h2>
+    <div class="season-note">Each season has the same weight. Reference = best 5-year Average Top 10. The delta becomes the proposed circuit additive, capped at 5.00.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>Seasons</th><th>Races</th><th>4-Year Average Top 10</th><th>Reference</th><th>Proposed Circuit Additive</th></tr></thead>
+      <tbody id="fiveRefBody"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h2>4-Year Estimated Penalty Effect</h2>
+    <div class="season-note">The proposed fixed additive is applied to the Calculated Penalty of each race. Minimum penalty 15 is then applied race by race. Displayed values are equal-weight averages of the available season averages.</div>
+    <div class="table-wrap"><table class="season-table">
+      <thead><tr><th>Circuit</th><th>4-Year Avg. Calculated Penalty</th><th>Circuit Additive</th><th>4-Year Current Avg. Applied Penalty</th><th>Estimated Avg. Penalty</th><th>Difference</th></tr></thead>
+      <tbody id="fivePenaltyBody"></tbody>
+    </table></div>
+  </div>
+</section>
+
 
   <div class="top-nav">
     <button id="navField" class="active" onclick="showPage('field')">1. Competitive Participation</button>
@@ -1341,7 +1591,7 @@
         🇫🇷 <strong>Additif circuit = Moyenne Top 10 du circuit − meilleure Moyenne Top 10 observée.</strong> L’additif est calculé une fois à la fin de la saison N et appliqué à toutes les courses correspondantes de la saison N+1.<br>
         🇬🇧 <strong>Circuit Additive = circuit Average Top 10 − best observed Average Top 10.</strong> The additive is calculated once at the end of Season N and applied to all corresponding races in Season N+1.
       </div>
-      <div class="coef-table-wrap"><table class="coef-table"><thead><tr><th>Circuit</th><th>Races</th><th>Average Top 10 FIS Points</th><th>Best Average Top 10</th><th>Raw Top 10 Gap</th><th>Proposed Circuit Additive</th></tr></thead><tbody id="absCoefTableBody"></tbody></table></div>
+      <div class="coef-table-wrap"><table class="coef-table"><thead><tr><th>Circuit</th><th>Races</th><th>Average Top 10 FIS Points</th><th>Best Average Top 10</th><th>Proposed Circuit Additive</th></tr></thead><tbody id="absCoefTableBody"></tbody></table></div>
       <div class="note" id="absCoefNote"></div>
     </div>
     <div class="card" style="margin-top:14px;">
@@ -3894,6 +4144,431 @@ initAbsoluteSimulator();
   <div style="margin-top:14px;font-size:11px;color:#6b7280;text-align:center;">
     Source: FIELD_LEVEL_DATA.csv · Continental Cup Analysis 2026
   </div>
+
+
+<script>
+let STUDY_SEASON='2026';
+const ORIGINAL_SHOW_PAGE = showPage;
+
+function sync2026Subnav(page){
+  const map={
+    field:'chapterNavField',
+    penalty:'chapterNavPenalty',
+    applied:'chapterNavApplied',
+    simulator:'chapterNavSimulator',
+    cross:'chapterNavCross'
+  };
+  Object.values(map).forEach(id=>{
+    const b=document.getElementById(id);
+    if(b)b.classList.remove('active');
+  });
+  const active=document.getElementById(map[page]);
+  if(active)active.classList.add('active');
+}
+
+showPage=function(page){
+  STUDY_SEASON='2026';
+  document.querySelectorAll('.season-placeholder').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('#seasonNav button').forEach(b=>b.classList.toggle('active',b.dataset.season==='2026'));
+  const sub=document.getElementById('subNav2026');
+  if(sub)sub.style.display='';
+  document.querySelectorAll('.page-section').forEach(x=>x.style.display='');
+  ORIGINAL_SHOW_PAGE(page);
+  sync2026Subnav(page);
+};
+
+function showSeason(season){
+  STUDY_SEASON=season;
+  document.querySelectorAll('#seasonNav button').forEach(b=>b.classList.toggle('active',b.dataset.season===season));
+  document.querySelectorAll('.season-placeholder').forEach(x=>x.classList.remove('active'));
+  const sub=document.getElementById('subNav2026');
+
+  if(season==='2026'){
+    if(sub)sub.style.display='';
+    document.querySelectorAll('.page-section').forEach(x=>x.style.display='');
+    ORIGINAL_SHOW_PAGE('field');
+    sync2026Subnav('field');
+  }else{
+    if(sub)sub.style.display='none';
+    document.querySelectorAll('.page-section').forEach(x=>x.style.display='none');
+    const p=document.getElementById('season-'+season);
+    if(p)p.classList.add('active');
+    if(season==='5year' && typeof renderFiveYear==='function') renderFiveYear();
+    if(/^202[3-5]$/.test(season) && typeof renderHistoricalSeason==='function') renderHistoricalSeason(Number(season));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+</script>
+
+
+<script>
+const HISTORICAL_SEASON_DATA={"2022":[{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":10.75,"AppliedPenalty":15.0,"Avg_Top10":18.07,"Codex":35.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":11.43,"AppliedPenalty":15.0,"Avg_Top10":18.07,"Codex":36.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":15.77,"AppliedPenalty":15.77,"Avg_Top10":19.2,"Codex":52.0,"Place":"Tarvisio"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":15.54,"AppliedPenalty":15.54,"Avg_Top10":19.2,"Codex":53.0,"Place":"Tarvisio"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":8.54,"AppliedPenalty":15.0,"Avg_Top10":11.52,"Codex":15.0,"Place":"Saalbach-Hinterglemm"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":6.07,"AppliedPenalty":15.0,"Avg_Top10":11.52,"Codex":16.0,"Place":"Saalbach-Hinterglemm"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":9.43,"AppliedPenalty":15.0,"Avg_Top10":13.25,"Codex":91.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":7.34,"AppliedPenalty":15.0,"Avg_Top10":13.25,"Codex":90.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":25.06,"AppliedPenalty":25.06,"Avg_Top10":30.64,"Codex":5042.0,"Place":"Val di Fassa"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":26.04,"AppliedPenalty":26.04,"Avg_Top10":30.64,"Codex":5043.0,"Place":"Val di Fassa"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":19.68,"AppliedPenalty":19.68,"Avg_Top10":29.07,"Codex":5059.0,"Place":"Orcieres-Merlette 1850"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":22.09,"AppliedPenalty":22.09,"Avg_Top10":29.81,"Codex":5058.0,"Place":"Orcieres-Merlette 1850"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":20.54,"AppliedPenalty":20.54,"Avg_Top10":28.64,"Codex":5015.0,"Place":"St. Anton"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":22.73,"AppliedPenalty":22.73,"Avg_Top10":28.64,"Codex":5016.0,"Place":"St. Anton"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":16.42,"AppliedPenalty":16.42,"Avg_Top10":21.7,"Codex":5027.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":13.19,"AppliedPenalty":15.0,"Avg_Top10":21.7,"Codex":5028.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.23,"AppliedPenalty":15.0,"Avg_Top10":16.12,"Codex":19.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.5,"AppliedPenalty":15.0,"Avg_Top10":16.12,"Codex":20.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.4,"AppliedPenalty":16.4,"Avg_Top10":19.69,"Codex":4.0,"Place":"Glungezer"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.7,"AppliedPenalty":15.0,"Avg_Top10":19.69,"Codex":5.0,"Place":"Glungezer"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":10.58,"AppliedPenalty":15.0,"Avg_Top10":14.84,"Codex":18.0,"Place":"Reiteralm"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":8.46,"AppliedPenalty":15.0,"Avg_Top10":14.32,"Codex":94.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.15,"AppliedPenalty":15.0,"Avg_Top10":14.32,"Codex":95.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.45,"AppliedPenalty":15.0,"Avg_Top10":15.77,"Codex":199.0,"Place":"Soldeu"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":15.63,"AppliedPenalty":15.63,"Avg_Top10":19.86,"Codex":5079.0,"Place":"Mayrhofen"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.23,"AppliedPenalty":15.0,"Avg_Top10":16.4,"Codex":5036.0,"Place":"Andalo"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":10.83,"AppliedPenalty":15.0,"Avg_Top10":16.9,"Codex":5037.0,"Place":"Andalo"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":8.64,"AppliedPenalty":15.0,"Avg_Top10":16.53,"Codex":5060.0,"Place":"Orcieres-Merlette 1850"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.06,"AppliedPenalty":15.0,"Avg_Top10":17.12,"Codex":5061.0,"Place":"Orcieres-Merlette 1850"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.99,"AppliedPenalty":15.0,"Avg_Top10":16.74,"Codex":5197.0,"Place":"Kopaonik"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":11.45,"AppliedPenalty":15.0,"Avg_Top10":16.33,"Codex":5077.0,"Place":"Maribor"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.7,"AppliedPenalty":15.0,"Avg_Top10":16.26,"Codex":5078.0,"Place":"Maribor"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.14,"AppliedPenalty":15.0,"Avg_Top10":15.69,"Codex":5194.0,"Place":"Soldeu"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.72,"AppliedPenalty":15.0,"Avg_Top10":20.53,"Codex":21.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.51,"AppliedPenalty":16.51,"Avg_Top10":20.53,"Codex":22.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":12.49,"AppliedPenalty":15.0,"Avg_Top10":18.2,"Codex":2261.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":13.31,"AppliedPenalty":15.0,"Avg_Top10":15.03,"Codex":2260.0,"Place":"Saalbach-Hinterglemm"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":12.8,"AppliedPenalty":15.0,"Avg_Top10":15.12,"Codex":102.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":11.29,"AppliedPenalty":15.0,"Avg_Top10":15.49,"Codex":92.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":13.82,"AppliedPenalty":15.0,"Avg_Top10":15.49,"Codex":93.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":11.71,"AppliedPenalty":15.0,"Avg_Top10":21.32,"Codex":5019.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":14.95,"AppliedPenalty":15.0,"Avg_Top10":21.32,"Codex":5020.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":11.3,"AppliedPenalty":15.0,"Avg_Top10":19.85,"Codex":5049.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":16.42,"AppliedPenalty":16.42,"Avg_Top10":19.85,"Codex":5050.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":6.41,"AppliedPenalty":15.0,"Avg_Top10":11.42,"Codex":37.0,"Place":"Obereggen"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":1.14,"AppliedPenalty":15.0,"Avg_Top10":8.45,"Codex":39.0,"Place":"Val di Fassa"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":12.72,"AppliedPenalty":15.0,"Avg_Top10":16.34,"Codex":100.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.81,"AppliedPenalty":15.81,"Avg_Top10":17.42,"Codex":101.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.25,"AppliedPenalty":15.0,"Avg_Top10":16.09,"Codex":56.0,"Place":"Vaujany"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.5,"AppliedPenalty":15.0,"Avg_Top10":16.79,"Codex":1138.0,"Place":"Vaujany"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":11.7,"AppliedPenalty":15.0,"Avg_Top10":14.1,"Codex":84.0,"Place":"Almaasa"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":9.16,"AppliedPenalty":15.0,"Avg_Top10":14.1,"Codex":85.0,"Place":"Almaasa"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":7.21,"AppliedPenalty":15.0,"Avg_Top10":13.47,"Codex":200.0,"Place":"Soldeu"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":9.79,"AppliedPenalty":15.0,"Avg_Top10":15.51,"Codex":5071.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.06,"AppliedPenalty":15.0,"Avg_Top10":15.51,"Codex":5072.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.07,"AppliedPenalty":15.0,"Avg_Top10":14.95,"Codex":5038.0,"Place":"Valle Aurina/Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":10.71,"AppliedPenalty":15.0,"Avg_Top10":15.02,"Codex":5039.0,"Place":"Valle Aurina/Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":8.67,"AppliedPenalty":15.0,"Avg_Top10":15.84,"Codex":5023.0,"Place":"Meiringen-Hasliberg"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":8.17,"AppliedPenalty":15.0,"Avg_Top10":15.89,"Codex":5024.0,"Place":"Meiringen-Hasliberg"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":5.64,"AppliedPenalty":15.0,"Avg_Top10":14.89,"Codex":5017.0,"Place":"Zell am See"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":9.36,"AppliedPenalty":15.0,"Avg_Top10":13.37,"Codex":5087.0,"Place":"Bad Wiessee"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":9.54,"AppliedPenalty":15.0,"Avg_Top10":13.37,"Codex":5088.0,"Place":"Bad Wiessee"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":8.92,"AppliedPenalty":15.0,"Avg_Top10":14.79,"Codex":5195.0,"Place":"Soldeu"},{"Circuit":"NAC","Discipline":"AC","Gender":"M","CalculatedPenalty":46.79,"AppliedPenalty":46.79,"Avg_Top10":58.06,"Codex":784.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"AC","Gender":"M","CalculatedPenalty":44.78,"AppliedPenalty":44.78,"Avg_Top10":58.06,"Codex":2101.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"AC","Gender":"W","CalculatedPenalty":86.55,"AppliedPenalty":86.55,"Avg_Top10":97.94,"Codex":5879.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"AC","Gender":"W","CalculatedPenalty":87.31,"AppliedPenalty":87.31,"Avg_Top10":97.94,"Codex":7161.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":14.52,"AppliedPenalty":15.0,"Avg_Top10":39.74,"Codex":781.0,"Place":"Lake Louise"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":18.65,"AppliedPenalty":18.65,"Avg_Top10":39.74,"Codex":782.0,"Place":"Lake Louise"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":8.93,"AppliedPenalty":15.0,"Avg_Top10":23.73,"Codex":2172.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":9.11,"AppliedPenalty":15.0,"Avg_Top10":23.73,"Codex":2173.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":44.15,"AppliedPenalty":44.15,"Avg_Top10":69.77,"Codex":5875.0,"Place":"Lake Louise"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":47.28,"AppliedPenalty":47.28,"Avg_Top10":68.64,"Codex":5876.0,"Place":"Lake Louise"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":20.99,"AppliedPenalty":20.99,"Avg_Top10":48.66,"Codex":7228.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":28.15,"AppliedPenalty":28.15,"Avg_Top10":57.05,"Codex":7229.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.58,"AppliedPenalty":17.58,"Avg_Top10":20.28,"Codex":1939.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.95,"AppliedPenalty":16.95,"Avg_Top10":20.28,"Codex":1940.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":19.96,"AppliedPenalty":19.96,"Avg_Top10":25.09,"Codex":790.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":20.64,"AppliedPenalty":20.64,"Avg_Top10":25.09,"Codex":791.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":15.58,"AppliedPenalty":15.58,"Avg_Top10":21.88,"Codex":827.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.73,"AppliedPenalty":15.0,"Avg_Top10":22.04,"Codex":830.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.0,"AppliedPenalty":15.0,"Avg_Top10":22.32,"Codex":2104.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.21,"AppliedPenalty":15.0,"Avg_Top10":18.27,"Codex":2175.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.65,"AppliedPenalty":15.0,"Avg_Top10":19.26,"Codex":7005.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":1.14,"AppliedPenalty":15.0,"Avg_Top10":16.96,"Codex":7006.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":21.12,"AppliedPenalty":21.12,"Avg_Top10":26.39,"Codex":5882.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":21.18,"AppliedPenalty":21.18,"Avg_Top10":26.39,"Codex":5883.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":21.73,"AppliedPenalty":21.73,"Avg_Top10":26.97,"Codex":5924.0,"Place":"Georgian Peaks"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":23.04,"AppliedPenalty":23.04,"Avg_Top10":28.21,"Codex":5925.0,"Place":"Georgian Peaks"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":22.29,"AppliedPenalty":22.29,"Avg_Top10":28.09,"Codex":7164.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":22.71,"AppliedPenalty":22.71,"Avg_Top10":34.13,"Codex":783.0,"Place":"Lake Louise"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":24.5,"AppliedPenalty":24.5,"Avg_Top10":32.28,"Codex":786.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":11.31,"AppliedPenalty":15.0,"Avg_Top10":32.58,"Codex":2102.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":17.43,"AppliedPenalty":17.43,"Avg_Top10":32.58,"Codex":2103.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":30.58,"AppliedPenalty":30.58,"Avg_Top10":45.98,"Codex":5877.0,"Place":"Lake Louise"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":26.95,"AppliedPenalty":26.95,"Avg_Top10":42.75,"Codex":5880.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":35.06,"AppliedPenalty":35.06,"Avg_Top10":48.05,"Codex":7162.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":37.09,"AppliedPenalty":37.09,"Avg_Top10":48.05,"Codex":7163.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.45,"AppliedPenalty":17.45,"Avg_Top10":20.95,"Codex":1937.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":18.89,"AppliedPenalty":18.89,"Avg_Top10":20.95,"Codex":1938.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.9,"AppliedPenalty":17.9,"Avg_Top10":23.77,"Codex":788.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.66,"AppliedPenalty":17.66,"Avg_Top10":23.77,"Codex":789.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":16.03,"AppliedPenalty":16.03,"Avg_Top10":20.84,"Codex":834.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.87,"AppliedPenalty":15.87,"Avg_Top10":21.8,"Codex":832.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":9.63,"AppliedPenalty":15.0,"Avg_Top10":22.66,"Codex":2105.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":9.25,"AppliedPenalty":15.0,"Avg_Top10":17.63,"Codex":2176.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":20.01,"AppliedPenalty":20.01,"Avg_Top10":25.85,"Codex":7003.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":21.45,"AppliedPenalty":21.45,"Avg_Top10":24.72,"Codex":7004.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.41,"AppliedPenalty":15.41,"Avg_Top10":23.5,"Codex":5884.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":16.64,"AppliedPenalty":16.64,"Avg_Top10":23.5,"Codex":5885.0,"Place":"Panorama, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.36,"AppliedPenalty":17.36,"Avg_Top10":24.61,"Codex":7363.0,"Place":"Osler Bluff, ON"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.09,"AppliedPenalty":17.09,"Avg_Top10":24.61,"Codex":7364.0,"Place":"Osler Bluff, ON"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":18.02,"AppliedPenalty":18.02,"Avg_Top10":24.34,"Codex":7165.0,"Place":"Whiteface Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.02,"AppliedPenalty":15.02,"Avg_Top10":20.55,"Codex":7232.0,"Place":"Sugarloaf"}],"2023":[{"Circuit":"ANC","Discipline":"GS","Gender":"M","CalculatedPenalty":18.54,"AppliedPenalty":18.54,"Avg_Top10":24.19,"Codex":157.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.83,"AppliedPenalty":16.83,"Avg_Top10":24.19,"Codex":156.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.52,"AppliedPenalty":19.52,"Avg_Top10":26.43,"Codex":5112.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"GS","Gender":"W","CalculatedPenalty":16.82,"AppliedPenalty":16.82,"Avg_Top10":29.92,"Codex":5111.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SG","Gender":"M","CalculatedPenalty":53.08,"AppliedPenalty":53.08,"Avg_Top10":79.13,"Codex":154.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SG","Gender":"M","CalculatedPenalty":48.41,"AppliedPenalty":48.41,"Avg_Top10":79.13,"Codex":155.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SG","Gender":"W","CalculatedPenalty":25.82,"AppliedPenalty":25.82,"Avg_Top10":54.88,"Codex":5109.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SG","Gender":"W","CalculatedPenalty":24.62,"AppliedPenalty":24.62,"Avg_Top10":54.88,"Codex":5110.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"M","CalculatedPenalty":19.71,"AppliedPenalty":19.71,"Avg_Top10":28.95,"Codex":152.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.75,"AppliedPenalty":15.75,"Avg_Top10":29.7,"Codex":153.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"W","CalculatedPenalty":18.53,"AppliedPenalty":18.53,"Avg_Top10":26.07,"Codex":5107.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"W","CalculatedPenalty":19.2,"AppliedPenalty":19.2,"Avg_Top10":26.98,"Codex":5108.0,"Place":"Coronet Peak, NZ"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":10.6,"AppliedPenalty":15.0,"Avg_Top10":15.43,"Codex":763.0,"Place":"St. Moritz"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":8.77,"AppliedPenalty":15.0,"Avg_Top10":15.43,"Codex":764.0,"Place":"St. Moritz"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":16.3,"AppliedPenalty":16.3,"Avg_Top10":22.3,"Codex":1012.0,"Place":"Sella Nevea"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":16.32,"AppliedPenalty":16.32,"Avg_Top10":22.3,"Codex":1013.0,"Place":"Sella Nevea"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":12.68,"AppliedPenalty":15.0,"Avg_Top10":16.33,"Codex":1345.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":13.65,"AppliedPenalty":15.0,"Avg_Top10":16.33,"Codex":1346.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":14.07,"AppliedPenalty":15.0,"Avg_Top10":15.97,"Codex":1118.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":20.77,"AppliedPenalty":20.77,"Avg_Top10":24.28,"Codex":5163.0,"Place":"Zauchensee"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":18.89,"AppliedPenalty":18.89,"Avg_Top10":24.28,"Codex":5164.0,"Place":"Zauchensee"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":16.53,"AppliedPenalty":16.53,"Avg_Top10":22.7,"Codex":6305.0,"Place":"Chatel"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":17.81,"AppliedPenalty":17.81,"Avg_Top10":22.92,"Codex":6306.0,"Place":"Chatel"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":13.33,"AppliedPenalty":15.0,"Avg_Top10":19.25,"Codex":5766.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":14.46,"AppliedPenalty":15.0,"Avg_Top10":19.25,"Codex":5767.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":15.4,"AppliedPenalty":15.4,"Avg_Top10":21.79,"Codex":6079.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.84,"AppliedPenalty":15.0,"Avg_Top10":15.28,"Codex":170.0,"Place":"Gurgl"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.61,"AppliedPenalty":15.0,"Avg_Top10":15.28,"Codex":171.0,"Place":"Gurgl"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":11.87,"AppliedPenalty":15.0,"Avg_Top10":15.79,"Codex":757.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.68,"AppliedPenalty":15.0,"Avg_Top10":15.79,"Codex":758.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":7.05,"AppliedPenalty":15.0,"Avg_Top10":12.27,"Codex":1038.0,"Place":"Folgaria"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":10.68,"AppliedPenalty":15.0,"Avg_Top10":12.27,"Codex":1039.0,"Place":"Folgaria"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.61,"AppliedPenalty":15.0,"Avg_Top10":16.52,"Codex":901.0,"Place":"Gaellivare"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.42,"AppliedPenalty":15.0,"Avg_Top10":16.52,"Codex":902.0,"Place":"Gaellivare"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.34,"AppliedPenalty":15.0,"Avg_Top10":19.55,"Codex":1114.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.16,"AppliedPenalty":19.16,"Avg_Top10":22.46,"Codex":5159.0,"Place":"Mayrhofen"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.61,"AppliedPenalty":17.61,"Avg_Top10":19.02,"Codex":5719.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.07,"AppliedPenalty":15.0,"Avg_Top10":19.8,"Codex":5720.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.25,"AppliedPenalty":15.0,"Avg_Top10":17.78,"Codex":5966.0,"Place":"Ponte di Legno"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.95,"AppliedPenalty":15.0,"Avg_Top10":17.79,"Codex":5967.0,"Place":"Ponte di Legno"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.3,"AppliedPenalty":15.0,"Avg_Top10":16.77,"Codex":5918.0,"Place":"Maribor"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.77,"AppliedPenalty":15.0,"Avg_Top10":16.77,"Codex":5919.0,"Place":"Maribor"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.71,"AppliedPenalty":15.0,"Avg_Top10":16.38,"Codex":5864.0,"Place":"Gaellivare"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.65,"AppliedPenalty":15.0,"Avg_Top10":16.38,"Codex":5865.0,"Place":"Gaellivare"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.43,"AppliedPenalty":15.0,"Avg_Top10":15.99,"Codex":6075.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":19.84,"AppliedPenalty":19.84,"Avg_Top10":22.69,"Codex":1000.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":18.12,"AppliedPenalty":18.12,"Avg_Top10":22.69,"Codex":1001.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":13.67,"AppliedPenalty":15.0,"Avg_Top10":18.45,"Codex":771.0,"Place":"Wengen"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":15.47,"AppliedPenalty":15.47,"Avg_Top10":19.81,"Codex":772.0,"Place":"Wengen"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":11.76,"AppliedPenalty":15.0,"Avg_Top10":19.48,"Codex":1347.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.88,"AppliedPenalty":15.0,"Avg_Top10":17.2,"Codex":184.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.85,"AppliedPenalty":16.85,"Avg_Top10":17.33,"Codex":1268.0,"Place":"Garmisch-Partenkirchen"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":12.56,"AppliedPenalty":15.0,"Avg_Top10":17.33,"Codex":1269.0,"Place":"Garmisch-Partenkirchen"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":15.68,"AppliedPenalty":15.68,"Avg_Top10":18.09,"Codex":1119.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":20.09,"AppliedPenalty":20.09,"Avg_Top10":27.52,"Codex":5717.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":23.9,"AppliedPenalty":23.9,"Avg_Top10":27.52,"Codex":5718.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":17.39,"AppliedPenalty":17.39,"Avg_Top10":25.79,"Codex":5165.0,"Place":"Zauchensee"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":17.53,"AppliedPenalty":17.53,"Avg_Top10":23.38,"Codex":5974.0,"Place":"Chatel"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":13.2,"AppliedPenalty":15.0,"Avg_Top10":21.55,"Codex":6000.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":16.66,"AppliedPenalty":16.66,"Avg_Top10":21.55,"Codex":6001.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":14.23,"AppliedPenalty":15.0,"Avg_Top10":22.73,"Codex":6490.0,"Place":"Sarajevo/Bjelasnica"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":19.08,"AppliedPenalty":19.08,"Avg_Top10":22.73,"Codex":6491.0,"Place":"Sarajevo/Bjelasnica"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":15.06,"AppliedPenalty":15.06,"Avg_Top10":22.1,"Codex":6080.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":3.35,"AppliedPenalty":15.0,"Avg_Top10":8.93,"Codex":1002.0,"Place":"Obereggen"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":2.96,"AppliedPenalty":15.0,"Avg_Top10":5.37,"Codex":1003.0,"Place":"Val di Fassa"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":2.88,"AppliedPenalty":15.0,"Avg_Top10":7.84,"Codex":800.0,"Place":"Jaun"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":7.14,"AppliedPenalty":15.0,"Avg_Top10":7.84,"Codex":801.0,"Place":"Jaun"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":4.54,"AppliedPenalty":15.0,"Avg_Top10":9.45,"Codex":1257.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":1.7,"AppliedPenalty":15.0,"Avg_Top10":9.66,"Codex":1258.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":7.06,"AppliedPenalty":15.0,"Avg_Top10":11.6,"Codex":325.0,"Place":"Levi"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":6.88,"AppliedPenalty":15.0,"Avg_Top10":11.6,"Codex":326.0,"Place":"Levi"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":5.95,"AppliedPenalty":15.0,"Avg_Top10":11.36,"Codex":1115.0,"Place":"Narvik"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.63,"AppliedPenalty":17.63,"Avg_Top10":21.37,"Codex":5160.0,"Place":"Mayrhofen"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.36,"AppliedPenalty":15.0,"Avg_Top10":17.04,"Codex":5964.0,"Place":"Valle Aurina / Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.64,"AppliedPenalty":15.0,"Avg_Top10":17.04,"Codex":5965.0,"Place":"Valle Aurina / Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.44,"AppliedPenalty":15.0,"Avg_Top10":16.96,"Codex":5744.0,"Place":"Pozza di Fassa"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":10.86,"AppliedPenalty":15.0,"Avg_Top10":16.96,"Codex":5745.0,"Place":"Pozza di Fassa"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.7,"AppliedPenalty":15.0,"Avg_Top10":20.67,"Codex":6297.0,"Place":"Vaujany"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.78,"AppliedPenalty":15.0,"Avg_Top10":20.68,"Codex":6298.0,"Place":"Vaujany"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.04,"AppliedPenalty":15.0,"Avg_Top10":16.77,"Codex":5313.0,"Place":"Suomu"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.2,"AppliedPenalty":15.0,"Avg_Top10":16.92,"Codex":5314.0,"Place":"Suomu"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.51,"AppliedPenalty":15.0,"Avg_Top10":16.31,"Codex":6076.0,"Place":"Narvik"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":19.73,"AppliedPenalty":19.73,"Avg_Top10":28.45,"Codex":1171.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":20.98,"AppliedPenalty":20.98,"Avg_Top10":28.06,"Codex":1172.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":28.28,"AppliedPenalty":28.28,"Avg_Top10":35.99,"Codex":443.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":27.54,"AppliedPenalty":27.54,"Avg_Top10":35.99,"Codex":444.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":28.0,"AppliedPenalty":28.0,"Avg_Top10":34.45,"Codex":1193.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":25.38,"AppliedPenalty":25.38,"Avg_Top10":34.54,"Codex":1194.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":21.4,"AppliedPenalty":21.4,"Avg_Top10":37.43,"Codex":6126.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":28.57,"AppliedPenalty":28.57,"Avg_Top10":36.23,"Codex":6129.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":24.62,"AppliedPenalty":24.62,"Avg_Top10":33.62,"Codex":5431.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":23.83,"AppliedPenalty":23.83,"Avg_Top10":33.62,"Codex":5432.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":21.83,"AppliedPenalty":21.83,"Avg_Top10":33.69,"Codex":6151.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":23.24,"AppliedPenalty":23.24,"Avg_Top10":33.69,"Codex":6152.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":21.29,"AppliedPenalty":21.29,"Avg_Top10":25.7,"Codex":1173.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":23.15,"AppliedPenalty":23.15,"Avg_Top10":25.7,"Codex":1174.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":20.82,"AppliedPenalty":20.82,"Avg_Top10":27.59,"Codex":445.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.23,"AppliedPenalty":17.23,"Avg_Top10":27.59,"Codex":446.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":19.41,"AppliedPenalty":19.41,"Avg_Top10":27.91,"Codex":447.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":21.58,"AppliedPenalty":21.58,"Avg_Top10":27.91,"Codex":448.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.39,"AppliedPenalty":15.0,"Avg_Top10":23.97,"Codex":1195.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":18.14,"AppliedPenalty":18.14,"Avg_Top10":23.97,"Codex":1196.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":32.18,"AppliedPenalty":32.18,"Avg_Top10":35.99,"Codex":6131.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":29.64,"AppliedPenalty":29.64,"Avg_Top10":35.99,"Codex":6132.0,"Place":"Akan"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":24.23,"AppliedPenalty":24.23,"Avg_Top10":33.28,"Codex":5433.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":25.58,"AppliedPenalty":25.58,"Avg_Top10":32.67,"Codex":5434.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":25.6,"AppliedPenalty":25.6,"Avg_Top10":33.57,"Codex":5435.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":24.88,"AppliedPenalty":24.88,"Avg_Top10":33.57,"Codex":5436.0,"Place":"Alpensia Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":24.97,"AppliedPenalty":24.97,"Avg_Top10":33.52,"Codex":6153.0,"Place":"Sugadairakogen"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":22.35,"AppliedPenalty":22.35,"Avg_Top10":33.52,"Codex":6154.0,"Place":"Sugadairakogen"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":12.56,"AppliedPenalty":15.0,"Avg_Top10":28.12,"Codex":1571.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":15.3,"AppliedPenalty":15.3,"Avg_Top10":28.12,"Codex":1572.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":6.4,"AppliedPenalty":15.0,"Avg_Top10":16.43,"Codex":2100.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":7.04,"AppliedPenalty":15.0,"Avg_Top10":16.43,"Codex":2101.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":70.08,"AppliedPenalty":70.08,"Avg_Top10":86.48,"Codex":6529.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":61.71,"AppliedPenalty":61.71,"Avg_Top10":86.48,"Codex":6530.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":45.16,"AppliedPenalty":45.16,"Avg_Top10":75.11,"Codex":7034.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":43.12,"AppliedPenalty":43.12,"Avg_Top10":79.33,"Codex":7035.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":23.94,"AppliedPenalty":23.94,"Avg_Top10":26.46,"Codex":1579.0,"Place":"Beaver Creek"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":18.67,"AppliedPenalty":18.67,"Avg_Top10":26.46,"Codex":1580.0,"Place":"Beaver Creek"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.64,"AppliedPenalty":17.64,"Avg_Top10":23.62,"Codex":1484.0,"Place":"Mont Ste-Marie, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.46,"AppliedPenalty":15.0,"Avg_Top10":17.02,"Codex":1492.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.22,"AppliedPenalty":15.0,"Avg_Top10":17.71,"Codex":1493.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":15.38,"AppliedPenalty":15.38,"Avg_Top10":18.43,"Codex":1618.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.68,"AppliedPenalty":15.0,"Avg_Top10":20.01,"Codex":2104.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.15,"AppliedPenalty":17.15,"Avg_Top10":23.41,"Codex":6521.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":10.33,"AppliedPenalty":15.0,"Avg_Top10":23.61,"Codex":6522.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.52,"AppliedPenalty":17.52,"Avg_Top10":22.56,"Codex":6440.0,"Place":"Mont Ste-Marie, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":15.09,"AppliedPenalty":15.09,"Avg_Top10":22.48,"Codex":6447.0,"Place":"Georgian Peaks, ON"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.48,"AppliedPenalty":15.0,"Avg_Top10":22.48,"Codex":6448.0,"Place":"Georgian Peaks, ON"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.33,"AppliedPenalty":18.33,"Avg_Top10":25.66,"Codex":6567.0,"Place":"Stratton"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.65,"AppliedPenalty":19.65,"Avg_Top10":27.06,"Codex":6568.0,"Place":"Stratton"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.51,"AppliedPenalty":15.0,"Avg_Top10":22.78,"Codex":7038.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":23.98,"AppliedPenalty":23.98,"Avg_Top10":29.42,"Codex":1573.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":20.77,"AppliedPenalty":20.77,"Avg_Top10":29.42,"Codex":1574.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":18.72,"AppliedPenalty":18.72,"Avg_Top10":30.85,"Codex":1621.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":25.1,"AppliedPenalty":25.1,"Avg_Top10":30.85,"Codex":1622.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.81,"AppliedPenalty":15.0,"Avg_Top10":20.23,"Codex":2103.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":38.86,"AppliedPenalty":38.86,"Avg_Top10":49.83,"Codex":6531.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":37.44,"AppliedPenalty":37.44,"Avg_Top10":49.83,"Codex":6532.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":43.7,"AppliedPenalty":43.7,"Avg_Top10":57.12,"Codex":6571.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":41.07,"AppliedPenalty":41.07,"Avg_Top10":57.77,"Codex":6572.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":34.38,"AppliedPenalty":34.38,"Avg_Top10":41.16,"Codex":7037.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":23.1,"AppliedPenalty":23.1,"Avg_Top10":27.41,"Codex":1581.0,"Place":"Beaver Creek"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":24.36,"AppliedPenalty":24.36,"Avg_Top10":27.41,"Codex":1582.0,"Place":"Beaver Creek"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":23.73,"AppliedPenalty":23.73,"Avg_Top10":25.92,"Codex":1619.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":22.64,"AppliedPenalty":22.64,"Avg_Top10":26.03,"Codex":1620.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.83,"AppliedPenalty":15.0,"Avg_Top10":22.42,"Codex":1485.0,"Place":"Camp Fortune, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.78,"AppliedPenalty":15.0,"Avg_Top10":16.05,"Codex":1494.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.7,"AppliedPenalty":15.0,"Avg_Top10":16.05,"Codex":1495.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":9.98,"AppliedPenalty":15.0,"Avg_Top10":17.96,"Codex":2105.0,"Place":"Whistler Mountain, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":19.04,"AppliedPenalty":19.04,"Avg_Top10":23.13,"Codex":6523.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":18.86,"AppliedPenalty":18.86,"Avg_Top10":22.93,"Codex":6524.0,"Place":"Copper Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":21.1,"AppliedPenalty":21.1,"Avg_Top10":25.32,"Codex":6569.0,"Place":"Stratton"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":20.12,"AppliedPenalty":20.12,"Avg_Top10":25.32,"Codex":6570.0,"Place":"Stratton"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":16.43,"AppliedPenalty":16.43,"Avg_Top10":20.4,"Codex":6439.0,"Place":"Camp Fortune, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.27,"AppliedPenalty":15.0,"Avg_Top10":18.3,"Codex":6449.0,"Place":"Osler Bluff"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.61,"AppliedPenalty":15.61,"Avg_Top10":19.97,"Codex":6450.0,"Place":"Osler Bluff"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.89,"AppliedPenalty":17.89,"Avg_Top10":24.67,"Codex":7039.0,"Place":"Whistler Mountain, BC"},{"Circuit":"SAC","Discipline":"AC","Gender":"M","CalculatedPenalty":76.56,"AppliedPenalty":76.56,"Avg_Top10":62.77,"Codex":124.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"AC","Gender":"M","CalculatedPenalty":93.93,"AppliedPenalty":93.93,"Avg_Top10":91.46,"Codex":142.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"AC","Gender":"W","CalculatedPenalty":146.68,"AppliedPenalty":540.0,"Avg_Top10":287.92,"Codex":5129.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"AC","Gender":"W","CalculatedPenalty":193.01,"AppliedPenalty":193.01,"Avg_Top10":569.22,"Codex":5147.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":25.82,"AppliedPenalty":25.82,"Avg_Top10":42.39,"Codex":122.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":22.1,"AppliedPenalty":22.1,"Avg_Top10":42.39,"Codex":123.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":22.39,"AppliedPenalty":22.39,"Avg_Top10":33.49,"Codex":133.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":18.52,"AppliedPenalty":18.52,"Avg_Top10":33.49,"Codex":134.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":22.0,"AppliedPenalty":22.0,"Avg_Top10":42.51,"Codex":5127.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":23.18,"AppliedPenalty":23.18,"Avg_Top10":42.51,"Codex":5128.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":237.66,"AppliedPenalty":660.0,"Avg_Top10":207.78,"Codex":5138.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":255.14,"AppliedPenalty":660.0,"Avg_Top10":207.78,"Codex":5139.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":36.02,"AppliedPenalty":36.02,"Avg_Top10":41.42,"Codex":88.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":31.91,"AppliedPenalty":31.91,"Avg_Top10":41.42,"Codex":92.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":33.13,"AppliedPenalty":33.13,"Avg_Top10":40.21,"Codex":118.0,"Place":"El Colorado"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.64,"AppliedPenalty":16.64,"Avg_Top10":22.93,"Codex":100.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":23.28,"AppliedPenalty":23.28,"Avg_Top10":28.53,"Codex":99.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":40.87,"AppliedPenalty":40.87,"Avg_Top10":80.72,"Codex":5077.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":38.66,"AppliedPenalty":38.66,"Avg_Top10":82.02,"Codex":5081.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":27.3,"AppliedPenalty":27.3,"Avg_Top10":65.37,"Codex":5123.0,"Place":"El Colorado"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":4.12,"AppliedPenalty":15.0,"Avg_Top10":20.17,"Codex":5089.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.87,"AppliedPenalty":19.87,"Avg_Top10":26.8,"Codex":5088.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":10.73,"AppliedPenalty":15.0,"Avg_Top10":16.74,"Codex":125.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":10.84,"AppliedPenalty":15.0,"Avg_Top10":16.74,"Codex":138.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":15.05,"AppliedPenalty":15.05,"Avg_Top10":31.57,"Codex":139.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":42.83,"AppliedPenalty":42.83,"Avg_Top10":99.91,"Codex":5130.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":34.24,"AppliedPenalty":34.24,"Avg_Top10":99.91,"Codex":5143.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":140.32,"AppliedPenalty":140.32,"Avg_Top10":235.01,"Codex":5144.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":36.51,"AppliedPenalty":36.51,"Avg_Top10":46.86,"Codex":89.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":42.33,"AppliedPenalty":42.33,"Avg_Top10":46.86,"Codex":90.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":37.64,"AppliedPenalty":37.64,"Avg_Top10":44.59,"Codex":119.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.23,"AppliedPenalty":17.23,"Avg_Top10":23.0,"Codex":97.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.1,"AppliedPenalty":17.1,"Avg_Top10":23.49,"Codex":98.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":42.69,"AppliedPenalty":42.69,"Avg_Top10":85.62,"Codex":5078.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":34.98,"AppliedPenalty":34.98,"Avg_Top10":85.62,"Codex":5079.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":22.16,"AppliedPenalty":22.16,"Avg_Top10":68.32,"Codex":5124.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.97,"AppliedPenalty":15.97,"Avg_Top10":20.93,"Codex":5086.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.67,"AppliedPenalty":17.67,"Avg_Top10":23.69,"Codex":5087.0,"Place":"Cerro Castor"}],"2024":[{"Circuit":"ANC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.83,"AppliedPenalty":15.0,"Avg_Top10":19.77,"Codex":305.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.13,"AppliedPenalty":17.13,"Avg_Top10":20.47,"Codex":306.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.35,"AppliedPenalty":15.0,"Avg_Top10":20.11,"Codex":5299.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.85,"AppliedPenalty":15.0,"Avg_Top10":20.61,"Codex":5300.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.06,"AppliedPenalty":15.0,"Avg_Top10":17.72,"Codex":307.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.08,"AppliedPenalty":15.08,"Avg_Top10":21.1,"Codex":308.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.9,"AppliedPenalty":15.0,"Avg_Top10":21.83,"Codex":5301.0,"Place":"Coronet Peak, NZ"},{"Circuit":"ANC","Discipline":"SL","Gender":"W","CalculatedPenalty":18.02,"AppliedPenalty":18.02,"Avg_Top10":23.18,"Codex":5302.0,"Place":"Coronet Peak, NZ"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":13.62,"AppliedPenalty":15.0,"Avg_Top10":20.77,"Codex":59.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":15.83,"AppliedPenalty":15.83,"Avg_Top10":20.77,"Codex":58.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":11.06,"AppliedPenalty":15.0,"Avg_Top10":17.45,"Codex":76.0,"Place":"Tarvisio"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":14.79,"AppliedPenalty":15.0,"Avg_Top10":17.94,"Codex":77.0,"Place":"Tarvisio"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":8.48,"AppliedPenalty":15.0,"Avg_Top10":15.19,"Codex":39.0,"Place":"Verbier"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":12.04,"AppliedPenalty":15.0,"Avg_Top10":15.86,"Codex":40.0,"Place":"Verbier"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":11.61,"AppliedPenalty":15.0,"Avg_Top10":15.42,"Codex":120.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":12.32,"AppliedPenalty":15.0,"Avg_Top10":22.28,"Codex":5035.0,"Place":"Passo San Pellegrino"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":15.59,"AppliedPenalty":15.59,"Avg_Top10":22.03,"Codex":5036.0,"Place":"Passo San Pellegrino"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":18.83,"AppliedPenalty":18.83,"Avg_Top10":27.73,"Codex":5279.0,"Place":"Orcieres Merlette 1850 - Region Sud"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":22.0,"AppliedPenalty":22.0,"Avg_Top10":26.97,"Codex":5280.0,"Place":"Orcieres Merlette 1850 - Region Sud"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":8.49,"AppliedPenalty":15.0,"Avg_Top10":18.75,"Codex":5024.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":11.28,"AppliedPenalty":15.0,"Avg_Top10":18.75,"Codex":5025.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":12.07,"AppliedPenalty":15.0,"Avg_Top10":21.0,"Codex":5093.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.68,"AppliedPenalty":15.0,"Avg_Top10":16.95,"Codex":23.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.87,"AppliedPenalty":15.0,"Avg_Top10":15.97,"Codex":43.0,"Place":"Valloire"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":9.82,"AppliedPenalty":15.0,"Avg_Top10":15.97,"Codex":44.0,"Place":"Valloire"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.3,"AppliedPenalty":15.0,"Avg_Top10":15.29,"Codex":82.0,"Place":"Val Cenis"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.14,"AppliedPenalty":16.14,"Avg_Top10":19.14,"Codex":100.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":15.87,"AppliedPenalty":15.87,"Avg_Top10":19.14,"Codex":101.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.84,"AppliedPenalty":15.0,"Avg_Top10":15.1,"Codex":114.0,"Place":"Trysil"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.15,"AppliedPenalty":15.0,"Avg_Top10":15.1,"Codex":115.0,"Place":"Trysil"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.8,"AppliedPenalty":15.0,"Avg_Top10":15.49,"Codex":117.0,"Place":"Hafjell"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.64,"AppliedPenalty":18.64,"Avg_Top10":21.73,"Codex":5014.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.11,"AppliedPenalty":18.11,"Avg_Top10":20.81,"Codex":5050.0,"Place":"Mayrhofen"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.79,"AppliedPenalty":15.0,"Avg_Top10":18.31,"Codex":5038.0,"Place":"Sestriere"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":10.61,"AppliedPenalty":15.0,"Avg_Top10":18.31,"Codex":5039.0,"Place":"Sestriere"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":15.61,"AppliedPenalty":15.61,"Avg_Top10":20.8,"Codex":5087.0,"Place":"Aal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.31,"AppliedPenalty":17.31,"Avg_Top10":20.07,"Codex":5088.0,"Place":"Aal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":16.67,"AppliedPenalty":16.67,"Avg_Top10":18.78,"Codex":5090.0,"Place":"Hafjell"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.43,"AppliedPenalty":15.0,"Avg_Top10":20.75,"Codex":60.0,"Place":"Saalbach"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.67,"AppliedPenalty":16.67,"Avg_Top10":20.9,"Codex":2068.0,"Place":"Saalbach"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.45,"AppliedPenalty":16.45,"Avg_Top10":19.28,"Codex":2058.0,"Place":"Tarvisio"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":8.44,"AppliedPenalty":15.0,"Avg_Top10":17.77,"Codex":311.0,"Place":"Sella Nevea"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":12.67,"AppliedPenalty":15.0,"Avg_Top10":17.77,"Codex":312.0,"Place":"Sella Nevea"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":11.15,"AppliedPenalty":15.0,"Avg_Top10":15.07,"Codex":24.0,"Place":"Verbier"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.89,"AppliedPenalty":15.0,"Avg_Top10":17.57,"Codex":446.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":17.32,"AppliedPenalty":17.32,"Avg_Top10":23.51,"Codex":5020.0,"Place":"St. Moritz"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":25.31,"AppliedPenalty":25.31,"Avg_Top10":28.06,"Codex":5281.0,"Place":"Orcieres Merlette 1850 - Region Sud"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":15.42,"AppliedPenalty":15.42,"Avg_Top10":22.19,"Codex":7023.0,"Place":"La Thuile"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":6.19,"AppliedPenalty":15.0,"Avg_Top10":22.19,"Codex":7024.0,"Place":"La Thuile"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":20.13,"AppliedPenalty":20.13,"Avg_Top10":26.42,"Codex":5048.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":10.02,"AppliedPenalty":15.0,"Avg_Top10":20.51,"Codex":5094.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":3.15,"AppliedPenalty":15.0,"Avg_Top10":7.38,"Codex":65.0,"Place":"Val di Fassa"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.57,"AppliedPenalty":15.0,"Avg_Top10":14.95,"Codex":68.0,"Place":"Obereggen"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.23,"AppliedPenalty":15.0,"Avg_Top10":17.76,"Codex":104.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.06,"AppliedPenalty":17.06,"Avg_Top10":17.8,"Codex":105.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":8.5,"AppliedPenalty":15.0,"Avg_Top10":14.37,"Codex":33.0,"Place":"Gstaad Saanenland"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":12.15,"AppliedPenalty":15.0,"Avg_Top10":14.37,"Codex":34.0,"Place":"Gstaad Saanenland"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.17,"AppliedPenalty":15.0,"Avg_Top10":14.25,"Codex":184.0,"Place":"Klaeppen"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":11.81,"AppliedPenalty":15.0,"Avg_Top10":14.25,"Codex":185.0,"Place":"Klaeppen"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.43,"AppliedPenalty":15.0,"Avg_Top10":14.25,"Codex":116.0,"Place":"Hafjell"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.15,"AppliedPenalty":15.0,"Avg_Top10":15.77,"Codex":5051.0,"Place":"Mayrhofen"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.82,"AppliedPenalty":15.0,"Avg_Top10":17.49,"Codex":5031.0,"Place":"Valle Aurina / Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":16.43,"AppliedPenalty":16.43,"Avg_Top10":17.99,"Codex":5032.0,"Place":"Valle Aurina / Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.51,"AppliedPenalty":15.0,"Avg_Top10":16.44,"Codex":5058.0,"Place":"Zell am See"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.98,"AppliedPenalty":15.0,"Avg_Top10":16.44,"Codex":5059.0,"Place":"Zell am See"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":6.93,"AppliedPenalty":15.0,"Avg_Top10":11.31,"Codex":5327.0,"Place":"Malbun"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":6.91,"AppliedPenalty":15.0,"Avg_Top10":11.31,"Codex":5328.0,"Place":"Malbun"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":9.66,"AppliedPenalty":15.0,"Avg_Top10":13.92,"Codex":5161.0,"Place":"Norefjell"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.2,"AppliedPenalty":15.0,"Avg_Top10":14.77,"Codex":5162.0,"Place":"Norefjell"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":9.52,"AppliedPenalty":15.0,"Avg_Top10":14.71,"Codex":5089.0,"Place":"Hafjell"},{"Circuit":"FEC","Discipline":"DH","Gender":"M","CalculatedPenalty":121.06,"AppliedPenalty":121.06,"Avg_Top10":153.88,"Codex":623.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"DH","Gender":"M","CalculatedPenalty":133.74,"AppliedPenalty":133.74,"Avg_Top10":204.24,"Codex":624.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"DH","Gender":"W","CalculatedPenalty":211.67,"AppliedPenalty":211.67,"Avg_Top10":367.64,"Codex":5616.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"DH","Gender":"W","CalculatedPenalty":252.56,"AppliedPenalty":252.56,"Avg_Top10":423.22,"Codex":5617.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":24.16,"AppliedPenalty":24.16,"Avg_Top10":30.49,"Codex":616.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":23.29,"AppliedPenalty":23.29,"Avg_Top10":30.49,"Codex":617.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":25.23,"AppliedPenalty":25.23,"Avg_Top10":29.58,"Codex":1298.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":29.52,"AppliedPenalty":29.52,"Avg_Top10":33.87,"Codex":5609.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":23.69,"AppliedPenalty":23.69,"Avg_Top10":33.87,"Codex":5610.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":22.83,"AppliedPenalty":22.83,"Avg_Top10":30.3,"Codex":6283.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SG","Gender":"M","CalculatedPenalty":130.37,"AppliedPenalty":130.37,"Avg_Top10":162.46,"Codex":625.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"SG","Gender":"M","CalculatedPenalty":129.71,"AppliedPenalty":129.71,"Avg_Top10":161.76,"Codex":626.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"SG","Gender":"W","CalculatedPenalty":214.39,"AppliedPenalty":214.39,"Avg_Top10":337.74,"Codex":5618.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"SG","Gender":"W","CalculatedPenalty":170.85,"AppliedPenalty":170.85,"Avg_Top10":290.27,"Codex":5619.0,"Place":"Yanqing"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":18.03,"AppliedPenalty":18.03,"Avg_Top10":24.67,"Codex":618.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.84,"AppliedPenalty":17.84,"Avg_Top10":24.67,"Codex":619.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":21.35,"AppliedPenalty":21.35,"Avg_Top10":25.48,"Codex":373.0,"Place":"Yong pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":21.46,"AppliedPenalty":21.46,"Avg_Top10":25.48,"Codex":374.0,"Place":"Yong pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":21.95,"AppliedPenalty":21.95,"Avg_Top10":25.85,"Codex":375.0,"Place":"Yong Pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":20.42,"AppliedPenalty":20.42,"Avg_Top10":25.85,"Codex":376.0,"Place":"Yong Pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":16.68,"AppliedPenalty":16.68,"Avg_Top10":22.44,"Codex":1299.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":20.48,"AppliedPenalty":20.48,"Avg_Top10":22.44,"Codex":1300.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":25.34,"AppliedPenalty":25.34,"Avg_Top10":32.34,"Codex":5611.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":25.01,"AppliedPenalty":25.01,"Avg_Top10":32.34,"Codex":5612.0,"Place":"Wanglong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":22.43,"AppliedPenalty":22.43,"Avg_Top10":31.84,"Codex":5363.0,"Place":"Yong pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":20.79,"AppliedPenalty":20.79,"Avg_Top10":31.84,"Codex":5364.0,"Place":"Yong pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":21.15,"AppliedPenalty":21.15,"Avg_Top10":30.25,"Codex":5365.0,"Place":"Yong Pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":22.59,"AppliedPenalty":22.59,"Avg_Top10":30.25,"Codex":5366.0,"Place":"Yong Pyong"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.98,"AppliedPenalty":17.98,"Avg_Top10":26.95,"Codex":6284.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":19.59,"AppliedPenalty":19.59,"Avg_Top10":26.95,"Codex":6285.0,"Place":"Sugadairakohgen"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":25.41,"AppliedPenalty":25.41,"Avg_Top10":36.74,"Codex":1667.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":23.71,"AppliedPenalty":23.71,"Avg_Top10":36.74,"Codex":1668.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":16.64,"AppliedPenalty":16.64,"Avg_Top10":30.32,"Codex":589.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":67.75,"AppliedPenalty":67.75,"Avg_Top10":85.71,"Codex":6626.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":62.89,"AppliedPenalty":62.89,"Avg_Top10":85.71,"Codex":6627.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":51.5,"AppliedPenalty":51.5,"Avg_Top10":74.5,"Codex":5582.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":20.14,"AppliedPenalty":20.14,"Avg_Top10":23.82,"Codex":1677.0,"Place":"Beaver Creek Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":20.97,"AppliedPenalty":20.97,"Avg_Top10":24.07,"Codex":1678.0,"Place":"Beaver Creek Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":19.37,"AppliedPenalty":19.37,"Avg_Top10":22.8,"Codex":1700.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":20.53,"AppliedPenalty":20.53,"Avg_Top10":22.8,"Codex":1702.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":18.75,"AppliedPenalty":18.75,"Avg_Top10":21.66,"Codex":556.0,"Place":"Mont Ste-Marie, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":19.89,"AppliedPenalty":19.89,"Avg_Top10":21.66,"Codex":557.0,"Place":"Mont Ste-Marie, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":15.5,"AppliedPenalty":15.5,"Avg_Top10":18.2,"Codex":593.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.93,"AppliedPenalty":15.0,"Avg_Top10":18.2,"Codex":594.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.23,"AppliedPenalty":19.23,"Avg_Top10":22.66,"Codex":5501.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.03,"AppliedPenalty":15.0,"Avg_Top10":22.66,"Codex":5502.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.28,"AppliedPenalty":19.28,"Avg_Top10":27.66,"Codex":6655.0,"Place":"Stratton Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.11,"AppliedPenalty":15.0,"Avg_Top10":27.66,"Codex":6656.0,"Place":"Stratton Mountain Resort"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":16.48,"AppliedPenalty":16.48,"Avg_Top10":24.35,"Codex":5551.0,"Place":"Georgian Peaks, ON"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.46,"AppliedPenalty":15.0,"Avg_Top10":20.17,"Codex":5588.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.81,"AppliedPenalty":15.0,"Avg_Top10":20.17,"Codex":5589.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":20.57,"AppliedPenalty":20.57,"Avg_Top10":28.28,"Codex":1670.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":23.08,"AppliedPenalty":23.08,"Avg_Top10":29.9,"Codex":1669.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.94,"AppliedPenalty":16.94,"Avg_Top10":28.61,"Codex":1715.0,"Place":"Whiteface, NY"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.82,"AppliedPenalty":15.0,"Avg_Top10":28.61,"Codex":1716.0,"Place":"Whiteface, NY"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":40.59,"AppliedPenalty":40.59,"Avg_Top10":62.79,"Codex":6628.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":42.3,"AppliedPenalty":42.3,"Avg_Top10":66.67,"Codex":6629.0,"Place":"Copper Mountain, CO"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":35.8,"AppliedPenalty":35.8,"Avg_Top10":51.29,"Codex":6670.0,"Place":"Whiteface, NY"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":34.75,"AppliedPenalty":34.75,"Avg_Top10":51.66,"Codex":6671.0,"Place":"Whiteface, NY"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":22.0,"AppliedPenalty":22.0,"Avg_Top10":23.98,"Codex":1679.0,"Place":"Beaver Creek Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":19.99,"AppliedPenalty":19.99,"Avg_Top10":23.98,"Codex":1680.0,"Place":"Beaver Creek Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":19.02,"AppliedPenalty":19.02,"Avg_Top10":22.29,"Codex":1704.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":20.83,"AppliedPenalty":20.83,"Avg_Top10":22.29,"Codex":1706.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":16.26,"AppliedPenalty":16.26,"Avg_Top10":19.64,"Codex":558.0,"Place":"Mont Ste-Marie, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.03,"AppliedPenalty":15.0,"Avg_Top10":17.69,"Codex":595.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.7,"AppliedPenalty":15.0,"Avg_Top10":17.69,"Codex":596.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":18.27,"AppliedPenalty":18.27,"Avg_Top10":22.72,"Codex":5503.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":19.21,"AppliedPenalty":19.21,"Avg_Top10":22.75,"Codex":5504.0,"Place":"Tremblant, QC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.16,"AppliedPenalty":17.16,"Avg_Top10":22.77,"Codex":6657.0,"Place":"Stratton Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":16.68,"AppliedPenalty":16.68,"Avg_Top10":22.77,"Codex":6658.0,"Place":"Stratton Mountain Resort"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.69,"AppliedPenalty":15.0,"Avg_Top10":21.09,"Codex":5549.0,"Place":"Devils Glen"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.03,"AppliedPenalty":15.0,"Avg_Top10":21.09,"Codex":5550.0,"Place":"Devils Glen"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":9.61,"AppliedPenalty":15.0,"Avg_Top10":19.02,"Codex":5586.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.99,"AppliedPenalty":15.0,"Avg_Top10":19.02,"Codex":5587.0,"Place":"Panorama Resort, BC"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":11.12,"AppliedPenalty":15.0,"Avg_Top10":22.11,"Codex":269.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":8.76,"AppliedPenalty":15.0,"Avg_Top10":22.11,"Codex":270.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":21.92,"AppliedPenalty":21.92,"Avg_Top10":34.28,"Codex":283.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":19.03,"AppliedPenalty":19.03,"Avg_Top10":34.28,"Codex":284.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":40.35,"AppliedPenalty":40.35,"Avg_Top10":73.32,"Codex":5246.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":41.06,"AppliedPenalty":41.06,"Avg_Top10":73.32,"Codex":5247.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":45.44,"AppliedPenalty":45.44,"Avg_Top10":94.15,"Codex":5260.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":89.76,"AppliedPenalty":89.76,"Avg_Top10":147.84,"Codex":5261.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":26.77,"AppliedPenalty":26.77,"Avg_Top10":39.12,"Codex":221.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":29.78,"AppliedPenalty":29.78,"Avg_Top10":39.12,"Codex":222.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":27.93,"AppliedPenalty":27.93,"Avg_Top10":32.65,"Codex":235.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":15.37,"AppliedPenalty":15.37,"Avg_Top10":19.79,"Codex":239.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.34,"AppliedPenalty":17.34,"Avg_Top10":20.61,"Codex":243.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":46.59,"AppliedPenalty":46.59,"Avg_Top10":59.47,"Codex":5198.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":49.97,"AppliedPenalty":49.97,"Avg_Top10":59.47,"Codex":5199.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":27.76,"AppliedPenalty":27.76,"Avg_Top10":38.34,"Codex":5212.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.15,"AppliedPenalty":15.0,"Avg_Top10":19.89,"Codex":5216.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.58,"AppliedPenalty":17.58,"Avg_Top10":21.69,"Codex":5220.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":18.49,"AppliedPenalty":18.49,"Avg_Top10":33.79,"Codex":288.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":24.79,"AppliedPenalty":24.79,"Avg_Top10":33.79,"Codex":289.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":22.95,"AppliedPenalty":22.95,"Avg_Top10":58.93,"Codex":5265.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":26.06,"AppliedPenalty":26.06,"Avg_Top10":58.93,"Codex":5266.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":34.14,"AppliedPenalty":34.14,"Avg_Top10":46.32,"Codex":225.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":34.73,"AppliedPenalty":34.73,"Avg_Top10":43.47,"Codex":226.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":22.39,"AppliedPenalty":22.39,"Avg_Top10":30.24,"Codex":236.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":23.85,"AppliedPenalty":23.85,"Avg_Top10":36.76,"Codex":266.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":12.1,"AppliedPenalty":15.0,"Avg_Top10":14.99,"Codex":246.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.75,"AppliedPenalty":15.75,"Avg_Top10":18.96,"Codex":247.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":52.04,"AppliedPenalty":52.04,"Avg_Top10":80.52,"Codex":5202.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":54.1,"AppliedPenalty":54.1,"Avg_Top10":76.24,"Codex":5203.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":27.79,"AppliedPenalty":27.79,"Avg_Top10":38.52,"Codex":5213.0,"Place":"Cerro Catedral"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":39.74,"AppliedPenalty":39.74,"Avg_Top10":58.81,"Codex":5243.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.51,"AppliedPenalty":15.0,"Avg_Top10":18.47,"Codex":5223.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.75,"AppliedPenalty":15.0,"Avg_Top10":18.08,"Codex":5224.0,"Place":"Cerro Castor"}],"2025":[{"Circuit":"ANC","Discipline":"GS","Gender":"W","CalculatedPenalty":9.48,"AppliedPenalty":15.0,"Avg_Top10":21.95,"Codex":5198.0,"Place":"Coronet Peak"},{"Circuit":"ANC","Discipline":"SL","Gender":"M","CalculatedPenalty":11.04,"AppliedPenalty":15.0,"Avg_Top10":16.37,"Codex":206.0,"Place":"Coronet Peak"},{"Circuit":"ANC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.61,"AppliedPenalty":15.0,"Avg_Top10":16.37,"Codex":207.0,"Place":"Coronet Peak"},{"Circuit":"ANC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.97,"AppliedPenalty":17.97,"Avg_Top10":22.52,"Codex":5199.0,"Place":"Coronet Peak"},{"Circuit":"ANC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.07,"AppliedPenalty":15.0,"Avg_Top10":22.46,"Codex":5200.0,"Place":"Coronet Peak"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":12.45,"AppliedPenalty":15.0,"Avg_Top10":18.58,"Codex":95.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":13.03,"AppliedPenalty":15.0,"Avg_Top10":18.58,"Codex":96.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":14.32,"AppliedPenalty":15.0,"Avg_Top10":20.61,"Codex":75.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":16.31,"AppliedPenalty":16.31,"Avg_Top10":20.61,"Codex":76.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":15.24,"AppliedPenalty":15.24,"Avg_Top10":19.05,"Codex":89.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":12.68,"AppliedPenalty":15.0,"Avg_Top10":19.05,"Codex":90.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":10.83,"AppliedPenalty":15.0,"Avg_Top10":14.0,"Codex":120.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"M","CalculatedPenalty":12.23,"AppliedPenalty":15.0,"Avg_Top10":14.15,"Codex":121.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":24.21,"AppliedPenalty":24.21,"Avg_Top10":32.1,"Codex":5107.0,"Place":"St. Moritz "},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":25.25,"AppliedPenalty":25.25,"Avg_Top10":32.1,"Codex":5108.0,"Place":"St. Moritz "},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":21.16,"AppliedPenalty":21.16,"Avg_Top10":25.8,"Codex":5067.0,"Place":"Zauchensee"},{"Circuit":"EC","Discipline":"DH","Gender":"W","CalculatedPenalty":20.86,"AppliedPenalty":20.86,"Avg_Top10":26.56,"Codex":5068.0,"Place":"Zauchensee"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":15.58,"AppliedPenalty":15.58,"Avg_Top10":18.9,"Codex":114.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":18.1,"AppliedPenalty":18.1,"Avg_Top10":18.9,"Codex":115.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.73,"AppliedPenalty":15.0,"Avg_Top10":14.8,"Codex":79.0,"Place":"Turnau"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":12.13,"AppliedPenalty":15.0,"Avg_Top10":15.86,"Codex":80.0,"Place":"Turnau"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.78,"AppliedPenalty":15.0,"Avg_Top10":16.12,"Codex":71.0,"Place":"Soldeu"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.62,"AppliedPenalty":15.0,"Avg_Top10":16.12,"Codex":72.0,"Place":"Soldeu"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.16,"AppliedPenalty":15.0,"Avg_Top10":15.52,"Codex":86.0,"Place":"Aal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.24,"AppliedPenalty":15.0,"Avg_Top10":15.52,"Codex":85.0,"Place":"Aal"},{"Circuit":"EC","Discipline":"GS","Gender":"M","CalculatedPenalty":11.02,"AppliedPenalty":15.0,"Avg_Top10":15.03,"Codex":112.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.03,"AppliedPenalty":17.03,"Avg_Top10":21.15,"Codex":5103.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":17.55,"AppliedPenalty":17.55,"Avg_Top10":21.15,"Codex":5104.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.18,"AppliedPenalty":18.18,"Avg_Top10":19.17,"Codex":5063.0,"Place":"Mayrhofen / Hippach"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":15.37,"AppliedPenalty":15.37,"Avg_Top10":16.95,"Codex":5074.0,"Place":"Puy Saint Vincent"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.8,"AppliedPenalty":15.0,"Avg_Top10":16.95,"Codex":5075.0,"Place":"Puy Saint Vincent"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.93,"AppliedPenalty":15.0,"Avg_Top10":16.82,"Codex":5076.0,"Place":"Oberjoch"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":15.35,"AppliedPenalty":15.35,"Avg_Top10":16.82,"Codex":5077.0,"Place":"Oberjoch"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.26,"AppliedPenalty":15.0,"Avg_Top10":16.18,"Codex":5099.0,"Place":"Geilo"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.33,"AppliedPenalty":15.0,"Avg_Top10":16.18,"Codex":5100.0,"Place":"Geilo"},{"Circuit":"EC","Discipline":"GS","Gender":"W","CalculatedPenalty":14.74,"AppliedPenalty":15.0,"Avg_Top10":16.18,"Codex":5102.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.0,"AppliedPenalty":15.0,"Avg_Top10":18.12,"Codex":97.0,"Place":"Santa Caterina"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":10.98,"AppliedPenalty":15.0,"Avg_Top10":18.45,"Codex":116.0,"Place":"Pass Thurn"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":15.43,"AppliedPenalty":15.43,"Avg_Top10":18.46,"Codex":78.0,"Place":"Reiteralm"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":13.39,"AppliedPenalty":15.0,"Avg_Top10":20.62,"Codex":77.0,"Place":"Reiteralm"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":13.98,"AppliedPenalty":15.0,"Avg_Top10":18.28,"Codex":91.0,"Place":"Orcieres Merlette 1850"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":12.94,"AppliedPenalty":15.0,"Avg_Top10":15.99,"Codex":117.0,"Place":"Crans Montana"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.17,"AppliedPenalty":16.17,"Avg_Top10":19.71,"Codex":81.0,"Place":"Bjelasnica / Sarajevo"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":15.75,"AppliedPenalty":15.75,"Avg_Top10":20.0,"Codex":82.0,"Place":"Bjelasnica / Sarajevo"},{"Circuit":"EC","Discipline":"SG","Gender":"M","CalculatedPenalty":13.41,"AppliedPenalty":15.0,"Avg_Top10":17.1,"Codex":109.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":20.93,"AppliedPenalty":20.93,"Avg_Top10":24.72,"Codex":5109.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":17.31,"AppliedPenalty":17.31,"Avg_Top10":24.72,"Codex":5110.0,"Place":"Zinal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":15.14,"AppliedPenalty":15.14,"Avg_Top10":25.8,"Codex":5069.0,"Place":"Zauchensee"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":20.06,"AppliedPenalty":20.06,"Avg_Top10":23.22,"Codex":5202.0,"Place":"Bardonecchia"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":16.39,"AppliedPenalty":16.39,"Avg_Top10":23.22,"Codex":5201.0,"Place":"Bardonecchia"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":17.74,"AppliedPenalty":17.74,"Avg_Top10":23.59,"Codex":5085.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":14.75,"AppliedPenalty":15.0,"Avg_Top10":21.67,"Codex":5086.0,"Place":"Sarntal"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":11.9,"AppliedPenalty":15.0,"Avg_Top10":21.02,"Codex":5616.0,"Place":"Kitzbuehel"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":15.61,"AppliedPenalty":15.61,"Avg_Top10":21.02,"Codex":5084.0,"Place":"Kitzbuehel"},{"Circuit":"EC","Discipline":"SG","Gender":"W","CalculatedPenalty":16.97,"AppliedPenalty":16.97,"Avg_Top10":22.25,"Codex":5098.0,"Place":"Kvitfjell"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.63,"AppliedPenalty":17.63,"Avg_Top10":18.27,"Codex":918.0,"Place":"Levi"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":16.98,"AppliedPenalty":16.98,"Avg_Top10":18.27,"Codex":919.0,"Place":"Levi"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.03,"AppliedPenalty":15.0,"Avg_Top10":18.67,"Codex":98.0,"Place":"Val di Fassa"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.25,"AppliedPenalty":17.25,"Avg_Top10":18.95,"Codex":99.0,"Place":"Obereggen"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.22,"AppliedPenalty":15.22,"Avg_Top10":17.38,"Codex":92.0,"Place":"Berchtesgaden"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":12.83,"AppliedPenalty":15.0,"Avg_Top10":15.81,"Codex":83.0,"Place":"Baqueira Beret"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.66,"AppliedPenalty":15.0,"Avg_Top10":15.81,"Codex":84.0,"Place":"Baqueira Beret"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.7,"AppliedPenalty":15.0,"Avg_Top10":15.6,"Codex":110.0,"Place":"Norefjell"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.53,"AppliedPenalty":15.0,"Avg_Top10":15.19,"Codex":111.0,"Place":"Norefjell"},{"Circuit":"EC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.52,"AppliedPenalty":15.0,"Avg_Top10":14.48,"Codex":113.0,"Place":"Oppdal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.3,"AppliedPenalty":15.0,"Avg_Top10":15.5,"Codex":5078.0,"Place":"Valle Aurina / Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.42,"AppliedPenalty":15.0,"Avg_Top10":15.82,"Codex":5079.0,"Place":"Valle Aurina / Ahrntal"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.23,"AppliedPenalty":15.0,"Avg_Top10":17.16,"Codex":5111.0,"Place":"Les Diablerets"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.12,"AppliedPenalty":15.12,"Avg_Top10":17.17,"Codex":5112.0,"Place":"Les Diablerets"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.53,"AppliedPenalty":15.0,"Avg_Top10":16.51,"Codex":5070.0,"Place":"Zell am See"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.84,"AppliedPenalty":15.0,"Avg_Top10":16.51,"Codex":5071.0,"Place":"Zell am See"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.07,"AppliedPenalty":15.0,"Avg_Top10":15.55,"Codex":5072.0,"Place":"Spindleruv Mlyn"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.43,"AppliedPenalty":15.0,"Avg_Top10":15.55,"Codex":5073.0,"Place":"Spindleruv Mlyn"},{"Circuit":"EC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.89,"AppliedPenalty":15.0,"Avg_Top10":16.4,"Codex":5101.0,"Place":"Oppdal"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":21.54,"AppliedPenalty":21.54,"Avg_Top10":25.57,"Codex":823.0,"Place":"Wanlong Ski Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.54,"AppliedPenalty":16.54,"Avg_Top10":25.57,"Codex":824.0,"Place":"Wanlong Ski Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.12,"AppliedPenalty":17.12,"Avg_Top10":23.58,"Codex":1208.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":18.88,"AppliedPenalty":18.88,"Avg_Top10":23.58,"Codex":1209.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.2,"AppliedPenalty":17.2,"Avg_Top10":21.58,"Codex":1224.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"GS","Gender":"M","CalculatedPenalty":19.58,"AppliedPenalty":19.58,"Avg_Top10":21.76,"Codex":1225.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":22.28,"AppliedPenalty":22.28,"Avg_Top10":26.92,"Codex":5792.0,"Place":"Wanlong Ski Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":22.68,"AppliedPenalty":22.68,"Avg_Top10":26.92,"Codex":5793.0,"Place":"Wanlong Ski Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":19.19,"AppliedPenalty":19.19,"Avg_Top10":26.68,"Codex":6165.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":22.56,"AppliedPenalty":22.56,"Avg_Top10":26.68,"Codex":6166.0,"Place":"Yongpyong Resort"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.92,"AppliedPenalty":18.92,"Avg_Top10":26.87,"Codex":6181.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"GS","Gender":"W","CalculatedPenalty":20.07,"AppliedPenalty":20.07,"Avg_Top10":26.87,"Codex":6182.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":19.28,"AppliedPenalty":19.28,"Avg_Top10":23.41,"Codex":825.0,"Place":"Wanlong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.15,"AppliedPenalty":17.15,"Avg_Top10":23.41,"Codex":826.0,"Place":"Wanlong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":12.65,"AppliedPenalty":15.0,"Avg_Top10":21.54,"Codex":1271.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.01,"AppliedPenalty":17.01,"Avg_Top10":21.54,"Codex":1272.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":18.21,"AppliedPenalty":18.21,"Avg_Top10":22.53,"Codex":1273.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":19.46,"AppliedPenalty":19.46,"Avg_Top10":22.53,"Codex":1274.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.14,"AppliedPenalty":15.14,"Avg_Top10":18.77,"Codex":1226.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.52,"AppliedPenalty":15.0,"Avg_Top10":18.77,"Codex":1227.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.73,"AppliedPenalty":15.73,"Avg_Top10":18.3,"Codex":1232.0,"Place":"Hakuba"},{"Circuit":"FEC","Discipline":"SL","Gender":"M","CalculatedPenalty":15.0,"AppliedPenalty":15.0,"Avg_Top10":18.3,"Codex":1233.0,"Place":"Hakuba"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":19.72,"AppliedPenalty":19.72,"Avg_Top10":28.44,"Codex":5794.0,"Place":"Wanlong Ski Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":23.4,"AppliedPenalty":23.4,"Avg_Top10":28.44,"Codex":5795.0,"Place":"Wanlong Ski Resrort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.88,"AppliedPenalty":17.88,"Avg_Top10":25.45,"Codex":6228.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.25,"AppliedPenalty":15.25,"Avg_Top10":25.45,"Codex":6229.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.85,"AppliedPenalty":15.0,"Avg_Top10":29.07,"Codex":6230.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":19.64,"AppliedPenalty":19.64,"Avg_Top10":34.07,"Codex":6231.0,"Place":"Alpensia Resort"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":14.3,"AppliedPenalty":15.0,"Avg_Top10":26.22,"Codex":6183.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.18,"AppliedPenalty":15.0,"Avg_Top10":26.92,"Codex":6184.0,"Place":"Sugadairakohgen"},{"Circuit":"FEC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.62,"AppliedPenalty":15.0,"Avg_Top10":27.49,"Codex":6190.0,"Place":"Hakuba"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":31.26,"AppliedPenalty":31.26,"Avg_Top10":46.09,"Codex":755.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":33.16,"AppliedPenalty":33.16,"Avg_Top10":46.09,"Codex":756.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":7.74,"AppliedPenalty":15.0,"Avg_Top10":25.95,"Codex":1963.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"DH","Gender":"M","CalculatedPenalty":14.06,"AppliedPenalty":15.0,"Avg_Top10":25.95,"Codex":1964.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":51.37,"AppliedPenalty":51.37,"Avg_Top10":82.78,"Codex":5724.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":54.41,"AppliedPenalty":54.41,"Avg_Top10":82.78,"Codex":5725.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":41.43,"AppliedPenalty":41.43,"Avg_Top10":65.43,"Codex":6887.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"DH","Gender":"W","CalculatedPenalty":44.1,"AppliedPenalty":44.1,"Avg_Top10":72.46,"Codex":6888.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":20.04,"AppliedPenalty":20.04,"Avg_Top10":21.94,"Codex":718.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.05,"AppliedPenalty":16.05,"Avg_Top10":22.03,"Codex":719.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.47,"AppliedPenalty":17.47,"Avg_Top10":22.21,"Codex":748.0,"Place":"Lake Louise, AB"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":18.95,"AppliedPenalty":18.95,"Avg_Top10":22.85,"Codex":749.0,"Place":"Lake Louise, AB"},{"Circuit":"NAC","Discipline":"GS","Gender":"M","CalculatedPenalty":14.59,"AppliedPenalty":15.0,"Avg_Top10":19.79,"Codex":1968.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.05,"AppliedPenalty":18.05,"Avg_Top10":22.43,"Codex":5689.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":16.83,"AppliedPenalty":16.83,"Avg_Top10":22.43,"Codex":5690.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.12,"AppliedPenalty":15.0,"Avg_Top10":23.46,"Codex":5715.0,"Place":"Lake Louise, AB"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":15.26,"AppliedPenalty":15.26,"Avg_Top10":23.46,"Codex":5716.0,"Place":"Lake Louise, AB"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":10.33,"AppliedPenalty":15.0,"Avg_Top10":20.19,"Codex":6901.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"GS","Gender":"W","CalculatedPenalty":7.92,"AppliedPenalty":15.0,"Avg_Top10":20.19,"Codex":6902.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":20.52,"AppliedPenalty":20.52,"Avg_Top10":33.47,"Codex":1791.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":17.72,"AppliedPenalty":17.72,"Avg_Top10":32.02,"Codex":1792.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":17.11,"AppliedPenalty":17.11,"Avg_Top10":37.9,"Codex":757.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":22.96,"AppliedPenalty":22.96,"Avg_Top10":37.9,"Codex":758.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":7.93,"AppliedPenalty":15.0,"Avg_Top10":16.98,"Codex":1966.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SG","Gender":"M","CalculatedPenalty":4.61,"AppliedPenalty":15.0,"Avg_Top10":16.98,"Codex":1965.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":40.56,"AppliedPenalty":40.56,"Avg_Top10":53.52,"Codex":6727.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":46.61,"AppliedPenalty":46.61,"Avg_Top10":53.52,"Codex":6728.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":33.13,"AppliedPenalty":33.13,"Avg_Top10":46.13,"Codex":5726.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":25.6,"AppliedPenalty":25.6,"Avg_Top10":46.88,"Codex":5727.0,"Place":"Kimberley, BC"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":28.21,"AppliedPenalty":28.21,"Avg_Top10":41.1,"Codex":6890.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SG","Gender":"W","CalculatedPenalty":27.93,"AppliedPenalty":27.93,"Avg_Top10":41.1,"Codex":6889.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.72,"AppliedPenalty":17.72,"Avg_Top10":21.03,"Codex":720.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.64,"AppliedPenalty":15.0,"Avg_Top10":21.03,"Codex":721.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":16.39,"AppliedPenalty":16.39,"Avg_Top10":20.6,"Codex":746.0,"Place":"Norquay, AB"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.2,"AppliedPenalty":15.0,"Avg_Top10":20.6,"Codex":747.0,"Place":"Norquay, AB"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":13.34,"AppliedPenalty":15.0,"Avg_Top10":18.57,"Codex":1969.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SL","Gender":"M","CalculatedPenalty":14.45,"AppliedPenalty":15.0,"Avg_Top10":18.47,"Codex":1970.0,"Place":"Sugarloaf"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":10.53,"AppliedPenalty":15.0,"Avg_Top10":19.04,"Codex":5687.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":11.59,"AppliedPenalty":15.0,"Avg_Top10":19.04,"Codex":5688.0,"Place":"Panorama Resort, BC"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":16.2,"AppliedPenalty":16.2,"Avg_Top10":21.16,"Codex":5717.0,"Place":"Norquay, AB"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.1,"AppliedPenalty":15.0,"Avg_Top10":21.16,"Codex":5718.0,"Place":"Norquay, AB"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":13.74,"AppliedPenalty":15.0,"Avg_Top10":19.23,"Codex":6903.0,"Place":"Burke Mountain"},{"Circuit":"NAC","Discipline":"SL","Gender":"W","CalculatedPenalty":15.82,"AppliedPenalty":15.82,"Avg_Top10":19.23,"Codex":6904.0,"Place":"Burke Mountain"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":20.68,"AppliedPenalty":20.68,"Avg_Top10":34.08,"Codex":169.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":22.97,"AppliedPenalty":22.97,"Avg_Top10":34.08,"Codex":170.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":26.09,"AppliedPenalty":26.09,"Avg_Top10":37.03,"Codex":186.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"M","CalculatedPenalty":25.55,"AppliedPenalty":25.55,"Avg_Top10":37.37,"Codex":187.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":42.45,"AppliedPenalty":42.45,"Avg_Top10":75.98,"Codex":5162.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":42.99,"AppliedPenalty":42.99,"Avg_Top10":75.98,"Codex":5163.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":54.07,"AppliedPenalty":54.07,"Avg_Top10":100.51,"Codex":5179.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"DH","Gender":"W","CalculatedPenalty":62.43,"AppliedPenalty":62.43,"Avg_Top10":100.51,"Codex":5180.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":28.0,"AppliedPenalty":28.0,"Avg_Top10":32.31,"Codex":128.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":17.08,"AppliedPenalty":17.08,"Avg_Top10":32.31,"Codex":130.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":28.7,"AppliedPenalty":28.7,"Avg_Top10":32.31,"Codex":131.0,"Place":"Cerro Catedral - Bariloche"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":16.56,"AppliedPenalty":16.56,"Avg_Top10":25.97,"Codex":165.0,"Place":"El Colorado"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":9.13,"AppliedPenalty":15.0,"Avg_Top10":16.53,"Codex":141.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"M","CalculatedPenalty":13.22,"AppliedPenalty":15.0,"Avg_Top10":17.79,"Codex":142.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":18.34,"AppliedPenalty":18.34,"Avg_Top10":39.33,"Codex":5121.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":25.78,"AppliedPenalty":25.78,"Avg_Top10":39.33,"Codex":5123.0,"Place":"Chapelco"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":22.15,"AppliedPenalty":22.15,"Avg_Top10":39.02,"Codex":5124.0,"Place":"Cerro Catedral - Bariloche"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":13.31,"AppliedPenalty":15.0,"Avg_Top10":33.15,"Codex":5158.0,"Place":"El Colorado"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.25,"AppliedPenalty":15.0,"Avg_Top10":18.66,"Codex":5134.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"GS","Gender":"W","CalculatedPenalty":12.18,"AppliedPenalty":15.0,"Avg_Top10":17.32,"Codex":5135.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":16.24,"AppliedPenalty":16.24,"Avg_Top10":24.89,"Codex":171.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":14.44,"AppliedPenalty":15.0,"Avg_Top10":24.89,"Codex":172.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":18.22,"AppliedPenalty":18.22,"Avg_Top10":30.85,"Codex":189.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"M","CalculatedPenalty":20.78,"AppliedPenalty":20.78,"Avg_Top10":30.85,"Codex":190.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":35.88,"AppliedPenalty":35.88,"Avg_Top10":57.32,"Codex":5164.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":32.0,"AppliedPenalty":32.0,"Avg_Top10":57.32,"Codex":5165.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":46.72,"AppliedPenalty":46.72,"Avg_Top10":79.8,"Codex":5182.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SG","Gender":"W","CalculatedPenalty":39.19,"AppliedPenalty":39.19,"Avg_Top10":79.8,"Codex":5183.0,"Place":"Corralco"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":21.27,"AppliedPenalty":21.27,"Avg_Top10":26.85,"Codex":133.0,"Place":"Cerro Catedral - Bariloche"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":18.36,"AppliedPenalty":18.36,"Avg_Top10":26.85,"Codex":134.0,"Place":"Cerro Catedral - Bariloche"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":17.93,"AppliedPenalty":17.93,"Avg_Top10":23.79,"Codex":166.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":12.56,"AppliedPenalty":15.0,"Avg_Top10":17.54,"Codex":139.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"M","CalculatedPenalty":10.15,"AppliedPenalty":15.0,"Avg_Top10":17.54,"Codex":140.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":34.91,"AppliedPenalty":34.91,"Avg_Top10":46.98,"Codex":5126.0,"Place":"Cerro Catedral - Bariloche"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":28.97,"AppliedPenalty":28.97,"Avg_Top10":46.98,"Codex":5127.0,"Place":"Cerro Catedral - Bariloche"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":17.44,"AppliedPenalty":17.44,"Avg_Top10":34.35,"Codex":5159.0,"Place":"La Parva"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":10.13,"AppliedPenalty":15.0,"Avg_Top10":17.31,"Codex":5132.0,"Place":"Cerro Castor"},{"Circuit":"SAC","Discipline":"SL","Gender":"W","CalculatedPenalty":12.01,"AppliedPenalty":15.0,"Avg_Top10":19.25,"Codex":5133.0,"Place":"Cerro Castor"}]};
+const HIST_STATE={
+  2023:{d:'SL',g:'M'},2024:{d:'SL',g:'M'},2025:{d:'SL',g:'M'}
+};
+const HIST_ORDER=['EC','NAC','FEC','SAC','ANC'];
+function hMean(a){a=a.filter(Number.isFinite);return a.length?a.reduce((s,v)=>s+v,0)/a.length:null}
+function hFmt(v){return Number.isFinite(v)?v.toFixed(2):'–'}
+function hColor(c){return (typeof COLORS!=='undefined'&&COLORS[c])?COLORS[c]:'#111827'}
+
+function renderHistoricalSeason(y){
+  y=Number(y); const st=HIST_STATE[y], all=HISTORICAL_SEASON_DATA[y]||[];
+  const rows=all.filter(r=>r.Discipline===st.d&&r.Gender===st.g);
+  const groups={};
+  rows.forEach(r=>(groups[r.Circuit]||(groups[r.Circuit]=[])).push(r));
+  let stats=Object.entries(groups).map(([c,rs])=>({
+    c,rs,n:rs.length,top:hMean(rs.map(r=>Number(r.Avg_Top10))),
+    calc:hMean(rs.map(r=>Number(r.CalculatedPenalty))),
+    current:hMean(rs.map(r=>Number(r.AppliedPenalty)))
+  })).filter(x=>Number.isFinite(x.top));
+  const best=stats.length?Math.min(...stats.map(x=>x.top)):null;
+  stats.forEach(x=>{x.raw=x.top-best;x.add=Math.min(histMax(),Math.max(0,x.raw));
+    const sims=x.rs.map(r=>Math.max(histMin(),Number(r.CalculatedPenalty)+x.add)).filter(Number.isFinite);
+    x.sim=hMean(sims);x.diff=(Number.isFinite(x.sim)&&Number.isFinite(x.current))?x.sim-x.current:null;
+  });
+  stats.sort((a,b)=>a.add-b.add||a.top-b.top||(HIST_ORDER.indexOf(a.c)-HIST_ORDER.indexOf(b.c)));
+  const ref=document.getElementById('seasonRefBody'+y);
+  const pen=document.getElementById('seasonPenaltyBody'+y);
+  if(ref)ref.innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${x.n}</td><td>${hFmt(x.top)}</td><td>${hFmt(best)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td></tr>`).join('');
+  if(pen)pen.innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${hFmt(x.calc)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td><td>${hFmt(x.current)}</td><td><strong>${hFmt(x.sim)}</strong></td><td>${x.diff==null?'–':(x.diff>=0?'+':'')+x.diff.toFixed(2)}</td></tr>`).join('');
+}
+document.querySelectorAll('.season-disc').forEach(box=>box.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;const y=Number(box.dataset.year);HIST_STATE[y].d=b.dataset.v;box.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));renderHistoricalSeason(y)}));
+document.querySelectorAll('.season-gender').forEach(box=>box.addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;const y=Number(box.dataset.year);HIST_STATE[y].g=b.dataset.v;box.querySelectorAll('button').forEach(x=>x.classList.toggle('active',x===b));renderHistoricalSeason(y)}));
+[2023,2024,2025].forEach(renderHistoricalSeason);
+</script>
+
+
+<script>
+const FIVE_STATE={d:'SL',g:'M'};
+function fiveSeasonMeanForCircuit(year,circuit,d,g,field){
+  const a=(HISTORICAL_SEASON_DATA[year]||[]).filter(r=>r.Circuit===circuit&&r.Discipline===d&&r.Gender===g)
+    .map(r=>Number(r[field])).filter(Number.isFinite);
+  return a.length?hMean(a):null;
+}
+function renderFiveYear(){
+  const d=FIVE_STATE.d,g=FIVE_STATE.g, years=[2023,2024,2025,2026];
+  // Historical 2022-25 come from the annual datasets; 2026 is reconstructed from the untouched reference datasets.
+  const circuits=new Set();
+  years.slice(0,3).forEach(y=>(HISTORICAL_SEASON_DATA[y]||[]).forEach(r=>{if(r.Discipline===d&&r.Gender===g)circuits.add(r.Circuit)}));
+  if(typeof FIELD_LEVEL_DATA!=='undefined') FIELD_LEVEL_DATA.forEach(r=>{if(r.discipline===d&&r.gender===g)circuits.add(r.circuit)});
+  let stats=[];
+  circuits.forEach(c=>{
+    const tops=[], calcs=[], apps=[], seasonRows=[];
+    [2023,2024,2025].forEach(y=>{
+      const rs=(HISTORICAL_SEASON_DATA[y]||[]).filter(r=>r.Circuit===c&&r.Discipline===d&&r.Gender===g);
+      if(rs.length){
+        const top=hMean(rs.map(r=>Number(r.Avg_Top10)));
+        const calc=hMean(rs.map(r=>Number(r.CalculatedPenalty)));
+        const app=hMean(rs.map(r=>Number(r.AppliedPenalty)));
+        if(Number.isFinite(top))tops.push(top);
+        if(Number.isFinite(calc))calcs.push(calc);
+        if(Number.isFinite(app))apps.push(app);
+        seasonRows.push({y,rs});
+      }
+    });
+    if(typeof FIELD_LEVEL_DATA!=='undefined'){
+      const fr=FIELD_LEVEL_DATA.filter(r=>r.circuit===c&&r.discipline===d&&r.gender===g);
+      if(fr.length){
+        const top=hMean(fr.map(r=>Number(r.avgTop10)));
+        if(Number.isFinite(top))tops.push(top);
+        // 2026 penalty data remains exactly the reference data.
+        const pr=(typeof PENALTY_DATA!=='undefined'?PENALTY_DATA:[]).filter(r=>r.circuit===c&&r.discipline===d&&r.gender===g);
+        if(pr.length){
+          const calc=hMean(pr.map(r=>Number(r.calculatedPenalty)));
+          const app=hMean(pr.map(r=>Number(r.appliedPenalty)));
+          if(Number.isFinite(calc))calcs.push(calc);
+          if(Number.isFinite(app))apps.push(app);
+          seasonRows.push({y:2026,rs:pr,is2026:true});
+        }
+      }
+    }
+    if(tops.length) stats.push({c,seasons:tops.length,top:hMean(tops),calc:hMean(calcs),current:hMean(apps),seasonRows});
+  });
+  const best=stats.length?Math.min(...stats.map(x=>x.top)):null;
+  stats.forEach(x=>{
+    x.raw=x.top-best; x.add=Math.min(histMax(),Math.max(0,x.raw));
+    const simSeason=[];
+    x.seasonRows.forEach(s=>{
+      const vals=s.rs.map(r=>{
+        const cp=Number(s.is2026?r.calculatedPenalty:r.CalculatedPenalty);
+        return Number.isFinite(cp)?Math.max(histMin(),cp+x.add):null;
+      }).filter(Number.isFinite);
+      if(vals.length)simSeason.push(hMean(vals));
+    });
+    x.sim=hMean(simSeason);
+    x.diff=(Number.isFinite(x.sim)&&Number.isFinite(x.current))?x.sim-x.current:null;
+    x.races=x.seasonRows.reduce((n,s)=>n+s.rs.length,0);
+  });
+  stats.sort((a,b)=>a.add-b.add||a.top-b.top);
+  document.getElementById('fiveRefBody').innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${x.seasons}</td><td>${x.races}</td><td>${hFmt(x.top)}</td><td>${hFmt(best)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td></tr>`).join('');
+  document.getElementById('fivePenaltyBody').innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${hFmt(x.calc)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td><td>${hFmt(x.current)}</td><td><strong>${hFmt(x.sim)}</strong></td><td>${x.diff==null?'–':(x.diff>=0?'+':'')+x.diff.toFixed(2)}</td></tr>`).join('');
+}
+document.getElementById('fiveDisc').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;FIVE_STATE.d=b.dataset.v;document.querySelectorAll('#fiveDisc button').forEach(x=>x.classList.toggle('active',x===b));renderFiveYear()});
+document.getElementById('fiveGender').addEventListener('click',e=>{const b=e.target.closest('button[data-v]');if(!b)return;FIVE_STATE.g=b.dataset.v;document.querySelectorAll('#fiveGender button').forEach(x=>x.classList.toggle('active',x===b));renderFiveYear()});
+renderFiveYear();
+</script>
+
+
+<script>
+function fget(r,...keys){for(const k of keys){if(r && r[k]!==undefined && r[k]!==null)return r[k]}return null}
+
+renderFiveYear=function(){
+  const d=FIVE_STATE.d,g=FIVE_STATE.g;
+  const circuits=new Set();
+
+  [2023,2024,2025].forEach(y=>(HISTORICAL_SEASON_DATA[y]||[]).forEach(r=>{
+    if(r.Discipline===d&&r.Gender===g)circuits.add(r.Circuit);
+  }));
+
+  const f26=(typeof FIELD_LEVEL_DATA!=='undefined'?FIELD_LEVEL_DATA:[]);
+  f26.forEach(r=>{
+    if(String(fget(r,'Discipline','discipline'))===d && String(fget(r,'Gender','gender'))===g)
+      circuits.add(String(fget(r,'Circuit','circuit')));
+  });
+
+  let stats=[];
+  circuits.forEach(c=>{
+    const tops=[],calcs=[],apps=[],seasonRows=[];
+
+    [2023,2024,2025].forEach(y=>{
+      const rs=(HISTORICAL_SEASON_DATA[y]||[]).filter(r=>r.Circuit===c&&r.Discipline===d&&r.Gender===g);
+      if(!rs.length)return;
+      const top=hMean(rs.map(r=>Number(r.Avg_Top10)));
+      const calc=hMean(rs.map(r=>Number(r.CalculatedPenalty)));
+      const app=hMean(rs.map(r=>Number(r.AppliedPenalty)));
+      if(Number.isFinite(top))tops.push(top);
+      if(Number.isFinite(calc))calcs.push(calc);
+      if(Number.isFinite(app))apps.push(app);
+      seasonRows.push({y,rs,is2026:false});
+    });
+
+    const fr=f26.filter(r=>
+      String(fget(r,'Circuit','circuit'))===c &&
+      String(fget(r,'Discipline','discipline'))===d &&
+      String(fget(r,'Gender','gender'))===g
+    );
+    if(fr.length){
+      const top=hMean(fr.map(r=>Number(fget(r,'Avg_Top10','avgTop10','AverageTop10','averageTop10'))));
+      if(Number.isFinite(top))tops.push(top);
+    }
+
+    const p26=(typeof PENALTY_DATA!=='undefined'?PENALTY_DATA:[]);
+    const pr=p26.filter(r=>
+      String(fget(r,'Circuit','circuit'))===c &&
+      String(fget(r,'Discipline','discipline'))===d &&
+      String(fget(r,'Gender','gender'))===g
+    );
+    if(pr.length){
+      const calc=hMean(pr.map(r=>Number(fget(r,'CalculatedPenalty','calculatedPenalty'))));
+      const app=hMean(pr.map(r=>Number(fget(r,'AppliedPenalty','appliedPenalty'))));
+      if(Number.isFinite(calc))calcs.push(calc);
+      if(Number.isFinite(app))apps.push(app);
+      seasonRows.push({y:2026,rs:pr,is2026:true});
+    }
+
+    if(tops.length)stats.push({c,seasons:tops.length,top:hMean(tops),calc:hMean(calcs),current:hMean(apps),seasonRows});
+  });
+
+  const best=stats.length?Math.min(...stats.map(x=>x.top)):null;
+  stats.forEach(x=>{
+    x.raw=x.top-best;
+    x.add=Math.min(histMax(),Math.max(0,x.raw));
+    const simSeason=[];
+    x.seasonRows.forEach(s=>{
+      const vals=s.rs.map(r=>{
+        const cp=Number(fget(r,'CalculatedPenalty','calculatedPenalty'));
+        return Number.isFinite(cp)?Math.max(histMin(),cp+x.add):null;
+      }).filter(Number.isFinite);
+      if(vals.length)simSeason.push(hMean(vals));
+    });
+    x.sim=hMean(simSeason);
+    x.diff=(Number.isFinite(x.sim)&&Number.isFinite(x.current))?x.sim-x.current:null;
+    x.races=x.seasonRows.reduce((n,s)=>n+s.rs.length,0);
+  });
+
+  stats.sort((a,b)=>a.add-b.add||a.top-b.top);
+  document.getElementById('fiveRefBody').innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${x.seasons}</td><td>${x.races}</td><td>${hFmt(x.top)}</td><td>${hFmt(best)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td></tr>`).join('');
+  document.getElementById('fivePenaltyBody').innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${hFmt(x.calc)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td><td>${hFmt(x.current)}</td><td><strong>${hFmt(x.sim)}</strong></td><td>${x.diff==null?'–':(x.diff>=0?'+':'')+x.diff.toFixed(2)}</td></tr>`).join('');
+}
+renderFiveYear();
+</script>
+
+
+<script>
+renderFiveYear=function(){
+  const d=FIVE_STATE.d,g=FIVE_STATE.g;
+  const circuits=new Set();
+  [2023,2024,2025].forEach(y=>(HISTORICAL_SEASON_DATA[y]||[]).forEach(r=>{
+    if(r.Discipline===d&&r.Gender===g)circuits.add(r.Circuit);
+  }));
+  (typeof RAW!=='undefined'?RAW:[]).forEach(r=>{
+    if(r.discipline===d&&r.gender===g)circuits.add(r.circuit);
+  });
+
+  let stats=[];
+  circuits.forEach(c=>{
+    const tops=[],calcs=[],apps=[],seasonRows=[];
+
+    [2023,2024,2025].forEach(y=>{
+      const rs=(HISTORICAL_SEASON_DATA[y]||[]).filter(r=>r.Circuit===c&&r.Discipline===d&&r.Gender===g);
+      if(!rs.length)return;
+      const top=hMean(rs.map(r=>Number(r.Avg_Top10)));
+      const calc=hMean(rs.map(r=>Number(r.CalculatedPenalty)));
+      const app=hMean(rs.map(r=>Number(r.AppliedPenalty)));
+      if(Number.isFinite(top))tops.push(top);
+      if(Number.isFinite(calc))calcs.push(calc);
+      if(Number.isFinite(app))apps.push(app);
+      seasonRows.push({rs,is2026:false});
+    });
+
+    // Exact same 2026 Top-10 logic as the untouched 2026 simulator.
+    const r26=(typeof RAW!=='undefined'?RAW:[]).filter(r=>
+      Number(r.cohortMaxRank)===10 && r.circuit===c && r.discipline===d && r.gender===g &&
+      Number.isFinite(Number(r.rank)) && Number.isFinite(Number(r.avgFisPoints))
+    );
+    if(r26.length){
+      const top26=hMean(r26.filter(r=>Number(r.rank)<=10).map(r=>Number(r.avgFisPoints)));
+      if(Number.isFinite(top26))tops.push(top26);
+    }
+
+    const p26=(typeof PENALTY_DATA!=='undefined'?PENALTY_DATA:[]).filter(r=>
+      r.circuit===c&&r.discipline===d&&r.gender===g&&Number.isFinite(Number(r.calculatedPenalty))
+    );
+    if(p26.length){
+      calcs.push(hMean(p26.map(r=>Number(r.calculatedPenalty))));
+      apps.push(hMean(p26.map(r=>Number(r.appliedPenalty)).filter(Number.isFinite)));
+      seasonRows.push({rs:p26,is2026:true});
+    }
+
+    if(tops.length)stats.push({c,seasons:tops.length,top:hMean(tops),calc:hMean(calcs),current:hMean(apps),seasonRows});
+  });
+
+  const best=stats.length?Math.min(...stats.map(x=>x.top)):null;
+  stats.forEach(x=>{
+    x.raw=x.top-best;x.add=Math.min(histMax(),Math.max(0,x.raw));
+    const sims=[];
+    x.seasonRows.forEach(s=>{
+      const vals=s.rs.map(r=>{
+        const cp=Number(s.is2026?r.calculatedPenalty:r.CalculatedPenalty);
+        return Number.isFinite(cp)?Math.max(histMin(),cp+x.add):null;
+      }).filter(Number.isFinite);
+      if(vals.length)sims.push(hMean(vals));
+    });
+    x.sim=hMean(sims);x.diff=Number.isFinite(x.sim)&&Number.isFinite(x.current)?x.sim-x.current:null;
+    x.races=x.seasonRows.reduce((n,s)=>n+s.rs.length,0);
+  });
+
+  stats.sort((a,b)=>a.add-b.add||a.top-b.top);
+  fiveRefBody.innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${x.seasons}</td><td>${x.races}</td><td>${hFmt(x.top)}</td><td>${hFmt(best)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td></tr>`).join('');
+  fivePenaltyBody.innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${hFmt(x.calc)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td><td>${hFmt(x.current)}</td><td><strong>${hFmt(x.sim)}</strong></td><td>${x.diff==null?'–':(x.diff>=0?'+':'')+x.diff.toFixed(2)}</td></tr>`).join('');
+};
+renderFiveYear();
+</script>
+
+
+<script>
+function histMin(){
+  const el=document.querySelector('.hist-min-penalty');
+  const v=el?Number(el.value):15; return Number.isFinite(v)?v:15;
+}
+function histMax(){
+  const el=document.querySelector('.hist-max-additive');
+  const v=el?Number(el.value):5; return Number.isFinite(v)?Math.max(0,v):5;
+}
+function syncSimulationInputs(source){
+  const cls=source.classList.contains('hist-min-penalty')?'hist-min-penalty':'hist-max-additive';
+  document.querySelectorAll('.'+cls).forEach(el=>{if(el!==source)el.value=source.value;});
+  [2023,2024,2025].forEach(y=>{if(typeof renderHistoricalSeason==='function')renderHistoricalSeason(y);});
+  if(typeof renderFiveYear==='function')renderFiveYear();
+}
+document.addEventListener('input',e=>{
+  if(e.target.matches('.hist-min-penalty,.hist-max-additive')) syncSimulationInputs(e.target);
+});
+</script>
+
+
+<script>
+renderFiveYear=function(){
+  const d=FIVE_STATE.d,g=FIVE_STATE.g;
+  const circuits=new Set();
+
+  [2023,2024,2025].forEach(y=>(HISTORICAL_SEASON_DATA[y]||[]).forEach(r=>{
+    if(r.Discipline===d&&r.Gender===g)circuits.add(r.Circuit);
+  }));
+  (typeof RAW!=='undefined'?RAW:[]).forEach(r=>{
+    if(r.discipline===d&&r.gender===g)circuits.add(r.circuit);
+  });
+
+  let stats=[];
+  circuits.forEach(c=>{
+    const tops=[], calcs=[], apps=[], seasonRows=[];
+
+    [2023,2024,2025].forEach(y=>{
+      const rs=(HISTORICAL_SEASON_DATA[y]||[]).filter(r=>r.Circuit===c&&r.Discipline===d&&r.Gender===g);
+      if(!rs.length)return;
+      const top=hMean(rs.map(r=>Number(r.Avg_Top10)));
+      const calc=hMean(rs.map(r=>Number(r.CalculatedPenalty)));
+      const app=hMean(rs.map(r=>Number(r.AppliedPenalty)));
+      if(Number.isFinite(top))tops.push(top);
+      if(Number.isFinite(calc))calcs.push(calc);
+      if(Number.isFinite(app))apps.push(app);
+      seasonRows.push({year:y,rs,is2026:false});
+    });
+
+    // 2026 Top 10: exact reference-page source/logic.
+    const r26=(typeof RAW!=='undefined'?RAW:[]).filter(r=>
+      Number(r.cohortMaxRank)===10 && r.circuit===c && r.discipline===d && r.gender===g &&
+      Number.isFinite(Number(r.rank)) && Number.isFinite(Number(r.avgFisPoints))
+    );
+    if(r26.length){
+      const top26=hMean(r26.filter(r=>Number(r.rank)<=10).map(r=>Number(r.avgFisPoints)));
+      if(Number.isFinite(top26))tops.push(top26);
+    }
+
+    // 2026 penalties: untouched reference data.
+    const p26=(typeof PENALTY_DATA!=='undefined'?PENALTY_DATA:[]).filter(r=>
+      r.circuit===c&&r.discipline===d&&r.gender===g&&Number.isFinite(Number(r.calculatedPenalty))
+    );
+    if(p26.length){
+      const calc26=hMean(p26.map(r=>Number(r.calculatedPenalty)));
+      const app26=hMean(p26.map(r=>Number(r.appliedPenalty)).filter(Number.isFinite));
+      if(Number.isFinite(calc26))calcs.push(calc26);
+      if(Number.isFinite(app26))apps.push(app26);
+      seasonRows.push({year:2026,rs:p26,is2026:true});
+    }
+
+    if(tops.length){
+      stats.push({c,seasons:tops.length,top:hMean(tops),calc:hMean(calcs),current:hMean(apps),seasonRows});
+    }
+  });
+
+  const best=stats.length?Math.min(...stats.map(x=>x.top)):null;
+  const maxAdd=histMax(), minPen=histMin();
+
+  stats.forEach(x=>{
+    x.raw=x.top-best;
+    x.add=Math.min(maxAdd,Math.max(0,x.raw));
+
+    // Simulate each season separately, then equal-weight the season averages.
+    const simBySeason=[];
+    x.seasonRows.forEach(s=>{
+      const vals=s.rs.map(r=>{
+        const cp=Number(s.is2026?r.calculatedPenalty:r.CalculatedPenalty);
+        return Number.isFinite(cp)?Math.max(minPen,cp+x.add):null;
+      }).filter(Number.isFinite);
+      if(vals.length)simBySeason.push(hMean(vals));
+    });
+    x.sim=hMean(simBySeason);
+    x.diff=(Number.isFinite(x.sim)&&Number.isFinite(x.current))?x.sim-x.current:null;
+    x.races=x.seasonRows.reduce((n,s)=>n+s.rs.length,0);
+  });
+
+  stats.sort((a,b)=>a.add-b.add||a.top-b.top);
+  fiveRefBody.innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${x.seasons}</td><td>${x.races}</td><td>${hFmt(x.top)}</td><td>${hFmt(best)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td></tr>`).join('');
+  fivePenaltyBody.innerHTML=stats.map(x=>`<tr><td style="color:${hColor(x.c)}">${x.c}</td><td>${hFmt(x.calc)}</td><td class="adder">${x.add>=0?'+':''}${hFmt(x.add)}</td><td>${hFmt(x.current)}</td><td><strong>${hFmt(x.sim)}</strong></td><td>${x.diff==null?'–':(x.diff>=0?'+':'')+x.diff.toFixed(2)}</td></tr>`).join('');
+};
+renderFiveYear();
+</script>
 
 </body>
 </html>
