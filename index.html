@@ -1083,7 +1083,7 @@
     <button data-season="2025" onclick="showSeason('2025')">2025</button>
     <button data-season="2024" onclick="showSeason('2024')">2024</button>
     <button data-season="2023" onclick="showSeason('2023')">2023</button>
-    <button data-season="5year" onclick="showSeason('5year')">Year Analysis</button>
+    <button data-season="5year" onclick="showSeason('5year')">2023–2026 Analysis</button>
     <button data-season="findings" onclick="showSeason('findings')">Findings &amp; Proposed Method</button>
     <button data-season="firstpage" onclick="showSeason('firstpage')">1st page (Z-value, Adder, ...)</button>
   </div>
@@ -4730,13 +4730,9 @@ renderFiveYear();
   .season-analysis > h1, .season-analysis > .subtitle { padding-right:190px; }
 }
 #page-cross > h1, #page-cross > .subtitle { padding-right:0; }
-/* On narrow screens keep every QR in the document flow so it cannot cover text. */
+/* Hide all QR codes on mobile screens. */
 @media(max-width:760px) {
-  .page-section .page-qr, .season-analysis .page-qr {
-    display:block;
-    position:static;
-    margin:0 0 16px auto;
-  }
+  .page-qr { display:none !important; }
 }
 </style>
 
